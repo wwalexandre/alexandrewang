@@ -15,7 +15,6 @@ Site no ar: https://alexandrewang.vercel.app
 | `publicacoes/importacao-jogo.html` | Artigo e vídeo "Importação, o jogo dos prazos": o fluxo de importação aérea como jogo de tabuleiro, com casos reais anonimizados |
 | `publicacoes/forecast-erro.html` | Artigo completo e vídeo sobre erro de forecast: erro por família, FVA e Bias, com checklist em PDF |
 | `publicacoes/incoterms.html` | Artigo completo e vídeo sobre os 11 Incoterms 2020 |
-| `publicacoes/forecast-erro.html` | Artigo e vídeo sobre erro de forecast |
 | `assets/` | CSS, JavaScript, imagens, prévias e vídeos |
 | `vercel.json` | Cabeçalhos de segurança (CSP, anti-iframe, nosniff) e cache |
 | `sitemap.xml`, `robots.txt`, `404.html` | Busca no Google e página de erro |
