@@ -425,3 +425,20 @@ pre .s { color: var(--teal); }
 .pubs-foot { margin-top: 18px; color: var(--muted); font-size: 15px; }
 .nav-cv { display: none; }
 @media (min-width: 960px) { .nav-cv { display: inline-flex; } }
+
+/* ---------- JANELA DO CURRÍCULO (e-mail + WhatsApp) ---------- */
+.cv-dialog { border: 0; border-radius: 16px; padding: 0; width: calc(100% - 32px); max-width: 420px; background: var(--surface); color: var(--text); box-shadow: 0 24px 64px rgba(0, 0, 0, .35); }
+.cv-dialog::backdrop { background: rgba(10, 20, 32, .6); }
+.cv-dialog form, .cv-dialog .done { display: grid; gap: 12px; padding: 24px; }
+.cv-dialog [hidden] { display: none; }
+.cv-dialog h2 { font-family: var(--display); font-size: 30px; }
+.cv-dialog p { margin: 0; color: var(--muted); font-size: 15px; }
+.cv-dialog label { font-size: 13px; font-weight: 600; }
+.cv-dialog input[type="email"] { width: 100%; font: 16px var(--font); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.cv-dialog input[type="email"]:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+.cv-dialog .err { color: #C0392B; font-size: 13px; min-height: 1em; }
+.cv-dialog small { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.cv-dialog .row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+.cv-dialog .hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
+.btn-wa { background: #25D366; color: #06331A; }
+.btn-wa:hover { background: #3BE07A; }

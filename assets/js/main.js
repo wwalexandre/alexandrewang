@@ -172,11 +172,11 @@ const CV = {
   }
 };
 
-document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('click', e => {
-  e.preventDefault();
+// Gera e baixa o PDF. Devolve false se a biblioteca ainda não carregou
+function generateCV() {
   if (!window.jspdf) {
     alert(LANG === 'en' ? 'The PDF library is still loading. Please try again.' : 'A biblioteca de PDF ainda está carregando. Tente de novo.');
-    return;
+    return false;
   }
   const cv = CV[LANG];
   const { jsPDF } = window.jspdf;
@@ -233,4 +233,118 @@ document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('clic
     doc.text(SITE_URL.replace('https://', '') + '   ' + i + '/' + pages, L, 820);
   }
   doc.save(cv.file);
-}));
+  return true;
+}
+
+// Antes do download: pede o e-mail do visitante, avisa o Alexandre e oferece o WhatsApp
+const LEAD_ENDPOINT = 'https://formsubmit.co/ajax/alexandre01.w@gmail.com';
+const WHATSAPP = '5511944021458';
+const CV_TXT = {
+  pt: {
+    title: 'Baixar currículo',
+    lead: 'Deixe seu e-mail para baixar o PDF.',
+    label: 'Seu e-mail',
+    placeholder: 'nome@empresa.com',
+    submit: 'Baixar currículo',
+    cancel: 'Cancelar',
+    privacy: 'Uso seu e-mail só para saber quem baixou o currículo e, se fizer sentido, entrar em contato. Não compartilho com ninguém.',
+    invalid: 'Digite um e-mail válido.',
+    doneTitle: 'Currículo baixado',
+    doneText: 'Obrigado! Se quiser conversar, me chama no WhatsApp.',
+    whatsapp: 'Falar no WhatsApp',
+    close: 'Fechar',
+    msg: 'Olá, Alexandre! Acessei o seu currículo e tenho interesse no seu perfil. Podemos conversar?',
+    subject: 'Novo download do currículo'
+  },
+  en: {
+    title: 'Download resume',
+    lead: 'Leave your email to download the PDF.',
+    label: 'Your email',
+    placeholder: 'name@company.com',
+    submit: 'Download resume',
+    cancel: 'Cancel',
+    privacy: 'I only use your email to know who downloaded my resume and, if it makes sense, to get in touch. I never share it.',
+    invalid: 'Please enter a valid email.',
+    doneTitle: 'Resume downloaded',
+    doneText: 'Thank you! If you would like to talk, message me on WhatsApp.',
+    whatsapp: 'Message on WhatsApp',
+    close: 'Close',
+    msg: 'Hi Alexandre! I saw your resume and I am interested in your profile. Can we talk?',
+    subject: 'New resume download (EN)'
+  }
+};
+
+(function cvGate() {
+  const t = CV_TXT[LANG];
+  const waLink = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(t.msg);
+  const dlg = document.createElement('dialog');
+  dlg.className = 'cv-dialog';
+  dlg.setAttribute('aria-labelledby', 'cvTitle');
+  dlg.innerHTML =
+    '<form method="dialog" id="cvForm" novalidate>' +
+      '<h2 id="cvTitle">' + t.title + '</h2>' +
+      '<p>' + t.lead + '</p>' +
+      '<label for="cvEmail">' + t.label + '</label>' +
+      '<input type="email" id="cvEmail" name="email" autocomplete="email" placeholder="' + t.placeholder + '" required>' +
+      '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<span class="err" id="cvErr" role="alert"></span>' +
+      '<small>' + t.privacy + '</small>' +
+      '<div class="row"><button type="button" class="btn btn-outline btn-sm" id="cvCancel">' + t.cancel + '</button>' +
+      '<button type="submit" class="btn btn-primary btn-sm">' + t.submit + '</button></div>' +
+    '</form>' +
+    '<div class="done" id="cvDone" hidden>' +
+      '<h2>' + t.doneTitle + '</h2>' +
+      '<p>' + t.doneText + '</p>' +
+      '<div class="row"><button type="button" class="btn btn-outline btn-sm" id="cvClose">' + t.close + '</button>' +
+      '<a class="btn btn-wa btn-sm" href="' + waLink + '" target="_blank" rel="noopener">' + t.whatsapp + '</a></div>' +
+    '</div>';
+  document.body.appendChild(dlg);
+
+  const form = dlg.querySelector('#cvForm');
+  const done = dlg.querySelector('#cvDone');
+  const email = dlg.querySelector('#cvEmail');
+  const err = dlg.querySelector('#cvErr');
+
+  const showDone = () => { form.hidden = true; done.hidden = false; };
+  const open = () => {
+    err.textContent = '';
+    let saved = '';
+    try { saved = localStorage.getItem('cv_email') || ''; } catch (e) {}
+    if (saved) {
+      // Quem já deixou o e-mail baixa direto
+      if (!generateCV()) return;
+      showDone();
+    } else {
+      form.hidden = false; done.hidden = true;
+    }
+    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+    if (!saved) email.focus();
+  };
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const value = email.value.trim();
+    if (!email.checkValidity() || !value) { err.textContent = t.invalid; email.focus(); return; }
+    if (!form._honey.value) {
+      fetch(LEAD_ENDPOINT, {
+        method: 'POST',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, _subject: t.subject, _template: 'table', _captcha: 'false' })
+      }).catch(() => {});
+    }
+    if (!generateCV()) return;
+    try { localStorage.setItem('cv_email', value); } catch (e) {}
+    showDone();
+  });
+
+  const close = () => (dlg.close ? dlg.close() : dlg.removeAttribute('open'));
+  dlg.querySelector('#cvCancel').addEventListener('click', close);
+  dlg.querySelector('#cvClose').addEventListener('click', close);
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+
+  document.querySelectorAll('[data-cv]').forEach(btn => btn.addEventListener('click', e => {
+    e.preventDefault();
+    open();
+  }));
+})();
