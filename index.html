@@ -21,8 +21,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script src="assets/js/main.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://alexandrewang.vercel.app/#alexandre","name":"Alexandre Wang","url":"https://alexandrewang.vercel.app/","image":"https://alexandrewang.vercel.app/assets/img/alexandre-wang.jpg","jobTitle":"Supply Chain Analytics e Automação","address":{"@type":"PostalAddress","addressLocality":"São Paulo","addressCountry":"BR"},"alumniOf":[{"@type":"CollegeOrUniversity","name":"Universidade Federal de Minas Gerais (UFMG)"},{"@type":"CollegeOrUniversity","name":"PUC Goiás"}],"knowsAbout":["Demand Planning","IBP","S&OP","PCP","Power BI","Power Automate","Python","SQL","SAP","Incoterms"],"sameAs":["https://www.linkedin.com/in/alexandrewwang/","https://github.com/wwalexandre"]},{"@type":"WebSite","@id":"https://alexandrewang.vercel.app/#site","url":"https://alexandrewang.vercel.app/","name":"Alexandre Wang | Supply Chain Analytics & Automação","inLanguage":["pt-BR","en"],"author":{"@id":"https://alexandrewang.vercel.app/#alexandre"}}]}</script>
 </head>
 <body>
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -37,7 +38,7 @@
       <a href="#contato">Contato</a>
     </div>
     <div class="nav-tools">
-      <a class="btn btn-primary btn-sm nav-cv" href="#" data-cv>Currículo</a>
+      <a class="btn btn-primary btn-sm nav-cv" href="#" data-cv data-umami-event="curriculo-clique">Currículo</a>
       <div class="lang" aria-label="Idioma"><a href="index.html" class="on" aria-current="true">PT</a><a href="en.html" hreflang="en">EN</a></div>
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
@@ -52,7 +53,7 @@
     <a href="#projetos">Projetos</a>
     <a href="#publicacoes">Publicações</a>
     <a href="#contato">Contato</a>
-    <a href="#" data-cv>Baixar currículo (PDF)</a>
+    <a href="#" data-cv data-umami-event="curriculo-clique">Baixar currículo (PDF)</a>
   </div>
 </nav>
 
@@ -65,7 +66,7 @@
         <h1>Alexandre <span>Wang</span></h1>
         <p class="hero-sub">Farmacêutico que virou analista de planejamento. Trabalho com demanda, IBP/S&amp;OP e PCP, e uso Power BI, Power Automate, Python e SQL para tirar o trabalho manual do caminho.</p>
         <div class="btn-row">
-          <a class="btn btn-primary" href="#" data-cv>
+          <a class="btn btn-primary" href="#" data-cv data-umami-event="curriculo-clique">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>Baixar currículo</a>
           <a class="btn btn-ghost" href="#contato">Falar comigo</a>
         </div>
@@ -202,7 +203,7 @@
     </div>
 
     <div class="feat-2">
-      <a class="feat reveal" href="projetos/boletim-ruptura.html">
+      <a class="feat reveal" data-umami-event="abrir-projeto" data-umami-event-projeto="ruptura" href="projetos/boletim-ruptura.html">
         <div class="feat-img"><img src="assets/img/previews/ruptura.png" alt="Prévia do dashboard de ruptura de lojas" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
           <span class="feat-type">Dashboard interativo · Cia. Hering · 2025</span>
@@ -212,7 +213,7 @@
           <span class="more">Abrir o dashboard →</span>
         </div>
       </a>
-      <a class="feat reveal" href="projetos/validador-documentos.html">
+      <a class="feat reveal" data-umami-event="abrir-projeto" data-umami-event-projeto="validador" href="projetos/validador-documentos.html">
         <div class="feat-img"><img src="assets/img/previews/validador.png" alt="Prévia do relatório do validador de documentos" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
           <span class="feat-type">Automação com Python e OCR · Comércio exterior · 2026</span>
@@ -376,7 +377,7 @@
         <div>
           <div class="pmeta"><span>Vídeo + artigo</span><span>Out 2026</span><span>Comércio exterior</span></div>
           <h3><a href="publicacoes/incoterms.html">O navio afundou. Quem paga o prejuízo?</a></h3>
-          <p>Os 11 Incoterms 2020 e o ponto exato em que o risco passa do vendedor para o comprador. Inclui a pegadinha do CFR e do CIF e o que o Incoterm muda no custo e no lead time.</p>
+          <p>Os 11 Incoterms 2020 e o ponto exato em que o risco passa do vendedor para o comprador. Inclui a pegadinha do CFR e do CIF, um simulador interativo e o que o Incoterm muda no custo e no lead time.</p>
           <div class="pub-links">
             <a class="btn btn-primary btn-sm" href="publicacoes/incoterms.html">Ler e assistir</a>
             <a class="btn btn-outline btn-sm" href="https://www.linkedin.com/in/alexandrewwang/recent-activity/all/" target="_blank" rel="noopener">Ver no LinkedIn</a>
@@ -400,25 +401,25 @@
     </div>
     <div class="contact">
       <div class="contact-list">
-        <a class="contact-item" href="mailto:alexandre01.w@gmail.com">
+        <a class="contact-item" data-umami-event="email" href="mailto:alexandre01.w@gmail.com">
           <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
           <span><small>E-mail</small>alexandre01.w@gmail.com</span></a>
-        <a class="contact-item" href="https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Vi%20o%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener">
+        <a class="contact-item" data-umami-event="whatsapp" data-umami-event-origem="contato" href="https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Vi%20o%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-13.3 7.9L3 21l1.2-4.5A9 9 0 1121 12z"/></svg>
           <span><small>WhatsApp</small>(11) 94402-1458</span></a>
-        <a class="contact-item" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener">
+        <a class="contact-item" data-umami-event="linkedin" data-umami-event-origem="contato" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
           <span><small>LinkedIn</small>/in/alexandrewwang</span></a>
-        <a class="contact-item" href="https://github.com/wwalexandre" target="_blank" rel="noopener">
+        <a class="contact-item" data-umami-event="github" href="https://github.com/wwalexandre" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 00-.9-2.6c3.1-.3 6.4-1.5 6.4-7A5.4 5.4 0 0020 4.8 5.1 5.1 0 0019.9 1S18.7.6 16 2.5a13.4 13.4 0 00-7 0C6.3.6 5.1 1 5.1 1A5.1 5.1 0 005 4.8a5.4 5.4 0 00-1.5 3.8c0 5.4 3.3 6.6 6.4 7a3.4 3.4 0 00-.9 2.6V22"/></svg>
           <span><small>GitHub</small>github.com/wwalexandre</span></a>
       </div>
       <div class="cv-card">
         <p>Currículo em PDF com o mesmo conteúdo deste site, gerado na hora.</p>
-        <div><a class="btn btn-primary" href="#" data-cv>
+        <div><a class="btn btn-primary" href="#" data-cv data-umami-event="curriculo-clique">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>Baixar currículo (PDF)</a></div>
         <div class="qr">
-          <img id="qrImg" alt="QR code que abre este portfólio" width="112" height="112">
+          <img id="qrImg" src="assets/img/qr.svg" alt="QR code que abre este portfólio" width="112" height="112">
           <div><small>Aponte a câmera para abrir o portfólio no celular</small><br><code>alexandrewang.vercel.app</code></div>
         </div>
       </div>

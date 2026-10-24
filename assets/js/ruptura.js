@@ -219,7 +219,10 @@
     render();
   }
 
-  [fWeek, fCanal, fLine, fMetric].forEach(el => el.addEventListener('change', render));
+  [fWeek, fCanal, fLine, fMetric].forEach(el => el.addEventListener('change', () => {
+    render();
+    if (typeof track === 'function') track('dashboard-filtro', { filtro: el.id });
+  }));
   new MutationObserver(rebuild).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', rebuild);
 

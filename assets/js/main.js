@@ -3,6 +3,24 @@
 const SITE_URL = 'https://alexandrewang.vercel.app';
 const LANG = document.documentElement.lang.startsWith('en') ? 'en' : 'pt';
 
+// Estatísticas anônimas (Umami, sem cookies). Para ligar, preencha o Website ID do Umami.
+// Só conta visitas no domínio oficial: prévias e testes locais ficam de fora.
+const UMAMI_ID = '';
+if (UMAMI_ID) {
+  const s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://cloud.umami.is/script.js';
+  s.dataset.websiteId = UMAMI_ID;
+  s.dataset.domains = 'alexandrewang.vercel.app';
+  document.head.appendChild(s);
+}
+function track(name, data) {
+  try { if (window.umami) window.umami.track(name, data); } catch (e) {}
+}
+document.querySelectorAll('video').forEach(v => v.addEventListener('play', () => {
+  track('video-play', { video: (v.currentSrc || '').split('/').pop() });
+}, { once: true }));
+
 // Tema claro/escuro (respeita o sistema, guarda a escolha do visitante)
 (function theme() {
   const root = document.documentElement;
@@ -77,16 +95,6 @@ const LANG = document.documentElement.lang.startsWith('en') ? 'en' : 'pt';
       card.hidden = !(f === 'all' || cats.includes(f));
     });
   }));
-})();
-
-// QR code do portfólio
-(function qr() {
-  const img = document.getElementById('qrImg');
-  if (!img) return;
-  const params = new URLSearchParams({
-    size: '300x300', data: SITE_URL, color: '0F1C2C', bgcolor: 'FFFFFF', margin: '0', qzone: '1', format: 'svg'
-  });
-  img.src = 'https://api.qrserver.com/v1/create-qr-code/?' + params.toString();
 })();
 
 const yearEl = document.getElementById('year');
@@ -172,10 +180,26 @@ const CV = {
   }
 };
 
-// Gera e baixa o PDF. Devolve false se a biblioteca ainda não carregou
-function generateCV() {
-  if (!window.jspdf) {
-    alert(LANG === 'en' ? 'The PDF library is still loading. Please try again.' : 'A biblioteca de PDF ainda está carregando. Tente de novo.');
+// A biblioteca de PDF só é baixada quando alguém pede o currículo (o site carrega mais rápido)
+const JSPDF_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+const JSPDF_SRI = 'sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==';
+let jspdfPromise;
+function loadJsPDF() {
+  if (window.jspdf) return Promise.resolve();
+  jspdfPromise = jspdfPromise || new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = JSPDF_SRC; s.integrity = JSPDF_SRI; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
+    s.onload = resolve;
+    s.onerror = () => { jspdfPromise = null; reject(new Error('jspdf')); };
+    document.head.appendChild(s);
+  });
+  return jspdfPromise;
+}
+
+// Gera e baixa o PDF. Devolve false se a biblioteca não carregou
+async function generateCV() {
+  try { await loadJsPDF(); } catch (e) {
+    alert(LANG === 'en' ? 'Could not load the PDF. Check your connection and try again.' : 'Não foi possível gerar o PDF. Confira a conexão e tente de novo.');
     return false;
   }
   const cv = CV[LANG];
@@ -306,19 +330,23 @@ const CV_TXT = {
   const err = dlg.querySelector('#cvErr');
 
   const showDone = () => { form.hidden = true; done.hidden = false; };
+  const show = () => (dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', ''));
   const open = () => {
     err.textContent = '';
     let saved = '';
     try { saved = localStorage.getItem('cv_email') || ''; } catch (e) {}
     if (saved) {
       // Quem já deixou o e-mail baixa direto
-      if (!generateCV()) return;
-      showDone();
-    } else {
-      form.hidden = false; done.hidden = true;
+      generateCV().then(ok => {
+        if (!ok) return;
+        track('curriculo-baixado', { repetido: true });
+        showDone(); show();
+      });
+      return;
     }
-    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
-    if (!saved) email.focus();
+    form.hidden = false; done.hidden = true;
+    show();
+    email.focus();
   };
 
   form.addEventListener('submit', e => {
@@ -333,9 +361,12 @@ const CV_TXT = {
         body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, _subject: t.subject, _template: 'table', _captcha: 'false' })
       }).catch(() => {});
     }
-    if (!generateCV()) return;
-    try { localStorage.setItem('cv_email', value); } catch (e) {}
-    showDone();
+    generateCV().then(ok => {
+      if (!ok) return;
+      try { localStorage.setItem('cv_email', value); } catch (e) {}
+      track('curriculo-baixado');
+      showDone();
+    });
   });
 
   const close = () => (dlg.close ? dlg.close() : dlg.removeAttribute('open'));
@@ -347,4 +378,58 @@ const CV_TXT = {
     e.preventDefault();
     open();
   }));
+})();
+
+// Botões de compartilhar nas publicações (cada rede leva um marcador para aparecer nas estatísticas)
+(function shareBars() {
+  const bars = document.querySelectorAll('[data-share]');
+  if (!bars.length) return;
+  const canon = (document.querySelector('link[rel="canonical"]') || {}).href || location.href.split('#')[0];
+  const title = (document.querySelector('meta[property="og:title"]') || {}).content || document.title;
+  const T = LANG === 'en'
+    ? { copy: 'Copy link', copied: 'Link copied', more: 'More options' }
+    : { copy: 'Copiar link', copied: 'Link copiado', more: 'Mais opções' };
+  const url = src => canon + (canon.includes('?') ? '&' : '?') + 'utm_source=' + src + '&utm_medium=share';
+  const ICON = {
+    linkedin: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 2a2 2 0 110 4 2 2 0 010-4z',
+    whatsapp: 'M21 12a9 9 0 01-13.3 7.9L3 21l1.2-4.5A9 9 0 1121 12z',
+    link: 'M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1 1M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1-1',
+    more: 'M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v13'
+  };
+  const make = (tag, icon, label) => {
+    const el = document.createElement(tag);
+    el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + ICON[icon] + '"/></svg>';
+    el.append(label);
+    return el;
+  };
+  bars.forEach(bar => {
+    const slug = bar.dataset.share;
+    const li = make('a', 'linkedin', 'LinkedIn');
+    li.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url('linkedin'));
+    const wa = make('a', 'whatsapp', 'WhatsApp');
+    wa.href = 'https://wa.me/?text=' + encodeURIComponent(title + ' ' + url('whatsapp'));
+    [li, wa].forEach(a => {
+      a.target = '_blank'; a.rel = 'noopener';
+      a.addEventListener('click', () => track('compartilhar', { rede: a.textContent, pagina: slug }));
+    });
+    const copy = make('button', 'link', T.copy);
+    copy.type = 'button';
+    copy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url('link'));
+        copy.lastChild.textContent = T.copied;
+        setTimeout(() => { copy.lastChild.textContent = T.copy; }, 2000);
+        track('compartilhar', { rede: 'link', pagina: slug });
+      } catch (e) {}
+    });
+    bar.append(li, wa, copy);
+    if (navigator.share) {
+      const more = make('button', 'more', T.more);
+      more.type = 'button';
+      more.addEventListener('click', () => {
+        navigator.share({ title, url: url('nativo') }).then(() => track('compartilhar', { rede: 'nativo', pagina: slug })).catch(() => {});
+      });
+      bar.append(more);
+    }
+  });
 })();

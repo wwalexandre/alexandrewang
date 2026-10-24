@@ -1,0 +1,4 @@
+Contact: mailto:alexandre01.w@gmail.com
+Expires: 2027-10-24T00:00:00.000Z
+Preferred-Languages: pt, en
+Canonical: https://alexandrewang.vercel.app/.well-known/security.txt

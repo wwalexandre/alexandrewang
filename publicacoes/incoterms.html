@@ -19,6 +19,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/style.css">
 <script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/simulador.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"O navio afundou. Quem paga o prejuízo?","description":"Os 11 Incoterms 2020 e o ponto exato em que o risco passa do vendedor para o comprador.","image":"https://alexandrewang.vercel.app/assets/img/previews/incoterms.jpg","datePublished":"2026-10-22","inLanguage":"pt-BR","mainEntityOfPage":"https://alexandrewang.vercel.app/publicacoes/incoterms.html","author":{"@type":"Person","name":"Alexandre Wang","url":"https://alexandrewang.vercel.app/"},"video":{"@type":"VideoObject","name":"O navio afundou. Quem paga o prejuízo?","description":"Os 11 Incoterms 2020 e o ponto exato em que o risco passa do vendedor para o comprador.","thumbnailUrl":"https://alexandrewang.vercel.app/assets/img/previews/incoterms.jpg","contentUrl":"https://alexandrewang.vercel.app/assets/video/incoterms-narrado-pt.mp4","uploadDate":"2026-10-22","duration":"PT1M21S"}}</script>
 </head>
 <body>
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -99,6 +102,15 @@
   </div>
   <p class="note">"Sem obrigação" quer dizer que o Incoterm não obriga ninguém a contratar seguro. Quem carrega o risco naquele trecho normalmente contrata.</p>
 
+  <section class="sim" id="simulador" aria-labelledby="simT">
+    <h2 id="simT">Simulador: onde o risco muda de lado</h2>
+    <p>Escolha um Incoterm e veja quem paga cada trecho da viagem e em que ponto o risco passa para o comprador.</p>
+    <div class="sim-terms" role="group" aria-label="Escolha um Incoterm"></div>
+    <div class="sim-track" aria-hidden="true"></div>
+    <div class="sim-legend" aria-hidden="true"><span><i class="v"></i>Vendedor paga o transporte</span><span><i class="c"></i>Comprador paga o transporte</span></div>
+    <div class="sim-out" aria-live="polite"></div>
+  </section>
+
   <h3>Uma forma fácil de lembrar</h3>
   <p>Agrupe pela primeira letra. Quanto mais para o fim do alfabeto, mais obrigação fica com o vendedor:</p>
   <ul>
@@ -153,6 +165,17 @@
   </div>
 
   <p class="note">Fonte das regras: Incoterms 2020, publicação da Câmara de Comércio Internacional (ICC). Este texto é um resumo didático e não substitui o contrato nem a orientação de um despachante.</p>
+
+    <div class="share" data-share="incoterms"><span>Compartilhar</span></div>
+
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Gostou do conteúdo?</h2><p>Publico sobre planejamento, dados e comércio exterior. Vamos conversar.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Li%20o%20seu%20artigo%20sobre%20Incoterms%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-incoterms">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-incoterms">Baixar currículo</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-incoterms">LinkedIn</a>
+    </div>
+  </aside>
 
   <div class="next-links">
     <a href="../projetos/validador-documentos.html"><small>Projeto relacionado</small>Validador de documentos de importação com OCR</a>
