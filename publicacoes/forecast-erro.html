@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seu forecast erra? Meça antes de culpar o comercial | Alexandre Wang</title>
+<meta name="description" content="Três cortes para entender o erro do forecast antes da reunião de demanda: erro por família, FVA (o ajuste manual ajudou ou piorou?) e Bias. Com exemplo fictício e checklist em PDF.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/forecast-erro.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Seu forecast erra? Meça antes de culpar o comercial.">
+<meta property="og:description" content="Erro por família, FVA e Bias: três cortes que tiram a culpa da reunião de demanda e colocam a ação no lugar.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/forecast.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#publicacoes">← Publicações</a></div>
+    <div class="kicker">Planejamento de demanda · Forecast</div>
+    <h1>Seu forecast erra? Meça antes de culpar o comercial.</h1>
+    <p class="lead">Toda reunião de demanda tem a mesma briga, e quase nunca alguém mostra um número. Este é o texto completo do vídeo, com os três cortes que eu uso para abrir o erro, um exemplo e um checklist para baixar.</p>
+    <div class="meta"><span>Leitura de 5 min</span><span>Vídeo de 0:58</span><span>Out 2026</span></div>
+  </div>
+</header>
+
+<main id="conteudo" class="article">
+
+  <figure>
+    <video controls preload="metadata" playsinline poster="../assets/img/previews/forecast-poster.jpg" style="width:100%;max-width:360px;margin:0 auto;border-radius:14px;background:#000;aspect-ratio:9/16">
+      <source src="../assets/video/forecast-erro-pt.mp4" type="video/mp4">
+    </video>
+    <figcaption style="text-align:center">Vídeo de 58 segundos no formato Reel. Narração gerada com IA (ElevenLabs). Todos os números são fictícios.</figcaption>
+  </figure>
+
+  <h2>A briga de toda reunião</h2>
+  <p>O forecast errou 40% no mês. O planejamento diz que o comercial mudou o número. O comercial diz que o mercado mudou. A reunião acaba sem conclusão, e no mês seguinte a conversa se repete.</p>
+  <p>O problema não é a falta de opinião. É a falta de um número que mostre <strong>onde</strong> o forecast erra e <strong>quem</strong> mexeu nele. Antes de discutir culpa, vale abrir o erro em três cortes.</p>
+
+  <div class="callout">
+    <p><strong>A pergunta certa não é "quem errou".</strong> É "onde errou, em que direção e se o ajuste manual ajudou ou atrapalhou".</p>
+  </div>
+
+  <h2>1. Abra o erro por família de produto</h2>
+  <p>Um erro de 40% no total esconde onde está o problema. Quando você separa por família, quase sempre aparece um padrão de Pareto: poucas famílias explicam a maior parte do erro.</p>
+  <p>Para medir o peso de cada família, some o erro absoluto dela e divida pelo erro absoluto total:</p>
+  <p><code>Peso no erro = soma do |real - forecast| da família ÷ soma do |real - forecast| total</code></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Família (fictícia)</th><th>Peso no erro</th><th>Acumulado</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A</strong></td><td>30%</td><td>30%</td></tr>
+        <tr><td><strong>B</strong></td><td>24%</td><td>54%</td></tr>
+        <tr><td><strong>C</strong></td><td>16%</td><td>70%</td></tr>
+        <tr><td>D a H</td><td>30%</td><td>100%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>No exemplo, 3 de 8 famílias explicam 70% do erro. A reunião começa por elas. As outras cinco podem esperar.</p>
+  <p class="note">Para o erro total, prefira o erro ponderado (WMAPE: soma dos erros absolutos dividida pela soma do real) à média simples dos percentuais. Na média simples, um item que vende 2 unidades e erra 1 pesa tanto quanto o item mais vendido.</p>
+
+  <h2>2. Compare o estatístico com o ajustado (FVA)</h2>
+  <p>Quase todo processo de demanda tem duas versões do número: o forecast estatístico, que sai do modelo, e o forecast ajustado, depois das correções manuais do comercial ou do planejamento. O FVA (Forecast Value Add) mede se esse ajuste agregou valor:</p>
+  <p><code>FVA = erro do forecast estatístico - erro do forecast ajustado</code></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Versão (fictícia)</th><th>Erro (WMAPE)</th></tr></thead>
+      <tbody>
+        <tr><td>Forecast estatístico</td><td>25%</td></tr>
+        <tr><td>Forecast ajustado pelo comercial</td><td>32%</td></tr>
+        <tr><td><strong>FVA do ajuste</strong></td><td><strong>-7 pontos</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>FVA negativo quer dizer que o ajuste piorou o forecast. Nesse caso, o problema não é o modelo. É o processo de ajuste.</p>
+  <p>Três cuidados para o número ser justo:</p>
+  <ul>
+    <li>Calcule por família e por quem fez o ajuste. Um ajuste pode ajudar numa família e atrapalhar em outra.</li>
+    <li>Olhe pelo menos três meses seguidos. Um mês isolado pode ser exceção.</li>
+    <li>Compare sempre no mesmo horizonte (por exemplo, Lag 1 ou Lag 3). O forecast feito um mês antes e o feito três meses antes têm erros diferentes por natureza.</li>
+  </ul>
+
+  <h2>3. Veja o viés (Bias)</h2>
+  <p>O erro absoluto diz o tamanho do erro. O Bias diz a direção. Se o erro vai sempre para o mesmo lado, não é ruído: é um padrão.</p>
+  <p><code>Bias = soma do (forecast - real) ÷ soma do real</code></p>
+  <ul>
+    <li><strong>Bias positivo:</strong> o forecast fica acima do real. O resultado é estoque sobrando, cobertura alta e risco de vencimento.</li>
+    <li><strong>Bias negativo:</strong> o forecast fica abaixo do real. O resultado é falta de produto e ruptura.</li>
+  </ul>
+  <p>No exemplo do vídeo, o forecast ajustado ficou acima do real em 12 de 12 meses, com Bias de +15%. Isso não é azar. É um ajuste otimista feito todo mês, e ele aparece direto no estoque.</p>
+
+  <h2>4. Transforme em ação</h2>
+  <p>Com os três cortes na mesa, a reunião muda de assunto. Em vez de "quem errou", a pauta vira:</p>
+  <ol>
+    <li>Quais famílias explicam a maior parte do erro?</li>
+    <li>Onde o ajuste manual está piorando o número?</li>
+    <li>O erro vai sempre para o mesmo lado?</li>
+    <li>Quem faz o quê até a próxima reunião?</li>
+  </ol>
+  <p>Cada família crítica sai com uma ação, um dono e um prazo. Ajustes com FVA negativo são revistos ou deixam de ser feitos. E os mesmos três números voltam na reunião seguinte, para mostrar se melhorou.</p>
+
+  <div class="callout green">
+    <p><strong>Resumo:</strong> abra o erro por família, compare o estatístico com o ajustado e olhe a direção do erro. Com esses três cortes, a reunião deixa de ser sobre culpa e vira sobre ação.</p>
+  </div>
+
+  <h2>Checklist para baixar</h2>
+  <p>Juntei os quatro passos, as fórmulas e as perguntas da reunião numa página A4, para usar no fechamento do mês.</p>
+  <p><a class="btn btn-primary btn-sm" href="../assets/docs/checklist-do-forecast.pdf" download>Baixar o checklist (PDF, 1 página)</a></p>
+
+  <p class="note">Todos os números deste artigo e do vídeo são fictícios e servem só de exemplo. O vídeo foi produzido com código e IA: narração gerada com ElevenLabs, animações feitas em HTML e renderizadas com Playwright e ffmpeg.</p>
+
+  <div class="next-links">
+    <a href="../projetos/boletim-ruptura.html"><small>Projeto relacionado</small>Dashboard de ruptura de lojas</a>
+    <a href="https://www.linkedin.com/in/alexandrewwang/recent-activity/all/" target="_blank" rel="noopener"><small>Comentar</small>Ver as publicações no LinkedIn</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>
