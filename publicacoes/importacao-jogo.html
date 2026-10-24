@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Importação, o jogo dos prazos | Alexandre Wang</title>
+<meta name="description" content="Uma importação aérea de produto para saúde vista como um jogo de tabuleiro: as etapas, as cartas que mais custam (data da invoice, cotação vencida, lote fabricado antes da anuência da Anvisa) e um checklist para não voltar ao início.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/importacao-jogo.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Importação, o jogo dos prazos">
+<meta property="og:description" content="Cada etapa é uma casa. E algumas mandam a carga de volta para o início. Casos reais, contados sem nomes.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/importacao-jogo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#publicacoes">← Publicações</a></div>
+    <div class="kicker">Comércio exterior · Importação</div>
+    <h1>Importação, o jogo dos prazos</h1>
+    <p class="lead">Uma importação aérea de produto para saúde vista como um jogo de tabuleiro: cada etapa é uma casa, e alguns erros mandam a carga de volta para o início. Os casos são reais, contados sem nomes de empresas, produtos ou parceiros.</p>
+    <div class="meta"><span>Leitura de 6 min</span><span>Vídeo de 1:40</span><span>Out 2026</span></div>
+  </div>
+</header>
+
+<main id="conteudo" class="article">
+
+  <figure>
+    <video controls preload="metadata" playsinline poster="../assets/img/previews/importacao-jogo-poster.jpg" style="width:100%;max-width:360px;margin:0 auto;border-radius:14px;background:#000;aspect-ratio:9/16">
+      <source src="../assets/video/importacao-jogo-pt.mp4" type="video/mp4">
+      <track kind="captions" srclang="pt" label="Português" src="../assets/video/importacao-jogo-pt.vtt">
+    </video>
+    <figcaption style="text-align:center">Vídeo de 1:40 no formato Reel. Narração gerada com IA (ElevenLabs). O placar de dias e custo usa valores fictícios.</figcaption>
+  </figure>
+
+  <h2>O tabuleiro</h2>
+  <p>De fora, importar parece ter três passos: pedido, avião e estoque. Na prática, a carga anda por um tabuleiro com dezenas de casas, e cada uma tem dono, documento e prazo. Uma casa mal resolvida não só atrasa: às vezes manda a carga de volta para a origem.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Casa</th><th>O que acontece</th><th>O que pode dar errado</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Pedido</strong></td><td>O pedido mensal vai para a fábrica com as quantidades por item.</td><td>Item fora do padrão sem alinhamento prévio.</td></tr>
+        <tr><td><strong>Fábrica e documentos</strong></td><td>A fábrica produz e manda invoice, packing list, shipping list e certificado de análise.</td><td>Divergência de quantidade, lote, validade ou CNPJ. A carga nem embarca.</td></tr>
+        <tr><td><strong>Anuência</strong></td><td>Em alguns produtos, a importação depende de anuência da Anvisa para aquela operação.</td><td>Lote fabricado antes da anuência.</td></tr>
+        <tr><td><strong>Frete</strong></td><td>O Incoterm diz quem contrata. Em EXW ou FCA, é o importador.</td><td>Cotação vencida, frete mais caro.</td></tr>
+        <tr><td><strong>Embarque</strong></td><td>Conferência do conhecimento aéreo (AWB) e voo.</td><td>Descrição diferente dos documentos. Depois da decolagem, cancelar quase nunca dá tempo.</td></tr>
+        <tr><td><strong>Chegada</strong></td><td>A carga fica no armazém alfandegado do aeroporto até ser liberada.</td><td>Cada dia parado é uma diária de armazenagem.</td></tr>
+        <tr><td><strong>Canal</strong></td><td>A declaração de importação (DUIMP) é parametrizada em um canal.</td><td>Amarelo ou vermelho: mais análise, mais dias.</td></tr>
+        <tr><td><strong>Avaria</strong></td><td>O armazém aponta dano na chegada e o despachante pede um retorno.</td><td>Sem resposta, o processo segue e a prova para o seguro se perde.</td></tr>
+        <tr><td><strong>NF de entrada</strong></td><td>Depois da liberação, sai a nota fiscal de entrada e o transporte é acionado.</td><td>NF atrasada: a carga continua no aeroporto, pagando diária.</td></tr>
+        <tr><td><strong>Estoque</strong></td><td>Entrega no operador logístico e lançamento dos lotes no sistema.</td><td>Só aqui o produto vira estoque disponível.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>As cartas que mais custam</h2>
+
+  <h3>Carta surpresa: a data que engana</h3>
+  <p>A invoice traz um campo de data de embarque. Em muitos casos, essa data é o dia em que o pedido foi carregado no sistema do fornecedor, e não o dia em que o avião saiu. A saída real está no conhecimento aéreo ou no follow-up do agente de carga.</p>
+  <p>Quem planeja a chegada pela data da invoice erra a previsão de chegada, e o erro se espalha: cobertura, backorder e prioridade de abastecimento ficam errados.</p>
+
+  <h3>Frete por sua conta: a cotação vence</h3>
+  <p>Quando o importador paga o frete, as ofertas dos agentes têm validade de poucos dias. Se a aprovação atrasa, a oferta vence e a nova cotação pode vir mais cara, às vezes com outra rota. Ao comparar propostas, confira se todas incluem coleta, desembaraço de exportação e documentos, e lembre que o frete aéreo é cobrado pelo peso cubado.</p>
+
+  <h3>A carta mais cara: lote fabricado antes da anuência</h3>
+  <p>Em alguns produtos para saúde, a Anvisa autoriza aquela importação específica e só aceita lotes fabricados depois da data dessa anuência. Num dos casos, um lote fabricado antes embarcou. A carga chegou ao Brasil e teve que voltar.</p>
+  <div class="callout">
+    <p><strong>A lição:</strong> antes de aprovar o embarque, peça o documento com número de lote e data de fabricação de cada item e compare com a data da anuência. Depois que o avião sai, entre fuso, conexões e feriados na origem, cancelar quase nunca dá tempo.</p>
+  </div>
+
+  <h3>Produto de demonstração: entra e volta</h3>
+  <p>Produto sem registro, usado só para demonstração, entra por admissão temporária e precisa voltar para a origem. Ele nunca deve viajar no mesmo embarque que produto registrado. Juntar cargas economiza frete, mas, se um item trava na fiscalização, todos os outros ficam parados com ele, inclusive o que era urgente para fechar o mês.</p>
+
+  <h3>Descrição criativa no conhecimento aéreo</h3>
+  <p>A descrição da carga no conhecimento aéreo precisa bater com os documentos e com o laudo de inspeção da origem. Acrescentar um nome comercial ou mudar a descrição para "facilitar" costuma ser recusado na origem e pode virar exigência na chegada.</p>
+
+  <h2>Quando a carga chega</h2>
+  <p>Chegar em Guarulhos não quer dizer que a carga é sua. Ela fica no armazém alfandegado até a liberação, e cada dia tem custo.</p>
+  <ul>
+    <li><strong>Canal da declaração:</strong> verde libera direto; amarelo exige análise de documentos; vermelho exige também inspeção física. Existe ainda o cinza, mais raro, quando há suspeita de fraude, por exemplo no valor declarado.</li>
+    <li><strong>Avaria:</strong> se o armazém apontar dano, o despachante pede um retorno, em geral em até 24 horas. Responda e guarde o e-mail e as fotos para acionar o seguro.</li>
+    <li><strong>Nota fiscal de entrada:</strong> liberada a carga, coloque o pedido de compra no sistema com o número da invoice e peça a NF. Enquanto ela não sai, a carga não sai do aeroporto e a diária continua.</li>
+    <li><strong>Lotes:</strong> no recebimento, confira lote, fabricação e validade de cada faixa antes de lançar no sistema. Só então o produto vira estoque disponível.</li>
+  </ul>
+
+  <h2>Checklist para não voltar ao início</h2>
+  <ol>
+    <li>Documentos conferidos: invoice, packing list, shipping list e certificado de análise (quantidades, lotes, validade mínima e CNPJ).</li>
+    <li>Data de saída tirada do conhecimento aéreo ou do follow-up, não da invoice.</li>
+    <li>Incoterm lido: quem contrata o frete e até quando a cotação vale.</li>
+    <li>Produto com anuência: lote e data de fabricação comparados com a data da anuência antes de aprovar o embarque.</li>
+    <li>Produto sem registro nunca no mesmo embarque que produto registrado.</li>
+    <li>Descrição do conhecimento aéreo igual aos documentos e ao laudo.</li>
+    <li>Avaria respondida em até 24 horas, com a prova guardada.</li>
+    <li>Pedido de compra e NF de entrada sem atraso depois da liberação.</li>
+  </ol>
+
+  <div class="callout green">
+    <p><strong>Resumo:</strong> importação é uma cadeia de prazos. Cada exigência documental vira dias de armazenagem e risco de ruptura. Quem planeja olhando só o lead time do fornecedor esquece as casas do meio do tabuleiro.</p>
+  </div>
+
+  <p class="note">Casos reais de importação aérea de produtos para saúde, contados sem nomes de empresas, produtos, parceiros ou processos. O placar do vídeo usa valores fictícios. Este texto é um resumo didático e não substitui a orientação do despachante, do agente de carga e da área regulatória.</p>
+
+  <div class="next-links">
+    <a href="incoterms.html"><small>Publicação relacionada</small>O navio afundou. Quem paga o prejuízo?</a>
+    <a href="../projetos/validador-documentos.html"><small>Projeto relacionado</small>Validador de documentos de importação com OCR</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>
