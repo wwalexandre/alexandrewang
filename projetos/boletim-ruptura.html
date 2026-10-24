@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boletim de Ruptura | Alexandre Wang</title>
+<meta name="description" content="Dashboard interativo de ruptura de lojas com dados fictícios: ruptura total, ruptura tratável, ranking de lojas e venda potencial perdida. Réplica web de um projeto em Power BI.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/boletim-ruptura.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Boletim de Ruptura de Lojas | dashboard interativo">
+<meta property="og:description" content="Qual loja está sem produto e se existe estoque no CD para repor. Dados fictícios.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/ruptura.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/ruptura.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a></div>
+    <div class="kicker">Dashboard · Varejo de moda</div>
+    <h1>Boletim de Ruptura de Lojas</h1>
+    <p class="lead">Toda semana, gerentes e coordenadores precisam saber duas coisas: quais produtos estão faltando em cada loja e quais dessas faltas dá para resolver agora, porque existe estoque no CD.</p>
+    <div class="meta"><span>Power BI · DAX · SQL · VBA</span><span>Réplica web</span><span>Dados fictícios</span></div>
+  </div>
+</header>
+
+<main id="conteudo">
+  <section class="dash" aria-label="Dashboard interativo">
+    <div class="wrap">
+      <div class="dash-bar" role="group" aria-label="Filtros do dashboard">
+        <label>Semana<select id="fWeek"></select></label>
+        <label>Canal<select id="fCanal"><option value="all">Todos</option><option>Loja própria</option><option>Franquia</option></select></label>
+        <label>Linha de produto<select id="fLine"><option value="all">Todas</option><option>Novidade</option><option>Core</option><option>Essencial</option><option>Sazonal</option></select></label>
+        <label>Métrica nos gráficos<select id="fMetric"><option value="trat">Ruptura tratável</option><option value="total">Ruptura total</option></select></label>
+        <span class="demo">Dados fictícios · 20 lojas · 80 SKUs</span>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi" id="kTotal"><span>Ruptura total (1 dia)</span><b>…</b><small></small></div>
+        <div class="kpi" id="kTrat"><span>Ruptura tratável</span><b>…</b><small></small></div>
+        <div class="kpi" id="kRepor"><span>SKU-lojas para repor agora</span><b>…</b><small></small></div>
+        <div class="kpi" id="kValor"><span>Venda potencial perdida (7 dias)</span><b>…</b><small></small></div>
+      </div>
+
+      <div class="charts">
+        <div class="chart-card wide">
+          <div class="chart-head"><h3>Ruptura por semana: total e tratável</h3><div class="chart-legend" id="lTrend"></div></div>
+          <div class="chart-box"><canvas id="cTrend" role="img" aria-label="Linha com a ruptura total e a ruptura tratável nas últimas 8 semanas"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 id="tStoreTitle">Ruptura por loja</h3>
+          <div class="chart-box tall"><canvas id="cStore" role="img" aria-label="Barras com as 12 lojas de maior ruptura na semana"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 id="tLineTitle">Ruptura por linha de produto</h3>
+          <div class="chart-box tall"><canvas id="cLine" role="img" aria-label="Barras com a ruptura por linha de produto"></canvas></div>
+        </div>
+      </div>
+
+      <div class="rank">
+        <div class="chart-card">
+          <h3>5 lojas detratoras (maior ruptura)</h3>
+          <div class="table-wrap" style="margin:0">
+            <table><thead><tr><th>Loja</th><th>Canal</th><th class="num">Ruptura</th><th class="num">Repor</th><th class="num">Vs sem. ant.</th></tr></thead><tbody id="tDet"></tbody></table>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>5 lojas promotoras (menor ruptura)</h3>
+          <div class="table-wrap" style="margin:0">
+            <table><thead><tr><th>Loja</th><th>Canal</th><th class="num">Ruptura</th><th class="num">Repor</th><th class="num">Vs sem. ant.</th></tr></thead><tbody id="tPro"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="article" style="padding-top:8px">
+    <h2>O problema</h2>
+    <p>Uma rede de varejo de moda acompanhava a ruptura das lojas em planilhas. O número geral até existia, mas não respondia a pergunta que importa para o abastecimento: <strong>dessas faltas, quais eu consigo resolver nesta semana?</strong></p>
+    <p>Se o produto acabou na loja e também no CD, não adianta cobrar o time de abastecimento. Se acabou na loja e tem estoque parado no CD, é uma falha de reposição que dá para corrigir agora.</p>
+
+    <h2>A solução</h2>
+    <p>Um boletim semanal em Power BI, alimentado por uma base preparada com SQL e VBA, com três ideias centrais:</p>
+    <ol>
+      <li><strong>Ruptura total:</strong> percentual de combinações SKU-loja zeradas no dia da foto de estoque.</li>
+      <li><strong>Ruptura tratável:</strong> o mesmo cálculo, só para os SKUs que têm estoque no CD. É a parte que o abastecimento consegue resolver.</li>
+      <li><strong>Ranking de lojas:</strong> detratoras e promotoras da semana, para o coordenador saber onde agir primeiro.</li>
+    </ol>
+    <p>Os filtros seguem a forma como o negócio enxerga a operação: canal (loja própria ou franquia), linha de produto (novidade, core, essencial e sazonal), regional e gerente. Produtos em retirada de linha ficam fora da conta, para não inflar a ruptura com itens que não serão repostos.</p>
+
+    <h3>As medidas principais em DAX</h3>
+<pre><span class="c">-- % de SKU-lojas zeradas, só entre os itens já recebidos pela loja</span>
+<span class="k">% Ruptura 1D</span> =
+AVERAGEX(
+    FILTER( Ruptura, Ruptura[ESTOQUE_RECEBIDO] = <span class="s">"RECEBIDO"</span> ),
+    Ruptura[RUPTURA_1D]
+)
+
+<span class="c">-- Mesma conta, só onde existe estoque no CD para repor</span>
+<span class="k">% Ruptura Tratável</span> =
+CALCULATE( [% Ruptura 1D], Ruptura[ESTOQUE_TRATAVEL] = <span class="s">"TRATAVEL"</span> )
+
+<span class="c">-- Venda potencial perdida: dias em ruptura x potencial de venda do SKU na loja</span>
+<span class="k">Valor Ruptura 7D</span> =
+SUMX( Ruptura, Ruptura[RUPTURA_7D] * Ruptura[POTENCIAL] )</pre>
+
+    <h2>O resultado</h2>
+    <p>O boletim passou a sair toda semana para gerentes e coordenadores, com o mesmo critério para todas as lojas, e agilizou a priorização do abastecimento das lojas próprias. A ideia é trocar "a ruptura está alta" por "estas lojas têm estes SKUs zerados com estoque no CD".</p>
+
+    <div class="callout green">
+      <p><strong>Sobre esta página:</strong> a versão original roda em Power BI com dados internos da empresa, que não podem ser publicados. Aqui está uma réplica fiel da lógica, feita em HTML e JavaScript, com 20 lojas e 80 produtos fictícios gerados no navegador.</p>
+    </div>
+
+    <div class="next-links">
+      <a href="validador-documentos.html"><small>Próximo projeto</small>Validador de documentos de importação com OCR</a>
+      <a href="../index.html#projetos"><small>Voltar</small>Todos os projetos</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validador de Documentos | Alexandre Wang</title>
+<meta name="description" content="Script em Python com OCR (Tesseract) que confere invoice, packing list, shipping list e certificados de análise de um embarque e aponta divergências de quantidade, lote e validade.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/validador-documentos.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Validador de documentos de importação com Python e OCR">
+<meta property="og:description" content="12 checagens automáticas entre invoice, packing list, shipping list e COA. Demonstração com dados fictícios.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/validador.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<style>
+  .flow { width: 100%; height: auto; margin: 8px 0 4px; }
+  .flow .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .flow .hl { fill: var(--navy); stroke: var(--navy); }
+  .flow .t { fill: var(--text); font: 600 14px var(--font); }
+  .flow .s { fill: var(--muted); font: 400 12px var(--font); }
+  .flow .hl + .t, .flow .tw { fill: #fff; }
+  .flow .sw { fill: #C9D3DD; }
+  .flow .arrow { stroke: var(--orange); stroke-width: 2; fill: none; marker-end: url(#ah); }
+  .report-head { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+  .report-head b { color: var(--text); }
+  .summary { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 0; }
+</style>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a></div>
+    <div class="kicker">Automação · Comércio exterior</div>
+    <h1>Validador de documentos de importação</h1>
+    <p class="lead">Antes de liberar um embarque, alguém precisa conferir se invoice, packing list, shipping list e certificados de análise contam a mesma história. Escrevi um script em Python que faz essa conferência, inclusive em documentos escaneados, e entrega um relatório pronto.</p>
+    <div class="meta"><span>Python · pandas</span><span>PyMuPDF</span><span>Tesseract OCR · OpenCV</span><span>Demo com dados fictícios</span></div>
+  </div>
+</header>
+
+<main id="conteudo" class="article">
+
+  <h2>Por que isso importa</h2>
+  <p>Comércio exterior é uma cadeia de prazos. Uma quantidade que não bate, um lote repetido ou uma validade curta descoberta tarde vira carga parada no terminal, custo de armazenagem e risco de faltar produto na ponta.</p>
+  <p>A conferência manual cruza quatro ou cinco documentos linha a linha. É lenta, cansativa e depende de quem está conferindo naquele dia.</p>
+
+  <h2>Como funciona</h2>
+  <figure>
+    <svg class="flow" viewBox="0 0 720 300" role="img" aria-labelledby="flowT flowD">
+      <title id="flowT">Fluxo do validador</title>
+      <desc id="flowD">Os documentos do embarque entram, são lidos como texto ou por OCR, passam por 12 checagens e geram um relatório em Excel com falhas, pontos de atenção e um rascunho de e-mail.</desc>
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F08A24"/></marker></defs>
+      <rect class="box" x="10" y="20" width="160" height="260" rx="12"/>
+      <text class="t" x="26" y="50">Documentos</text>
+      <text class="s" x="26" y="80">Invoice (Excel)</text>
+      <text class="s" x="26" y="102">Packing list (Excel)</text>
+      <text class="s" x="26" y="124">Shipping list (Excel)</text>
+      <text class="s" x="26" y="146">Certificados de</text>
+      <text class="s" x="26" y="162">análise (PDF)</text>
+      <text class="s" x="26" y="184">Invoice e packing</text>
+      <text class="s" x="26" y="200">assinados (PDF)</text>
+      <path class="arrow" d="M176 150H212"/>
+      <rect class="box" x="218" y="20" width="150" height="260" rx="12"/>
+      <text class="t" x="234" y="50">Leitura</text>
+      <text class="s" x="234" y="80">Excel: pandas</text>
+      <text class="s" x="234" y="102">PDF digital: texto</text>
+      <text class="s" x="234" y="118">direto (PyMuPDF)</text>
+      <text class="s" x="234" y="140">PDF escaneado:</text>
+      <text class="s" x="234" y="156">OpenCV limpa a</text>
+      <text class="s" x="234" y="172">imagem e o</text>
+      <text class="s" x="234" y="188">Tesseract lê</text>
+      <text class="s" x="234" y="210">Cache por página</text>
+      <path class="arrow" d="M374 150H410"/>
+      <rect class="box hl" x="416" y="20" width="140" height="260" rx="12"/>
+      <text class="t tw" x="432" y="50">12 checagens</text>
+      <text class="s sw" x="432" y="80">Cabeçalho e CNPJ</text>
+      <text class="s sw" x="432" y="102">Quantidades</text>
+      <text class="s sw" x="432" y="124">Valores e pesos</text>
+      <text class="s sw" x="432" y="146">Caixas</text>
+      <text class="s sw" x="432" y="168">Lotes e séries</text>
+      <text class="s sw" x="432" y="190">Validade</text>
+      <text class="s sw" x="432" y="212">Certificados</text>
+      <text class="s sw" x="432" y="234">Anuência</text>
+      <path class="arrow" d="M562 150H598"/>
+      <rect class="box" x="604" y="20" width="106" height="260" rx="12"/>
+      <text class="t" x="618" y="50">Relatório</text>
+      <text class="s" x="618" y="80">Excel com</text>
+      <text class="s" x="618" y="96">Falha,</text>
+      <text class="s" x="618" y="112">Atenção e OK</text>
+      <text class="s" x="618" y="134">Abas de apoio</text>
+      <text class="s" x="618" y="156">Rascunho de</text>
+      <text class="s" x="618" y="172">e-mail para o</text>
+      <text class="s" x="618" y="188">fornecedor</text>
+    </svg>
+    <figcaption>Do documento ao relatório. Um certificado ilegível não derruba a execução: a página com problema vira um ponto de atenção.</figcaption>
+  </figure>
+
+  <h3>Três níveis de resultado</h3>
+  <ul>
+    <li><span class="pill fail">FALHA</span> divergência que precisa voltar para o fornecedor antes de aprovar.</li>
+    <li><span class="pill warn">ATENÇÃO</span> ponto para conferir no olho, por exemplo uma leitura duvidosa do OCR.</li>
+    <li><span class="pill ok">OK</span> a checagem passou.</li>
+  </ul>
+
+  <h2>As 12 checagens</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>O que confere</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>Cabeçalho coerente entre os documentos: exportador, número da invoice e do pedido, faturado para, entregar para, contato.</td></tr>
+        <tr><td>A2</td><td>CNPJ do importador presente, com dígito verificador válido e igual em todos os documentos.</td></tr>
+        <tr><td>B</td><td>Quantidade por SKU: invoice x shipping list.</td></tr>
+        <tr><td>C</td><td>Quantidade por família: shipping list x packing list, e total geral da invoice x packing list.</td></tr>
+        <tr><td>D</td><td>Valores da invoice: quantidade x preço unitário = valor da linha.</td></tr>
+        <tr><td>E</td><td>Pesos do packing list: soma das linhas x totais declarados.</td></tr>
+        <tr><td>F</td><td>Caixas: shipping list x packing list, inclusive por tamanho de caixa.</td></tr>
+        <tr><td>G</td><td>Lotes: quantidade igual ao número de séries, sem série duplicada, sem o mesmo lote em dois códigos.</td></tr>
+        <tr><td>H</td><td>Validade mínima na chegada (padrão de 18 meses) e fabricação recente.</td></tr>
+        <tr><td>I</td><td>Certificado de análise lote a lote: lote presente, código, séries e validade iguais ao shipping list.</td></tr>
+        <tr><td>J</td><td>Documentos finais assinados (PDF) x planilhas: número da invoice, quantidades, caixas e pesos.</td></tr>
+        <tr><td>K</td><td>Anuência regulatória: lote fabricado antes da data da anuência do produto é bloqueado.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Exemplo de relatório</h2>
+  <p>Resultado de uma execução com documentos fictícios. Os nomes, números e lotes abaixo são inventados.</p>
+  <div class="report-head">
+    <span>Invoice <b>INV-2026-0418</b> · Example Medical Devices Co.</span>
+    <span>Embarque aéreo · 6 SKUs · 14 lotes</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Checagem</th><th>Status</th><th>Detalhe</th></tr></thead>
+      <tbody>
+        <tr><td>A. Cabeçalho</td><td><span class="pill ok">OK</span></td><td>Dados iguais nos 5 documentos.</td></tr>
+        <tr><td>A2. CNPJ do importador</td><td><span class="pill ok">OK</span></td><td>Válido e igual em todos os documentos.</td></tr>
+        <tr><td>B. Quantidade por SKU</td><td><span class="pill fail">FALHA</span></td><td>SKU-1042: invoice 120 un, shipping list 100 un.</td></tr>
+        <tr><td>C. Quantidade por família</td><td><span class="pill ok">OK</span></td><td>Totais batem: 640 un.</td></tr>
+        <tr><td>D. Valores da invoice</td><td><span class="pill ok">OK</span></td><td>6 linhas conferidas.</td></tr>
+        <tr><td>E. Pesos</td><td><span class="pill warn">ATENÇÃO</span></td><td>Soma das linhas 412,6 kg; total declarado 415,0 kg.</td></tr>
+        <tr><td>F. Caixas</td><td><span class="pill ok">OK</span></td><td>18 caixas nos dois documentos.</td></tr>
+        <tr><td>G. Lotes e séries</td><td><span class="pill fail">FALHA</span></td><td>Série SN-00871 aparece nos lotes L2405 e L2406.</td></tr>
+        <tr><td>H. Validade</td><td><span class="pill fail">FALHA</span></td><td>Lote L2398 chega com 11 meses de validade (mínimo 18).</td></tr>
+        <tr><td>I. Certificados de análise</td><td><span class="pill warn">ATENÇÃO</span></td><td>Lote lido como "L24O6" no certificado. Provável L2406; conferir no PDF.</td></tr>
+        <tr><td>J. Documentos finais</td><td><span class="pill ok">OK</span></td><td>PDF assinado bate com as planilhas.</td></tr>
+        <tr><td>K. Anuência</td><td><span class="pill ok">OK</span></td><td>Todos os lotes fabricados depois da data da anuência.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="summary"><span class="pill fail">3 FALHAS</span><span class="pill warn">2 ATENÇÃO</span><span class="pill ok">7 OK</span></div>
+
+  <h2>Trechos da lógica</h2>
+  <p>Versões simplificadas, escritas para esta página, de duas partes do script.</p>
+  <h3>Ler a página: texto direto ou OCR</h3>
+<pre><span class="k">def</span> texto_da_pagina(pagina):
+    texto = pagina.get_text()
+    <span class="k">if</span> len(texto.strip()) > <span class="s">50</span>:          <span class="c"># PDF digital: o texto já está lá</span>
+        <span class="k">return</span> texto
+    pix = pagina.get_pixmap(dpi=<span class="s">300</span>)      <span class="c"># PDF escaneado: vira imagem</span>
+    img = np.frombuffer(pix.samples, np.uint8).reshape(pix.h, pix.w, pix.n)
+    cinza = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    _, pb = cv2.threshold(cinza, <span class="s">0</span>, <span class="s">255</span>, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    <span class="k">return</span> pytesseract.image_to_string(pb)</pre>
+
+  <h3>Validade mínima e fabricação recente</h3>
+<pre><span class="k">def</span> checar_validade(lote, data_chegada, meses_min=<span class="s">18</span>, meses_fab_max=<span class="s">6</span>):
+    restantes = meses_entre(data_chegada, lote.validade)
+    <span class="k">if</span> restantes < meses_min:
+        <span class="k">return</span> <span class="s">"FALHA"</span>, f<span class="s">"Lote {lote.numero} chega com {restantes} meses (mínimo {meses_min})"</span>
+    <span class="k">if</span> meses_entre(lote.fabricacao, data_chegada) > meses_fab_max:
+        <span class="k">return</span> <span class="s">"ATENCAO"</span>, f<span class="s">"Lote {lote.numero} fabricado há mais de {meses_fab_max} meses"</span>
+    <span class="k">return</span> <span class="s">"OK"</span>, f<span class="s">"Lote {lote.numero} dentro do prazo"</span></pre>
+
+  <h2>O que aprendi</h2>
+  <ul>
+    <li><strong>OCR erra de formas previsíveis.</strong> Letra O vira zero, I vira 1, carimbo colorido vira ruído. Por isso a leitura duvidosa vira ATENÇÃO, não FALHA.</li>
+    <li><strong>Cache por página faz diferença.</strong> Rodar de novo depois de corrigir um documento leva segundos, porque só as páginas novas passam pelo OCR.</li>
+    <li><strong>A data da invoice nem sempre é a data do embarque.</strong> A data real de saída fica no conhecimento de transporte, e isso muda a conta da validade.</li>
+  </ul>
+
+  <div class="callout green">
+    <p><strong>Sobre o código:</strong> o script original trabalha com documentos reais de fornecedores e não é público. Os trechos e o relatório desta página foram recriados com dados fictícios.</p>
+  </div>
+
+  <div class="next-links">
+    <a href="../publicacoes/incoterms.html"><small>Publicação relacionada</small>Incoterms: onde o risco muda de lado</a>
+    <a href="boletim-ruptura.html"><small>Outro projeto</small>Boletim de Ruptura de Lojas (dashboard interativo)</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>
