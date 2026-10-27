@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caçador de Vencimentos | Alexandre Wang</title>
+<meta name="description" content="App web que simula o consumo lote a lote (FEFO), mostra quanto estoque vai vencer antes de ser consumido, quanto isso custa e qual ação tomar. Demonstração com dados fictícios.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/cacador-vencimentos.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caçador de Vencimentos: a perda por validade antes que ela aconteça">
+<meta property="og:description" content="Consumo FEFO lote a lote, perda projetada em reais e uma ação sugerida para cada lote. App aberto com dados fictícios.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/cacador.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<style>
+  .page-hero .btn-row { margin-top: 24px; }
+  .shot { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--navy); }
+  .shot img { width: 100%; height: auto; }
+  .steps { counter-reset: passo; list-style: none; padding: 0; display: grid; gap: 12px; }
+  .steps li { counter-increment: passo; position: relative; padding: 14px 16px 14px 56px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+  .steps li::before { content: counter(passo); position: absolute; left: 16px; top: 13px; width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: #fff; font: 600 13px/26px var(--mono); text-align: center; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+</style>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a></div>
+    <div class="kicker">App web · Planejamento de estoque</div>
+    <h1>Caçador de Vencimentos</h1>
+    <p class="lead">Lote parado no estoque vence e vira perda. O risco aparece cedo nos números, mas só fica visível quando alguém cruza validade, estoque e consumo. Criei um app que faz esse cruzamento lote a lote, mostra quanto vai sobrar na data de validade e sugere uma ação para cada lote.</p>
+    <div class="meta"><span>Lovable · React · Recharts</span><span>Especificação com Claude</span><span>Demo com dados fictícios</span></div>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://cacador-de-vencimentos.lovable.app" target="_blank" rel="noopener" data-umami-event="abrir-app" data-umami-event-projeto="cacador">Abrir o app →</a>
+      <a class="btn btn-ghost" href="https://cacador-de-vencimentos.lovable.app/?lang=en" target="_blank" rel="noopener" hreflang="en" data-umami-event="abrir-app" data-umami-event-projeto="cacador-en">Versão em inglês</a>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo" class="article">
+
+  <figure class="shot">
+    <img src="../assets/img/previews/cacador.png" alt="Tela do Caçador de Vencimentos com os indicadores de valor em estoque, perda projetada e lotes que pedem ação" width="1280" height="800" loading="lazy">
+  </figure>
+
+  <h2>Por que isso importa</h2>
+  <p>Na saúde, produto vencido não volta para a prateleira. Vira descarte, provisão de perda e, às vezes, falta do mesmo item em outro local que teria vendido tudo a tempo.</p>
+  <p>Olhar só a data de validade não basta. Um lote que vence em 60 dias pode estar seguro se o giro for alto, e um lote que vence em 200 dias pode estar perdido se outro lote do mesmo produto estiver na frente da fila.</p>
+
+  <h2>Como funciona</h2>
+  <ol class="steps">
+    <li><strong>Fila por validade.</strong> Para cada produto e local, os lotes entram em fila pela data de validade. É o FEFO: o primeiro que vence é o primeiro que sai.</li>
+    <li><strong>O consumo gasta a fila.</strong> O consumo diário vai esvaziando um lote de cada vez. O lote seguinte só começa a ser consumido quando o anterior acaba ou vence.</li>
+    <li><strong>O que sobra vira perda.</strong> A quantidade que não for consumida até a validade é a sobra. Sobra vezes custo unitário é a perda projetada em reais.</li>
+    <li><strong>Uma ação por lote.</strong> Regras simples sugerem o que fazer, e o planejador pode trocar a ação e marcar o andamento.</li>
+  </ol>
+  <p>Na tela dá para mudar a data de referência, simular uma variação de consumo de -50% a +50%, filtrar por local e importar um CSV próprio. Tudo roda no navegador.</p>
+
+  <h2>Regras da ação sugerida</h2>
+  <p>Testadas nesta ordem. A primeira que se aplica é a sugerida.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Situação do lote</th><th>Ação sugerida</th></tr></thead>
+      <tbody>
+        <tr><td>Já venceu</td><td>Bloquear e descartar</td></tr>
+        <tr><td>O consumo cobre o lote inteiro</td><td>Monitorar</td></tr>
+        <tr><td>Outro local consome a tempo pelo menos 20% da sobra</td><td>Transferir para esse local</td></tr>
+        <tr><td>Vence em até 30 dias</td><td>Provisionar perda e planejar descarte</td></tr>
+        <tr><td>Vence em até 90 dias</td><td>Ação comercial: desconto ou campanha</td></tr>
+        <tr><td>Vence em mais de 90 dias</td><td>Revisar o plano de compras do produto</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Exemplo com os dados da demo</h2>
+  <p>Quatro lotes da base fictícia, com consumo sem variação.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Lote</th><th class="num">Vence em</th><th class="num">Quantidade</th><th class="num">Consumo</th><th class="num">Sobra</th><th class="num">Perda projetada</th><th>Ação</th></tr></thead>
+      <tbody>
+        <tr><td>L2405 · Analgésico · CD Sudeste</td><td class="num">25 dias</td><td class="num">4.000 un</td><td class="num">60 un/dia</td><td class="num">2.500 un</td><td class="num">R$ 21.250,00</td><td>Transferir 1.050 un para CD Sul</td></tr>
+        <tr><td>L1120 · Vitamina C · CD Sudeste</td><td class="num">45 dias</td><td class="num">2.500 un</td><td class="num">30 un/dia</td><td class="num">1.150 un</td><td class="num">R$ 21.160,00</td><td>Ação comercial</td></tr>
+        <tr><td>L6612 · Xarope infantil · CD Nordeste</td><td class="num">95 dias</td><td class="num">1.800 un</td><td class="num">15 un/dia</td><td class="num">555 un</td><td class="num">R$ 11.821,50</td><td>Revisar plano de compras</td></tr>
+        <tr><td>L1128 · Vitamina C · CD Sudeste</td><td class="num">160 dias</td><td class="num">3.000 un</td><td class="num">30 un/dia</td><td class="num">0</td><td class="num">R$ 0,00</td><td>Monitorar</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>O L6612 vence em 95 dias, mas o lote L6604 do mesmo xarope está na frente da fila. Por isso ele só começa a ser consumido no dia 12 e sobram 555 unidades. Olhando só a validade, esse lote pareceria seguro.</p>
+
+  <h2>Como construí</h2>
+  <p>Escrevi a especificação com o Claude: os dados de exemplo, a fórmula do FEFO, as regras de ação e os números que a tela precisava mostrar. O Claude enviou essa especificação ao Lovable pelo conector oficial, e o Lovable gerou o app em React. Depois conferi os totais da tela contra a conta feita à mão.</p>
+  <ul>
+    <li><strong>Valor em estoque:</strong> R$ 356.130,00</li>
+    <li><strong>Perda projetada:</strong> R$ 100.590,50</li>
+    <li><strong>Lotes que pedem ação:</strong> 11 de 20</li>
+  </ul>
+
+  <h2>O que aprendi</h2>
+  <ul>
+    <li><strong>Números de conferência valem mais que um prompt longo.</strong> Com os totais esperados na especificação, deu para saber na hora se o cálculo do app estava certo.</li>
+    <li><strong>FEFO muda a conta.</strong> Calcular cada lote sozinho subestima a perda, porque ignora que o lote seguinte espera o anterior acabar.</li>
+    <li><strong>Transferir só vale se o outro local consome a tempo.</strong> Por isso a regra exige que o destino absorva pelo menos 20% da sobra antes da validade.</li>
+  </ul>
+
+  <div class="callout green">
+    <p><strong>Sobre os dados:</strong> produtos, lotes, custos e locais são fictícios. As regras foram simplificadas para a demonstração; num caso real, transferência e descarte seguem as regras sanitárias. O CSV importado é processado no navegador e não sai do seu computador.</p>
+  </div>
+
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Quer conversar sobre esse projeto?</h2><p>Estou aberto a vagas em Demand Planning, IBP, Supply Chain Analytics e PCP.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Vi%20o%20seu%20Ca%C3%A7ador%20de%20Vencimentos%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-cacador">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-cacador">Baixar currículo</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-cacador">LinkedIn</a>
+    </div>
+  </aside>
+
+  <div class="next-links">
+    <a href="boletim-ruptura.html"><small>Outro projeto</small>Boletim de Ruptura de Lojas (dashboard interativo)</a>
+    <a href="validador-documentos.html"><small>Outro projeto</small>Validador de documentos de importação</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>
