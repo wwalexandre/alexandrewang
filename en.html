@@ -19,7 +19,7 @@
 <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <script src="assets/js/main.js" defer></script>
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
@@ -62,8 +62,8 @@
     <div class="hero-inner v2">
       <div>
         <div class="status"><span class="dot"></span>Open to opportunities, São Paulo, Brazil</div>
-        <div class="kicker">Supply Chain Analytics &amp; Automation</div>
-        <h1>Alexandre <span>Wang</span></h1>
+        <h1>Alexandre Wang</h1>
+        <p class="hero-role">Supply Chain Analytics &amp; Automation</p>
         <p class="hero-sub">A pharmacist who became a planning analyst. I work in demand planning, IBP/S&amp;OP and production planning, and use Power BI, Power Automate, Python and SQL to take manual work out of the way.</p>
         <div class="btn-row">
           <a class="btn btn-primary" href="#" data-cv data-umami-event="curriculo-clique">
@@ -76,9 +76,9 @@
       </div>
     </div>
     <nav class="jump" aria-label="Portfolio sections">
-      <a href="#experience"><span class="n">01</span><b>Experience</b><span>Sanofi, Hering, Hypera, Abbott and FUNED</span></a>
-      <a href="#projects"><span class="n">02</span><b>Projects</b><span>Dashboards and automations, with demos</span></a>
-      <a href="#publications"><span class="n">03</span><b>Publications</b><span>Videos and articles on supply chain</span></a>
+      <a href="#experience"><b>Experience</b><span>Sanofi, Hering, Hypera, Abbott and FUNED</span></a>
+      <a href="#projects"><b>Projects</b><span>Dashboards and automations, with demos</span></a>
+      <a href="#publications"><b>Publications</b><span>Videos and articles on supply chain</span></a>
     </nav>
   </div>
 </header>
@@ -88,16 +88,15 @@
 <!-- 01 EXPERIENCE -->
 <section class="section" id="experience" aria-labelledby="t-exp">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head">
       <div>
-        <div class="sec-num">01 / 03</div>
         <h2 id="t-exp">Experience</h2>
         <p>I started in product development, moved through production and found in planning the place where data and operations meet.</p>
       </div>
     </div>
 
     <div class="timeline">
-      <article class="tl reveal">
+      <article class="tl">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/sanofi.png" alt="Sanofi"></div>
           <div><div class="tl-co">Sanofi</div><div class="tl-period">Jan 2026 to Oct 2026</div></div>
@@ -111,7 +110,7 @@
           <li>LATAM hub onboarding: a bank of more than 135 questions across 6 modules.</li>
         </ul>
       </article>
-      <article class="tl reveal">
+      <article class="tl">
         <div class="tl-head">
           <div class="tl-logo mono" aria-hidden="true">Hering</div>
           <div><div class="tl-co">Cia. Hering</div><div class="tl-period">Oct 2025 to Jan 2026</div></div>
@@ -122,7 +121,7 @@
           <li>Standardized and automated Stockout, Turnover and Coverage KPIs with Power BI, SQL and VBA.</li>
         </ul>
       </article>
-      <article class="tl reveal">
+      <article class="tl">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/brainfarma-hypera-pharma.png" alt="Brainfarma, Hypera Pharma"></div>
           <div><div class="tl-co">Hypera Pharma (Brainfarma)</div><div class="tl-period">Aug 2024 to Oct 2025</div></div>
@@ -136,7 +135,7 @@
           <li>Batch release documentation flow under ANVISA RDC 658.</li>
         </ul>
       </article>
-      <article class="tl reveal">
+      <article class="tl">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/abbott.png" alt="Abbott"></div>
           <div><div class="tl-co">Abbott</div><div class="tl-period">2022 to 2024</div></div>
@@ -148,7 +147,7 @@
           <li>Indicators in SAP BO and Power BI with automated extraction via Power Automate; Lean and 5S.</li>
         </ul>
       </article>
-      <article class="tl reveal">
+      <article class="tl">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/funed.png" alt="FUNED"></div>
           <div><div class="tl-co">FUNED</div><div class="tl-period">2021 to 2022</div></div>
@@ -164,21 +163,21 @@
       <div>
         <h3 class="sub-h">Education</h3>
         <div class="edu-list">
-          <div class="edu-item reveal"><div class="edu-year">2024 to 2026</div><div><h3>Postgraduate degree in Supply Chain, Quality Management and Auditing in the Pharmaceutical Industry</h3><p>PUC Goiás</p></div></div>
-          <div class="edu-item reveal"><div class="edu-year">2019 to 2024</div><div><h3>B.Sc. in Pharmacy</h3><p>Federal University of Minas Gerais (UFMG)</p></div></div>
-          <div class="edu-item reveal"><div class="edu-year">2023</div><div><h3>A3 Continuous Improvement Certificate</h3><p>Abbott, 3-month program</p></div></div>
-          <div class="edu-item reveal"><div class="edu-year">2024</div><div><h3>Lean Six Sigma Yellow Belt</h3><p>Continuous improvement</p></div></div>
+          <div class="edu-item"><div class="edu-year">2024 to 2026</div><div><h3>Postgraduate degree in Supply Chain, Quality Management and Auditing in the Pharmaceutical Industry</h3><p>PUC Goiás</p></div></div>
+          <div class="edu-item"><div class="edu-year">2019 to 2024</div><div><h3>B.Sc. in Pharmacy</h3><p>Federal University of Minas Gerais (UFMG)</p></div></div>
+          <div class="edu-item"><div class="edu-year">2023</div><div><h3>A3 Continuous Improvement Certificate</h3><p>Abbott, 3-month program</p></div></div>
+          <div class="edu-item"><div class="edu-year">2024</div><div><h3>Lean Six Sigma Yellow Belt</h3><p>Continuous improvement</p></div></div>
         </div>
-        <div class="langs reveal" style="margin-top:12px">
-          <h3>Languages</h3>
-          <div class="lang-row"><div>Portuguese <span>Native</span></div><div class="bar"><i style="width:100%"></i></div></div>
-          <div class="lang-row"><div>English <span>Advanced</span></div><div class="bar"><i style="width:85%"></i></div></div>
-          <div class="lang-row"><div>Mandarin <span>Basic</span></div><div class="bar"><i style="width:30%"></i></div></div>
+        <h3 class="sub-h">Languages</h3>
+        <div class="langs">
+          <div class="lang-row">Portuguese <span>Native</span></div>
+          <div class="lang-row">English <span>Advanced</span></div>
+          <div class="lang-row">Mandarin <span>Basic</span></div>
         </div>
       </div>
       <div>
         <h3 class="sub-h">Skills</h3>
-        <div class="skill-rows reveal">
+        <div class="skill-rows">
           <div class="skill-row"><h4>BI and reporting</h4><div class="tags"><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Power Query</span><span class="tag">Power Pivot</span><span class="tag">Excel</span><span class="tag">SAP BO</span></div></div>
           <div class="skill-row"><h4>Automation and data</h4><div class="tags"><span class="tag">Power Automate</span><span class="tag">Power Apps</span><span class="tag">Python</span><span class="tag">pandas</span><span class="tag">SQL</span><span class="tag">Snowflake</span><span class="tag">VBA</span></div></div>
           <div class="skill-row"><h4>Systems</h4><div class="tags"><span class="tag">SAP ECC PP/MM</span><span class="tag">Kinaxis</span><span class="tag">TM1</span><span class="tag">SharePoint</span></div></div>
@@ -194,43 +193,42 @@
 <!-- 02 PROJECTS -->
 <section class="section alt" id="projects" aria-labelledby="t-projects">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head">
       <div>
-        <div class="sec-num">02 / 03</div>
         <h2 id="t-projects">Projects</h2>
         <p>Projects I delivered at work and on my own. The first three have an open demo (pages in Portuguese; the Expiry Hunter app also runs in English). Internal data and screens are not shown; demos use fictional data.</p>
       </div>
     </div>
 
     <div class="featured">
-      <a class="feat reveal" data-umami-event="abrir-projeto" data-umami-event-projeto="ruptura" href="projetos/boletim-ruptura.html" hreflang="pt-BR">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="ruptura" href="projetos/boletim-ruptura.html" hreflang="pt-BR">
         <div class="feat-img"><img src="assets/img/previews/ruptura.png" alt="Preview of the store stockout dashboard" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
-          <span class="feat-type">Interactive dashboard · Cia. Hering · 2025</span>
+          <div class="proj-top"><span class="proj-co">Cia. Hering</span><span>2025</span></div>
           <h3>Store Stockout Bulletin</h3>
           <p>Shows which products are missing in each store and which of those gaps can be fixed now, because the DC has stock.</p>
           <div class="tags"><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">SQL</span><span class="tag">VBA</span></div>
-          <span class="more">Open the dashboard →</span>
+          <span class="more">Open the dashboard</span>
         </div>
       </a>
-      <a class="feat reveal" data-umami-event="abrir-projeto" data-umami-event-projeto="validador" href="projetos/validador-documentos.html" hreflang="pt-BR">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="validador" href="projetos/validador-documentos.html" hreflang="pt-BR">
         <div class="feat-img"><img src="assets/img/previews/validador.png" alt="Preview of the document checker report" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
-          <span class="feat-type">Python and OCR automation · International trade · 2026</span>
+          <div class="proj-top"><span class="proj-co">International trade</span><span>2026</span></div>
           <h3>Import document checker</h3>
           <p>Reads invoice, packing list and certificates, including scanned ones, and runs 12 checks on quantity, batch and expiry.</p>
           <div class="tags"><span class="tag">Python</span><span class="tag">Tesseract</span><span class="tag">pandas</span><span class="tag">OpenCV</span></div>
-          <span class="more">See how it works →</span>
+          <span class="more">See how it works</span>
         </div>
       </a>
-      <a class="feat reveal" data-umami-event="abrir-projeto" data-umami-event-projeto="cacador" href="projetos/cacador-vencimentos.html" hreflang="pt-BR">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="cacador" href="projetos/cacador-vencimentos.html" hreflang="pt-BR">
         <div class="feat-img"><img src="assets/img/previews/cacador.png" alt="Preview of the Expiry Hunter app" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
-          <span class="feat-type">Web app · Personal project · 2026</span>
+          <div class="proj-top"><span class="proj-co">Personal project</span><span>2026</span></div>
           <h3>Expiry Hunter</h3>
           <p>Simulates consumption lot by lot, shows how much stock will expire before it is used and suggests an action for each lot.</p>
           <div class="tags"><span class="tag">Lovable</span><span class="tag">React</span><span class="tag">FEFO</span><span class="tag">Claude</span></div>
-          <span class="more">See the app →</span>
+          <span class="more">See the app</span>
         </div>
       </a>
     </div>
@@ -354,9 +352,8 @@
 <!-- 03 PUBLICATIONS -->
 <section class="section" id="publications" aria-labelledby="t-pub">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head">
       <div>
-        <div class="sec-num">03 / 03</div>
         <h2 id="t-pub">Publications</h2>
         <p>Videos and articles on planning, data and international trade. The short version goes on LinkedIn; the full version of each one lives here. Videos are narrated in Portuguese, with English subtitles.</p>
       </div>
@@ -364,13 +361,13 @@
 
     <div class="pubs">
       <!-- New publication: copy one <article class="pub-item"> block and paste it at the top of the list (newest first) -->
-      <article class="pub-item reveal">
+      <article class="pub-item">
         <a class="pub-thumb" href="publicacoes/importacao-jogo-en.html">
           <img src="assets/img/previews/importacao-jogo.jpg" alt="Video cover: Importing, the deadline game, with the board and the Back to origin stamp." loading="lazy" width="1200" height="750">
           <span class="play">▶ 1:40</span>
         </a>
         <div>
-          <div class="pmeta"><span>Video + article</span><span>Oct 2026</span><span>International trade</span></div>
+          <p class="pmeta">International trade, Oct 2026</p>
           <h3><a href="publicacoes/importacao-jogo-en.html">Importing: the deadline game</a></h3>
           <p>An air import shown as a board game: the invoice date that misleads, the freight quote that expires and the batch made before the ANVISA approval that reached Brazil and had to go back. Real cases, no names.</p>
           <div class="pub-links">
@@ -378,13 +375,13 @@
           </div>
         </div>
       </article>
-      <article class="pub-item reveal">
+      <article class="pub-item">
         <a class="pub-thumb" href="publicacoes/forecast-erro-en.html">
           <img src="assets/img/previews/forecast.jpg" alt="Video cover: Is your forecast wrong? Measure before blaming sales." loading="lazy" width="1200" height="750">
           <span class="play">▶ 0:58</span>
         </a>
         <div>
-          <div class="pmeta"><span>Video + article</span><span>Oct 2026</span><span>Demand planning</span></div>
+          <p class="pmeta">Demand planning, Oct 2026</p>
           <h3><a href="publicacoes/forecast-erro-en.html">Is your forecast wrong? Measure before blaming sales.</a></h3>
           <p>Three cuts to break down forecast error before the demand review: error by product family, FVA (did the manual override help or hurt?) and bias. With a fictional example and a PDF checklist.</p>
           <div class="pub-links">
@@ -393,13 +390,13 @@
           </div>
         </div>
       </article>
-      <article class="pub-item reveal">
+      <article class="pub-item">
         <a class="pub-thumb" href="publicacoes/incoterms-en.html">
           <img src="assets/img/previews/incoterms.jpg" alt="Frame from the video: the ship sank, who pays for the loss?" loading="lazy" width="1080" height="1080">
           <span class="play">▶ 1:21</span>
         </a>
         <div>
-          <div class="pmeta"><span>Video + article</span><span>Oct 2026</span><span>International trade</span></div>
+          <p class="pmeta">International trade, Oct 2026</p>
           <h3><a href="publicacoes/incoterms-en.html">The ship sank. Who pays for the loss?</a></h3>
           <p>The 11 Incoterms 2020 and the exact point where risk passes from seller to buyer. Includes the CFR and CIF trap, an interactive simulator and how the Incoterm changes cost and lead time.</p>
           <div class="pub-links">
@@ -416,9 +413,8 @@
 <!-- CONTACT -->
 <section class="section dark" id="contact" aria-labelledby="t-contact">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head">
       <div>
-        <div class="eyebrow">Contact</div>
         <h2 id="t-contact">Let's talk</h2>
         <p>I am looking for roles in Demand Planning, IBP, Supply Chain Analytics and Production Planning. Happy to talk about data and automation too.</p>
       </div>
@@ -456,7 +452,7 @@
 <footer>
   <div class="wrap">
     <span>© <span id="year">2026</span> Alexandre Wang</span>
-    <span>Supply Chain Analytics · Demand Planning · Automation</span>
+    <span>Supply chain analytics and automation, São Paulo</span>
   </div>
 </footer>
 </body>

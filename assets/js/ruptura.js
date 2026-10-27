@@ -82,7 +82,7 @@
     afterDatasetsDraw(chart) {
       const { ctx } = chart;
       ctx.save();
-      ctx.font = "600 12px 'Inter', system-ui, sans-serif";
+      ctx.font = "600 12px 'Barlow', system-ui, sans-serif";
       ctx.fillStyle = css('--text');
       ctx.textBaseline = 'middle';
       chart.data.datasets.forEach((ds, i) => {
@@ -96,7 +96,7 @@
   };
 
   function chartDefaults() {
-    Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+    Chart.defaults.font.family = "'Barlow', system-ui, sans-serif";
     Chart.defaults.font.size = 12;
     Chart.defaults.color = css('--muted');
     Chart.defaults.borderColor = css('--line');
