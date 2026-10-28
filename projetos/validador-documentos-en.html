@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Import Document Checker | Alexandre Wang</title>
+<meta name="description" content="Python script with OCR (Tesseract) that cross-checks a shipment's invoice, packing list, shipping list and certificates of analysis, flagging mismatches in quantity, batch and expiry.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/validador-documentos-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/validador-documentos.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/validador-documentos-en.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Import document checker with Python and OCR">
+<meta property="og:description" content="12 automatic checks across invoice, packing list, shipping list and COA. Demo with fictional data.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/validador.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<style>
+  .flow { width: 100%; height: auto; margin: 8px 0 4px; }
+  .flow .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .flow .hl { fill: var(--navy); stroke: var(--navy); }
+  .flow .t { fill: var(--text); font: 600 14px var(--font); }
+  .flow .s { fill: var(--muted); font: 400 12px var(--font); }
+  .flow .hl + .t, .flow .tw { fill: #fff; }
+  .flow .sw { fill: #C9D3DD; }
+  .flow .arrow { stroke: var(--orange); stroke-width: 2; fill: none; marker-end: url(#ah); }
+  .report-head { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+  .report-head b { color: var(--text); }
+  .summary { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 0; }
+</style>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="validador-documentos.html" hreflang="pt-BR">PT</a><a href="validador-documentos-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#projects">← Projects</a></div>
+    <div class="kicker">Automation · International trade</div>
+    <h1>Import document checker</h1>
+    <p class="lead">Before a shipment is released, someone has to check that the invoice, packing list, shipping list and certificates of analysis tell the same story. I wrote a Python script that does this check, including on scanned documents, and delivers a ready report.</p>
+    <div class="meta"><span>Python · pandas</span><span>PyMuPDF</span><span>Tesseract OCR · OpenCV</span><span>Demo with fictional data</span></div>
+  </div>
+</header>
+
+<main id="content" class="article">
+
+  <h2>Why it matters</h2>
+  <p>International trade is a chain of deadlines. A quantity that does not match, a repeated batch or a short expiry found too late turns into cargo stuck at the terminal, storage costs and a risk of running out of product at the end of the line.</p>
+  <p>The manual check cross-references four or five documents line by line. It is slow, tiring and depends on who is checking that day.</p>
+
+  <h2>How it works</h2>
+  <figure>
+    <svg class="flow" viewBox="0 0 720 300" role="img" aria-labelledby="flowT flowD">
+      <title id="flowT">Checker flow</title>
+      <desc id="flowD">The shipment documents come in, are read as text or with OCR, go through 12 checks and produce an Excel report with failures, warnings and an email draft.</desc>
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#F08A24"/></marker></defs>
+      <rect class="box" x="10" y="20" width="160" height="260" rx="12"/>
+      <text class="t" x="26" y="50">Documents</text>
+      <text class="s" x="26" y="80">Invoice (Excel)</text>
+      <text class="s" x="26" y="102">Packing list (Excel)</text>
+      <text class="s" x="26" y="124">Shipping list (Excel)</text>
+      <text class="s" x="26" y="146">Certificates of</text>
+      <text class="s" x="26" y="162">analysis (PDF)</text>
+      <text class="s" x="26" y="184">Signed invoice and</text>
+      <text class="s" x="26" y="200">packing list (PDF)</text>
+      <path class="arrow" d="M176 150H212"/>
+      <rect class="box" x="218" y="20" width="150" height="260" rx="12"/>
+      <text class="t" x="234" y="50">Reading</text>
+      <text class="s" x="234" y="80">Excel: pandas</text>
+      <text class="s" x="234" y="102">Digital PDF: text</text>
+      <text class="s" x="234" y="118">directly (PyMuPDF)</text>
+      <text class="s" x="234" y="140">Scanned PDF:</text>
+      <text class="s" x="234" y="156">OpenCV cleans</text>
+      <text class="s" x="234" y="172">the image and</text>
+      <text class="s" x="234" y="188">Tesseract reads it</text>
+      <text class="s" x="234" y="210">Cache per page</text>
+      <path class="arrow" d="M374 150H410"/>
+      <rect class="box hl" x="416" y="20" width="140" height="260" rx="12"/>
+      <text class="t tw" x="432" y="50">12 checks</text>
+      <text class="s sw" x="432" y="80">Header and tax ID</text>
+      <text class="s sw" x="432" y="102">Quantities</text>
+      <text class="s sw" x="432" y="124">Values and weights</text>
+      <text class="s sw" x="432" y="146">Cartons</text>
+      <text class="s sw" x="432" y="168">Batches and serials</text>
+      <text class="s sw" x="432" y="190">Expiry</text>
+      <text class="s sw" x="432" y="212">Certificates</text>
+      <text class="s sw" x="432" y="234">Import approval</text>
+      <path class="arrow" d="M562 150H598"/>
+      <rect class="box" x="604" y="20" width="106" height="260" rx="12"/>
+      <text class="t" x="618" y="50">Report</text>
+      <text class="s" x="618" y="80">Excel with</text>
+      <text class="s" x="618" y="96">Fail, Warning</text>
+      <text class="s" x="618" y="112">and OK</text>
+      <text class="s" x="618" y="134">Support tabs</text>
+      <text class="s" x="618" y="156">Email draft</text>
+      <text class="s" x="618" y="172">to the</text>
+      <text class="s" x="618" y="188">supplier</text>
+    </svg>
+    <figcaption>From document to report. An unreadable certificate does not stop the run: the problem page becomes a warning.</figcaption>
+  </figure>
+
+  <h3>Three result levels</h3>
+  <ul>
+    <li><span class="pill fail">FAIL</span> a mismatch that must go back to the supplier before approval.</li>
+    <li><span class="pill warn">WARNING</span> something to check by eye, for example a doubtful OCR reading.</li>
+    <li><span class="pill ok">OK</span> the check passed.</li>
+  </ul>
+
+  <h2>The 12 checks</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Code</th><th>What it checks</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>Consistent header across documents: exporter, invoice and order numbers, bill to, ship to, contact.</td></tr>
+        <tr><td>A2</td><td>Importer's tax ID (CNPJ) present, with a valid check digit and the same on every document.</td></tr>
+        <tr><td>B</td><td>Quantity per SKU: invoice vs. shipping list.</td></tr>
+        <tr><td>C</td><td>Quantity per family: shipping list vs. packing list, and invoice grand total vs. packing list.</td></tr>
+        <tr><td>D</td><td>Invoice values: quantity x unit price = line amount.</td></tr>
+        <tr><td>E</td><td>Packing list weights: sum of lines vs. declared totals.</td></tr>
+        <tr><td>F</td><td>Cartons: shipping list vs. packing list, including by carton size.</td></tr>
+        <tr><td>G</td><td>Batches: quantity equal to the number of serials, no duplicated serial, no batch under two product codes.</td></tr>
+        <tr><td>H</td><td>Minimum shelf life on arrival (18 months by default) and recent manufacturing.</td></tr>
+        <tr><td>I</td><td>Certificate of analysis batch by batch: batch present, code, serials and expiry matching the shipping list.</td></tr>
+        <tr><td>J</td><td>Final signed documents (PDF) vs. spreadsheets: invoice number, quantities, cartons and weights.</td></tr>
+        <tr><td>K</td><td>Regulatory import approval: a batch made before the product's approval date is blocked.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Sample report</h2>
+  <p>Output of a run with fictional documents. The names, numbers and batches below are made up.</p>
+  <div class="report-head">
+    <span>Invoice <b>INV-2026-0418</b> · Example Medical Devices Co.</span>
+    <span>Air shipment · 6 SKUs · 14 batches</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>A. Header</td><td><span class="pill ok">OK</span></td><td>Same data on all 5 documents.</td></tr>
+        <tr><td>A2. Importer tax ID</td><td><span class="pill ok">OK</span></td><td>Valid and the same on every document.</td></tr>
+        <tr><td>B. Quantity per SKU</td><td><span class="pill fail">FAIL</span></td><td>SKU-1042: invoice 120 units, shipping list 100 units.</td></tr>
+        <tr><td>C. Quantity per family</td><td><span class="pill ok">OK</span></td><td>Totals match: 640 units.</td></tr>
+        <tr><td>D. Invoice values</td><td><span class="pill ok">OK</span></td><td>6 lines checked.</td></tr>
+        <tr><td>E. Weights</td><td><span class="pill warn">WARNING</span></td><td>Sum of lines 412.6 kg; declared total 415.0 kg.</td></tr>
+        <tr><td>F. Cartons</td><td><span class="pill ok">OK</span></td><td>18 cartons on both documents.</td></tr>
+        <tr><td>G. Batches and serials</td><td><span class="pill fail">FAIL</span></td><td>Serial SN-00871 appears in batches L2405 and L2406.</td></tr>
+        <tr><td>H. Expiry</td><td><span class="pill fail">FAIL</span></td><td>Batch L2398 arrives with 11 months of shelf life (minimum 18).</td></tr>
+        <tr><td>I. Certificates of analysis</td><td><span class="pill warn">WARNING</span></td><td>Batch read as "L24O6" on the certificate. Probably L2406; check the PDF.</td></tr>
+        <tr><td>J. Final documents</td><td><span class="pill ok">OK</span></td><td>Signed PDF matches the spreadsheets.</td></tr>
+        <tr><td>K. Import approval</td><td><span class="pill ok">OK</span></td><td>All batches made after the approval date.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="summary"><span class="pill fail">3 FAILS</span><span class="pill warn">2 WARNINGS</span><span class="pill ok">7 OK</span></div>
+
+  <h2>Pieces of the logic</h2>
+  <p>Simplified versions of two parts of the script, written for this page.</p>
+  <h3>Reading a page: direct text or OCR</h3>
+<pre><span class="k">def</span> page_text(page):
+    text = page.get_text()
+    <span class="k">if</span> len(text.strip()) > <span class="s">50</span>:          <span class="c"># digital PDF: the text is already there</span>
+        <span class="k">return</span> text
+    pix = page.get_pixmap(dpi=<span class="s">300</span>)        <span class="c"># scanned PDF: turn it into an image</span>
+    img = np.frombuffer(pix.samples, np.uint8).reshape(pix.h, pix.w, pix.n)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    _, bw = cv2.threshold(gray, <span class="s">0</span>, <span class="s">255</span>, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    <span class="k">return</span> pytesseract.image_to_string(bw)</pre>
+
+  <h3>Minimum shelf life and recent manufacturing</h3>
+<pre><span class="k">def</span> check_expiry(batch, arrival_date, min_months=<span class="s">18</span>, max_mfg_months=<span class="s">6</span>):
+    remaining = months_between(arrival_date, batch.expiry)
+    <span class="k">if</span> remaining < min_months:
+        <span class="k">return</span> <span class="s">"FAIL"</span>, f<span class="s">"Batch {batch.number} arrives with {remaining} months (minimum {min_months})"</span>
+    <span class="k">if</span> months_between(batch.manufactured, arrival_date) > max_mfg_months:
+        <span class="k">return</span> <span class="s">"WARNING"</span>, f<span class="s">"Batch {batch.number} made more than {max_mfg_months} months ago"</span>
+    <span class="k">return</span> <span class="s">"OK"</span>, f<span class="s">"Batch {batch.number} within limits"</span></pre>
+
+  <h2>What I learned</h2>
+  <ul>
+    <li><strong>OCR fails in predictable ways.</strong> The letter O becomes zero, I becomes 1, a colored stamp becomes noise. That is why a doubtful reading becomes a WARNING, not a FAIL.</li>
+    <li><strong>A cache per page makes a difference.</strong> Running again after fixing a document takes seconds, because only new pages go through OCR.</li>
+    <li><strong>The invoice date is not always the shipping date.</strong> The real departure date is on the transport document, and that changes the shelf life math.</li>
+  </ul>
+
+  <div class="callout green">
+    <p><strong>About the code:</strong> the original script works with real supplier documents and is not public. The snippets and the report on this page were recreated with fictional data.</p>
+  </div>
+
+  <aside class="cta-card" aria-label="Contact">
+    <div><h2>Want to talk about this project?</h2><p>I am open to roles in Demand Planning, IBP, Supply Chain Analytics and Production Planning.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp/en" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-validador-en">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-validador-en">Download resume</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-validador-en">LinkedIn</a>
+    </div>
+  </aside>
+
+  <div class="next-links">
+    <a href="../publicacoes/incoterms-en.html"><small>Related publication</small>Incoterms: where the risk changes hands</a>
+    <a href="boletim-ruptura-en.html"><small>Another project</small>Store Stockout Bulletin (interactive dashboard)</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+  </div>
+</footer>
+</body>
+</html>

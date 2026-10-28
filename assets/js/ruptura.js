@@ -1,6 +1,23 @@
 // Boletim de Ruptura: réplica web do dashboard Power BI, com dados fictícios gerados no navegador
 
 (function () {
+  // Textos em português e em inglês (o idioma vem do lang da página, como no main.js)
+  const EN = document.documentElement.lang.startsWith('en');
+  const T = EN ? {
+    week: 'Week ', wk: 'W', total: 'Total stockout', trat: 'Actionable stockout',
+    vsPrev: ' vs previous week', ofPot: ' of potential sales', pp: ' pp',
+    byStore: w => ' by store, week ' + w + ' (top 12)', byLine: ' by product line',
+    canal: { 'Loja própria': 'Company-owned', 'Franquia': 'Franchise' },
+    line: { 'Novidade': 'New in', 'Core': 'Core', 'Essencial': 'Basics', 'Sazonal': 'Seasonal' }
+  } : {
+    week: 'Semana ', wk: 'S', total: 'Ruptura total', trat: 'Ruptura tratável',
+    vsPrev: ' vs semana anterior', ofPot: ' da venda potencial', pp: ' p.p.',
+    byStore: w => ' por loja, semana ' + w + ' (12 maiores)', byLine: ' por linha de produto',
+    canal: {}, line: {}
+  };
+  const LOCALE = EN ? 'en-US' : 'pt-BR';
+  const num = x => EN ? x.toFixed(1) : x.toFixed(1).replace('.', ',');
+
   // Gerador pseudoaleatório com semente fixa: todo visitante vê os mesmos números
   let seed = 20261023;
   const rand = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
@@ -53,11 +70,11 @@
 
   const $ = id => document.getElementById(id);
   const fWeek = $('fWeek'), fCanal = $('fCanal'), fLine = $('fLine'), fMetric = $('fMetric');
-  WEEKS.slice().reverse().forEach(w => fWeek.add(new Option('Semana ' + w, w)));
+  WEEKS.slice().reverse().forEach(w => fWeek.add(new Option(T.week + w, w)));
 
-  const pct = x => (x * 100).toFixed(1).replace('.', ',') + '%';
-  const pp = x => (x >= 0 ? '+' : '') + (x * 100).toFixed(1).replace('.', ',') + ' p.p.';
-  const brl = x => 'R$ ' + Math.round(x / 1000).toLocaleString('pt-BR') + ' mil';
+  const pct = x => num(x * 100) + '%';
+  const pp = x => (x >= 0 ? '+' : '') + num(x * 100) + T.pp;
+  const brl = x => 'R$ ' + Math.round(x / 1000).toLocaleString(LOCALE) + (EN ? 'k' : ' mil');
 
   const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const isDark = () => {
@@ -89,7 +106,7 @@
         const pts = chart.getDatasetMeta(i).data;
         const last = pts[pts.length - 1];
         if (!last) return;
-        ctx.fillText(ds.data[ds.data.length - 1].toFixed(1).replace('.', ',') + '%', last.x + 10, last.y);
+        ctx.fillText(num(ds.data[ds.data.length - 1]) + '%', last.x + 10, last.y);
       });
       ctx.restore();
     }
@@ -121,8 +138,8 @@
     const kpis = [
       ['kTotal', pct(m.total), mp ? pp(m.total - mp.total) : '', mp && m.total > mp.total],
       ['kTrat', pct(m.trat), mp ? pp(m.trat - mp.trat) : '', mp && m.trat > mp.trat],
-      ['kRepor', m.repor.toLocaleString('pt-BR'), mp ? ((m.repor - mp.repor >= 0 ? '+' : '') + (m.repor - mp.repor) + ' vs semana anterior') : '', mp && m.repor > mp.repor],
-      ['kValor', brl(m.valor), pct(m.pctValor) + ' da venda potencial', false]
+      ['kRepor', m.repor.toLocaleString(LOCALE), mp ? ((m.repor - mp.repor >= 0 ? '+' : '') + (m.repor - mp.repor) + T.vsPrev) : '', mp && m.repor > mp.repor],
+      ['kValor', brl(m.valor), pct(m.pctValor) + T.ofPot, false]
     ];
     kpis.forEach(([id, val, delta, worse]) => {
       $(id).querySelector('b').textContent = val;
@@ -133,12 +150,12 @@
 
     // Tendência semanal
     const trend = WEEKS.map(w => measures(filtered(w)));
-    const labels = WEEKS.map(w => 'S' + w);
-    $('lTrend').innerHTML = '<span><i style="background:' + c.total + '"></i>Ruptura total</span><span><i style="background:' + c.trat + '"></i>Ruptura tratável</span>';
+    const labels = WEEKS.map(w => T.wk + w);
+    $('lTrend').innerHTML = '<span><i style="background:' + c.total + '"></i>' + T.total + '</span><span><i style="background:' + c.trat + '"></i>' + T.trat + '</span>';
     const ds = [
-      { label: 'Ruptura total', data: trend.map(t => t.total * 100), borderColor: c.total, backgroundColor: c.total },
-      { label: 'Ruptura tratável', data: trend.map(t => t.trat * 100), borderColor: c.trat, backgroundColor: c.trat }
-    ].map(d => ({ ...d, borderWidth: 2, pointRadius: labels.map(l => l === 'S' + week ? 5 : 0), pointHoverRadius: 6, pointBorderColor: css('--surface'), pointBorderWidth: 2, tension: 0.25 }));
+      { label: T.total, data: trend.map(t => t.total * 100), borderColor: c.total, backgroundColor: c.total },
+      { label: T.trat, data: trend.map(t => t.trat * 100), borderColor: c.trat, backgroundColor: c.trat }
+    ].map(d => ({ ...d, borderWidth: 2, pointRadius: labels.map(l => l === T.wk + week ? 5 : 0), pointHoverRadius: 6, pointBorderColor: css('--surface'), pointBorderWidth: 2, tension: 0.25 }));
     if (!trendChart) {
       trendChart = new Chart($('cTrend'), {
         type: 'line',
@@ -153,7 +170,7 @@
           },
           plugins: {
             legend: { display: false },
-            tooltip: { ...tooltip(), callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1).replace('.', ',') + '%' } }
+            tooltip: { ...tooltip(), callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + num(ctx.parsed.y) + '%' } }
           }
         }
       });
@@ -170,7 +187,7 @@
     const top = sorted.slice(0, 12);
     const storeData = {
       labels: top.map(x => x.s.name),
-      datasets: [{ label: metric === 'trat' ? 'Ruptura tratável' : 'Ruptura total', data: top.map(x => x.m[key] * 100), backgroundColor: c[key], borderRadius: 4, maxBarThickness: 14, borderSkipped: 'start' }]
+      datasets: [{ label: metric === 'trat' ? T.trat : T.total, data: top.map(x => x.m[key] * 100), backgroundColor: c[key], borderRadius: 4, maxBarThickness: 14, borderSkipped: 'start' }]
     };
     if (!storeChart) {
       storeChart = new Chart($('cStore'), {
@@ -178,17 +195,17 @@
         options: {
           indexAxis: 'y', maintainAspectRatio: false,
           scales: { x: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: css('--line') }, border: { display: false } }, y: { grid: { display: false } } },
-          plugins: { legend: { display: false }, tooltip: { ...tooltip(), callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.x.toFixed(1).replace('.', ',') + '%' } } }
+          plugins: { legend: { display: false }, tooltip: { ...tooltip(), callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + num(ctx.parsed.x) + '%' } } }
         }
       });
     } else { storeChart.data = storeData; storeChart.update(); }
-    $('tStoreTitle').textContent = (metric === 'trat' ? 'Ruptura tratável' : 'Ruptura total') + ' por loja, semana ' + week + ' (12 maiores)';
+    $('tStoreTitle').textContent = (metric === 'trat' ? T.trat : T.total) + T.byStore(week);
 
     // Ruptura por linha de produto
     const byLine = LINES.map(l => measures(filtered(week, { ignoreLine: true }).filter(x => x.line === l.id)));
     const lineData = {
-      labels: LINES.map(l => l.id),
-      datasets: [{ label: metric === 'trat' ? 'Ruptura tratável' : 'Ruptura total', data: byLine.map(x => x[key] * 100), backgroundColor: LINES.map(l => fLine.value === 'all' || fLine.value === l.id ? c[key] : css('--line')), borderRadius: 4, maxBarThickness: 36, borderSkipped: 'start' }]
+      labels: LINES.map(l => T.line[l.id] || l.id),
+      datasets: [{ label: metric === 'trat' ? T.trat : T.total, data: byLine.map(x => x[key] * 100), backgroundColor: LINES.map(l => fLine.value === 'all' || fLine.value === l.id ? c[key] : css('--line')), borderRadius: 4, maxBarThickness: 36, borderSkipped: 'start' }]
     };
     if (!lineChart) {
       lineChart = new Chart($('cLine'), {
@@ -196,16 +213,16 @@
         options: {
           maintainAspectRatio: false,
           scales: { y: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: css('--line') }, border: { display: false } }, x: { grid: { display: false } } },
-          plugins: { legend: { display: false }, tooltip: { ...tooltip(), callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1).replace('.', ',') + '%' } } }
+          plugins: { legend: { display: false }, tooltip: { ...tooltip(), callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + num(ctx.parsed.y) + '%' } } }
         }
       });
     } else { lineChart.data = lineData; lineChart.update(); }
-    $('tLineTitle').textContent = (metric === 'trat' ? 'Ruptura tratável' : 'Ruptura total') + ' por linha de produto';
+    $('tLineTitle').textContent = (metric === 'trat' ? T.trat : T.total) + T.byLine;
 
     // Detratoras e promotoras
     const rowHtml = x => {
       const d = x.mp ? x.m[key] - x.mp[key] : null;
-      return '<tr><td>' + x.s.name + '</td><td>' + x.s.canal + '</td><td class="num">' + pct(x.m[key]) + '</td><td class="num">' + x.m.repor + '</td><td class="num" data-trend="' + (d == null ? '' : d > 0 ? 'up' : 'down') + '">' + (d == null ? '' : pp(d)) + '</td></tr>';
+      return '<tr><td>' + x.s.name + '</td><td>' + (T.canal[x.s.canal] || x.s.canal) + '</td><td class="num">' + pct(x.m[key]) + '</td><td class="num">' + x.m.repor + '</td><td class="num" data-trend="' + (d == null ? '' : d > 0 ? 'up' : 'down') + '">' + (d == null ? '' : pp(d)) + '</td></tr>';
     };
     $('tDet').innerHTML = sorted.slice(0, 5).map(rowHtml).join('');
     $('tPro').innerHTML = sorted.slice(-5).reverse().map(rowHtml).join('');

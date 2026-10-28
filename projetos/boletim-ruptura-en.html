@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store Stockout Bulletin | Alexandre Wang</title>
+<meta name="description" content="Interactive store stockout dashboard with fictional data: total stockout, actionable stockout, store ranking and lost potential sales. Web replica of a Power BI project.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/boletim-ruptura-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/boletim-ruptura.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/boletim-ruptura-en.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Store Stockout Bulletin | interactive dashboard">
+<meta property="og:description" content="Which store is out of stock and whether the DC has inventory to replenish it. Fictional data.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/ruptura.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/ruptura.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="boletim-ruptura.html" hreflang="pt-BR">PT</a><a href="boletim-ruptura-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#projects">← Projects</a></div>
+    <div class="kicker">Dashboard · Fashion retail</div>
+    <h1>Store Stockout Bulletin</h1>
+    <p class="lead">Every week, store managers and coordinators need to know two things: which products are missing in each store, and which of those gaps can be fixed right now because the distribution center has stock.</p>
+    <div class="meta"><span>Power BI · DAX · SQL · VBA</span><span>Web replica</span><span>Fictional data</span></div>
+  </div>
+</header>
+
+<main id="content">
+  <section class="dash" aria-label="Interactive dashboard">
+    <div class="wrap">
+      <div class="dash-bar" role="group" aria-label="Dashboard filters">
+        <label>Week<select id="fWeek"></select></label>
+        <label>Channel<select id="fCanal"><option value="all">All</option><option value="Loja própria">Company-owned</option><option value="Franquia">Franchise</option></select></label>
+        <label>Product line<select id="fLine"><option value="all">All</option><option value="Novidade">New in</option><option value="Core">Core</option><option value="Essencial">Basics</option><option value="Sazonal">Seasonal</option></select></label>
+        <label>Metric in charts<select id="fMetric"><option value="trat">Actionable stockout</option><option value="total">Total stockout</option></select></label>
+        <span class="demo">Fictional data · 20 stores · 80 SKUs</span>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi" id="kTotal"><span>Total stockout (1 day)</span><b>…</b><small></small></div>
+        <div class="kpi" id="kTrat"><span>Actionable stockout</span><b>…</b><small></small></div>
+        <div class="kpi" id="kRepor"><span>Store-SKUs to replenish now</span><b>…</b><small></small></div>
+        <div class="kpi" id="kValor"><span>Lost potential sales (7 days)</span><b>…</b><small></small></div>
+      </div>
+
+      <div class="charts">
+        <div class="chart-card wide">
+          <div class="chart-head"><h3>Stockout by week: total and actionable</h3><div class="chart-legend" id="lTrend"></div></div>
+          <div class="chart-box"><canvas id="cTrend" role="img" aria-label="Line chart with total and actionable stockout over the last 8 weeks"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 id="tStoreTitle">Stockout by store</h3>
+          <div class="chart-box tall"><canvas id="cStore" role="img" aria-label="Bar chart with the 12 stores with the highest stockout in the week"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 id="tLineTitle">Stockout by product line</h3>
+          <div class="chart-box tall"><canvas id="cLine" role="img" aria-label="Bar chart with stockout by product line"></canvas></div>
+        </div>
+      </div>
+
+      <div class="rank">
+        <div class="chart-card">
+          <h3>5 lagging stores (highest stockout)</h3>
+          <div class="table-wrap" style="margin:0">
+            <table><thead><tr><th>Store</th><th>Channel</th><th class="num">Stockout</th><th class="num">Replenish</th><th class="num">Vs prev. week</th></tr></thead><tbody id="tDet"></tbody></table>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>5 leading stores (lowest stockout)</h3>
+          <div class="table-wrap" style="margin:0">
+            <table><thead><tr><th>Store</th><th>Channel</th><th class="num">Stockout</th><th class="num">Replenish</th><th class="num">Vs prev. week</th></tr></thead><tbody id="tPro"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="article" style="padding-top:8px">
+    <h2>The problem</h2>
+    <p>A fashion retail chain tracked store stockouts in spreadsheets. The overall number existed, but it did not answer the question that matters for replenishment: <strong>of these gaps, which ones can I fix this week?</strong></p>
+    <p>If the product ran out in the store and in the distribution center too, there is no point pushing the replenishment team. If it ran out in the store while stock sits in the distribution center, that is a replenishment failure that can be fixed now.</p>
+
+    <h2>The solution</h2>
+    <p>A weekly bulletin in Power BI, fed by a dataset prepared with SQL and VBA, built on three ideas:</p>
+    <ol>
+      <li><strong>Total stockout:</strong> the share of store-SKU combinations at zero on the day of the stock snapshot.</li>
+      <li><strong>Actionable stockout:</strong> the same calculation, only for SKUs that have stock in the distribution center. This is the part replenishment can solve.</li>
+      <li><strong>Store ranking:</strong> lagging and leading stores of the week, so coordinators know where to act first.</li>
+    </ol>
+    <p>The filters follow the way the business looks at the operation: channel (company-owned or franchise), product line (new in, core, basics and seasonal), region and manager. Products being phased out are left out, so items that will not be replenished do not inflate the stockout.</p>
+
+    <h3>The main DAX measures</h3>
+<pre><span class="c">-- % of store-SKUs at zero, only among items the store has already received</span>
+<span class="k">% Ruptura 1D</span> =
+AVERAGEX(
+    FILTER( Ruptura, Ruptura[ESTOQUE_RECEBIDO] = <span class="s">"RECEBIDO"</span> ),
+    Ruptura[RUPTURA_1D]
+)
+
+<span class="c">-- Same calculation, only where the distribution center has stock to replenish</span>
+<span class="k">% Ruptura Tratável</span> =
+CALCULATE( [% Ruptura 1D], Ruptura[ESTOQUE_TRATAVEL] = <span class="s">"TRATAVEL"</span> )
+
+<span class="c">-- Lost potential sales: days out of stock x the SKU's sales potential in the store</span>
+<span class="k">Valor Ruptura 7D</span> =
+SUMX( Ruptura, Ruptura[RUPTURA_7D] * Ruptura[POTENCIAL] )</pre>
+    <p class="note">Measure and column names are in Portuguese, as in the original model.</p>
+
+    <h2>The result</h2>
+    <p>The bulletin went out every week to store managers and coordinators, with the same criteria for every store, and sped up replenishment priorities for company-owned stores. The goal is to replace "stockout is high" with "these stores have these SKUs at zero while the distribution center has stock".</p>
+
+    <div class="callout green">
+      <p><strong>About this page:</strong> the original version runs in Power BI with the company's internal data, which cannot be published. This is a faithful replica of the logic, built in HTML and JavaScript, with 20 stores and 80 fictional products generated in the browser.</p>
+    </div>
+
+    <aside class="cta-card" aria-label="Contact">
+      <div><h2>Want to talk about this project?</h2><p>I am open to roles in Demand Planning, IBP, Supply Chain Analytics and Production Planning.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp/en" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-ruptura-en">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-ruptura-en">Download resume</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-ruptura-en">LinkedIn</a>
+      </div>
+    </aside>
+
+    <div class="next-links">
+      <a href="validador-documentos-en.html"><small>Next project</small>Import document checker with OCR</a>
+      <a href="../en.html#projects"><small>Back</small>All projects</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+  </div>
+</footer>
+</body>
+</html>

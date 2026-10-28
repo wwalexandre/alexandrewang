@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expiry Hunter | Alexandre Wang</title>
+<meta name="description" content="Web app that simulates batch-by-batch consumption (FEFO), shows how much stock will expire before it is used, what that costs and which action to take. Demo with fictional data.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/cacador-vencimentos-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/cacador-vencimentos.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/cacador-vencimentos-en.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Expiry Hunter: the expiry loss before it happens">
+<meta property="og:description" content="FEFO consumption batch by batch, projected loss in reais and a suggested action for each batch. Open app with fictional data.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/cacador.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<style>
+  .page-hero .btn-row { margin-top: 24px; }
+  .shot { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--navy); }
+  .shot img { width: 100%; height: auto; }
+  .steps { counter-reset: passo; list-style: none; padding: 0; display: grid; gap: 12px; }
+  .steps li { counter-increment: passo; position: relative; padding: 14px 16px 14px 56px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+  .steps li::before { content: counter(passo); position: absolute; left: 16px; top: 13px; width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: #fff; font: 600 13px/26px var(--mono); text-align: center; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+</style>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="cacador-vencimentos.html" hreflang="pt-BR">PT</a><a href="cacador-vencimentos-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#projects">← Projects</a></div>
+    <div class="kicker">Web app · Inventory planning</div>
+    <h1>Expiry Hunter</h1>
+    <p class="lead">A batch sitting in stock expires and becomes a loss. The risk shows up early in the numbers, but only becomes visible when someone crosses expiry, stock and consumption. I built an app that does this batch by batch, shows how much will be left on the expiry date and suggests an action for each batch.</p>
+    <div class="meta"><span>Lovable · React · Recharts</span><span>Specification with Claude</span><span>Demo with fictional data</span></div>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="https://cacador-de-vencimentos.lovable.app/?lang=en" target="_blank" rel="noopener" data-umami-event="abrir-app" data-umami-event-projeto="cacador-en">Open the app →</a>
+      <a class="btn btn-ghost" href="https://cacador-de-vencimentos.lovable.app" target="_blank" rel="noopener" hreflang="pt-BR" data-umami-event="abrir-app" data-umami-event-projeto="cacador">Portuguese version</a>
+    </div>
+  </div>
+</header>
+
+<main id="content" class="article">
+
+  <figure class="shot">
+    <img src="../assets/img/previews/cacador.png" alt="Expiry Hunter screen with stock value, projected loss and batches that need action" width="1280" height="800" loading="lazy">
+  </figure>
+
+  <h2>Why it matters</h2>
+  <p>In healthcare, an expired product does not go back on the shelf. It becomes disposal, a loss provision and sometimes a stockout of the same item in another location that would have sold it all in time.</p>
+  <p>Looking only at the expiry date is not enough. A batch that expires in 60 days can be safe if turnover is high, and a batch that expires in 200 days can be lost if another batch of the same product is ahead in the queue.</p>
+
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><strong>A queue by expiry.</strong> For each product and location, batches queue up by expiry date. That is FEFO: first expired, first out.</li>
+    <li><strong>Consumption works through the queue.</strong> Daily consumption empties one batch at a time. The next batch only starts being used when the previous one runs out or expires.</li>
+    <li><strong>What is left becomes a loss.</strong> The quantity not used by the expiry date is the leftover. Leftover times unit cost is the projected loss in reais.</li>
+    <li><strong>One action per batch.</strong> Simple rules suggest what to do, and the planner can change the action and track progress.</li>
+  </ol>
+  <p>On screen you can change the reference date, simulate a consumption change from -50% to +50%, filter by location and import your own CSV. Everything runs in the browser.</p>
+
+  <h2>Suggested action rules</h2>
+  <p>Tested in this order. The first one that applies is suggested.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Batch situation</th><th>Suggested action</th></tr></thead>
+      <tbody>
+        <tr><td>Already expired</td><td>Block and dispose</td></tr>
+        <tr><td>Consumption covers the whole batch</td><td>Monitor</td></tr>
+        <tr><td>Another location uses at least 20% of the leftover in time</td><td>Transfer to that location</td></tr>
+        <tr><td>Expires within 30 days</td><td>Provision the loss and plan disposal</td></tr>
+        <tr><td>Expires within 90 days</td><td>Commercial action: discount or campaign</td></tr>
+        <tr><td>Expires in more than 90 days</td><td>Review the product's purchasing plan</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Example with the demo data</h2>
+  <p>Four batches from the fictional dataset, with no change in consumption.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Batch</th><th class="num">Expires in</th><th class="num">Quantity</th><th class="num">Consumption</th><th class="num">Leftover</th><th class="num">Projected loss</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>L2405 · Painkiller · Southeast DC</td><td class="num">25 days</td><td class="num">4,000 units</td><td class="num">60 units/day</td><td class="num">2,500 units</td><td class="num">R$ 21,250.00</td><td>Transfer 1,050 units to South DC</td></tr>
+        <tr><td>L1120 · Vitamin C · Southeast DC</td><td class="num">45 days</td><td class="num">2,500 units</td><td class="num">30 units/day</td><td class="num">1,150 units</td><td class="num">R$ 21,160.00</td><td>Commercial action</td></tr>
+        <tr><td>L6612 · Children's syrup · Northeast DC</td><td class="num">95 days</td><td class="num">1,800 units</td><td class="num">15 units/day</td><td class="num">555 units</td><td class="num">R$ 11,821.50</td><td>Review purchasing plan</td></tr>
+        <tr><td>L1128 · Vitamin C · Southeast DC</td><td class="num">160 days</td><td class="num">3,000 units</td><td class="num">30 units/day</td><td class="num">0</td><td class="num">R$ 0.00</td><td>Monitor</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>L6612 expires in 95 days, but batch L6604 of the same syrup is ahead in the queue. That is why it only starts being used on day 12 and 555 units are left over. Looking only at expiry, this batch would seem safe.</p>
+
+  <h2>How I built it</h2>
+  <p>I wrote the specification with Claude: the sample data, the FEFO formula, the action rules and the numbers the screen had to show. Claude sent that specification to Lovable through the official connector, and Lovable generated the app in React. Then I checked the on-screen totals against the calculation done by hand.</p>
+  <ul>
+    <li><strong>Stock value:</strong> R$ 356,130.00</li>
+    <li><strong>Projected loss:</strong> R$ 100,590.50</li>
+    <li><strong>Batches that need action:</strong> 11 of 20</li>
+  </ul>
+
+  <h2>What I learned</h2>
+  <ul>
+    <li><strong>Check numbers are worth more than a long prompt.</strong> With the expected totals in the specification, I could tell right away whether the app's math was right.</li>
+    <li><strong>FEFO changes the math.</strong> Calculating each batch on its own underestimates the loss, because it ignores that the next batch waits for the previous one to run out.</li>
+    <li><strong>A transfer only pays off if the other location uses it in time.</strong> That is why the rule requires the destination to absorb at least 20% of the leftover before expiry.</li>
+  </ul>
+
+  <div class="callout green">
+    <p><strong>About the data:</strong> products, batches, costs and locations are fictional. The rules were simplified for the demo; in a real case, transfers and disposal follow health regulations. An imported CSV is processed in the browser and never leaves your computer.</p>
+  </div>
+
+  <aside class="cta-card" aria-label="Contact">
+    <div><h2>Want to talk about this project?</h2><p>I am open to roles in Demand Planning, IBP, Supply Chain Analytics and Production Planning.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp/en" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-cacador-en">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-cacador-en">Download resume</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-cacador-en">LinkedIn</a>
+    </div>
+  </aside>
+
+  <div class="next-links">
+    <a href="boletim-ruptura-en.html"><small>Another project</small>Store Stockout Bulletin (interactive dashboard)</a>
+    <a href="validador-documentos-en.html"><small>Another project</small>Import document checker</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+  </div>
+</footer>
+</body>
+</html>
