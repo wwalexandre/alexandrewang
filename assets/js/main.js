@@ -250,7 +250,6 @@ async function generateCV() {
 
 // Antes do download: pede o e-mail do visitante, avisa o Alexandre e oferece o WhatsApp
 const LEAD_ENDPOINT = 'https://formsubmit.co/ajax/alexandre01.w@gmail.com';
-const WHATSAPP = '5511944021458';
 const CV_TXT = {
   pt: {
     title: 'Baixar currículo',
@@ -288,7 +287,7 @@ const CV_TXT = {
 
 (function cvGate() {
   const t = CV_TXT[LANG];
-  const waLink = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(t.msg);
+  const waLink = LANG === 'en' ? '/whatsapp/resume' : '/whatsapp/curriculo';
   const dlg = document.createElement('dialog');
   dlg.className = 'cv-dialog';
   dlg.setAttribute('aria-labelledby', 'cvTitle');

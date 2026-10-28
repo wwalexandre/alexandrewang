@@ -49,7 +49,7 @@
     <div class="crumb"><a href="../en.html#publications">← Publications</a></div>
     <div class="kicker">Demand planning · Forecast</div>
     <h1>Is your forecast wrong? Measure before blaming sales.</h1>
-    <p class="lead">Every demand review has the same argument, and almost nobody brings a number. This is the full text behind the video, with the three cuts I use to break down the error, an example and a checklist to download.</p>
+    <p class="lead">At Sanofi, part of my IBP work was tracking forecast accuracy: MAPE, bias and FVA, at Lag 1 and Lag 3, comparing the statistical forecast with the commercial one. These are the three cuts that helped me most to take the demand review away from blame. The numbers in the example are fictional.</p>
     <div class="meta"><span>5 min read</span><span>0:58 video</span><span>Oct 2026</span></div>
   </div>
 </header>
@@ -62,21 +62,17 @@
       <track kind="subtitles" srclang="en" label="English" src="../assets/video/forecast-erro-en.vtt" default>
       <track kind="captions" srclang="pt" label="Português" src="../assets/video/forecast-erro-pt.vtt">
     </video>
-    <figcaption style="text-align:center">58-second Reel. Narrated in Portuguese with AI (ElevenLabs), with English subtitles turned on. All numbers are fictional.</figcaption>
+    <figcaption style="text-align:center">The video I posted on LinkedIn about it, in Portuguese with English subtitles. The numbers are fictional.<span class="credit">Voice: elevenlabs.io</span></figcaption>
   </figure>
 
-  <h2>The same argument every month</h2>
-  <p>The forecast missed by 40% this month. Planning says sales changed the number. Sales says the market changed. The meeting ends without a conclusion, and next month the conversation repeats itself.</p>
-  <p>The problem is not a lack of opinions. It is the lack of a number that shows <strong>where</strong> the forecast misses and <strong>who</strong> touched it. Before talking about blame, break the error down in three cuts.</p>
+  <h2>Where this comes from</h2>
+  <p>In a demand review, forecast error turns into an argument fast. Planning points at the sales override. Sales points at the market. The month closes with no decision, and the next month the same conversation comes back.</p>
+  <p>What I saw work was showing up with the error already broken down in numbers: where the forecast misses, in which direction and whether the manual override helped. With that on screen, nobody has to defend an opinion. It takes three cuts, always in the same order.</p>
 
-  <div class="callout">
-    <p><strong>The right question is not "who got it wrong".</strong> It is "where did it miss, in which direction, and did the manual override help or hurt".</p>
-  </div>
-
-  <h2>1. Break the error down by product family</h2>
-  <p>A 40% total error hides where the problem is. When you split it by family, a Pareto pattern almost always shows up: a few families explain most of the error.</p>
-  <p>To measure each family's weight, add up its absolute error and divide by the total absolute error:</p>
-  <p><code>Weight in error = sum of |actual - forecast| for the family ÷ sum of |actual - forecast| overall</code></p>
+  <h2>1. Error by product family</h2>
+  <p>This is the first cut I make. A 40% total error does not tell you where to act. Split by family, a Pareto almost always shows up: a few families explain most of the error.</p>
+  <p>Each family's weight in the error is its absolute error divided by the total absolute error:</p>
+  <p><code>Weight in error = sum of |actual - forecast| for the family ÷ total sum of |actual - forecast|</code></p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Family (fictional)</th><th>Weight in error</th><th>Cumulative</th></tr></thead>
@@ -88,11 +84,11 @@
       </tbody>
     </table>
   </div>
-  <p>In the example, 3 of 8 families explain 70% of the error. The meeting starts with them. The other five can wait.</p>
-  <p class="note">For the total error, prefer the weighted error (WMAPE: sum of absolute errors divided by the sum of actuals) over a simple average of percentages. In a simple average, an item that sells 2 units and misses by 1 weighs as much as your best seller.</p>
+  <p>In the example, 3 of 8 families explain 70% of the error. The meeting starts with them.</p>
+  <p class="note">For the total error, I prefer the weighted error (WMAPE: sum of absolute errors divided by the sum of actuals) over a simple average of percentages. In a simple average, an item that sells 2 units and misses by 1 weighs as much as the best seller.</p>
 
-  <h2>2. Compare statistical vs. adjusted (FVA)</h2>
-  <p>Almost every demand process has two versions of the number: the statistical forecast, straight from the model, and the adjusted forecast, after manual changes by sales or planning. FVA (Forecast Value Add) measures whether that adjustment added value:</p>
+  <h2>2. Did the manual override help? (FVA)</h2>
+  <p>Every demand process I have worked with had two versions of the number: the statistical forecast from the model, and the adjusted forecast after sales or planning overrides. FVA (Forecast Value Add) shows whether that override made the result better or worse:</p>
   <p><code>FVA = statistical forecast error - adjusted forecast error</code></p>
   <div class="table-wrap">
     <table>
@@ -100,53 +96,49 @@
       <tbody>
         <tr><td>Statistical forecast</td><td>25%</td></tr>
         <tr><td>Forecast adjusted by sales</td><td>32%</td></tr>
-        <tr><td><strong>FVA of the adjustment</strong></td><td><strong>-7 points</strong></td></tr>
+        <tr><td><strong>FVA of the override</strong></td><td><strong>-7 points</strong></td></tr>
       </tbody>
     </table>
   </div>
-  <p>A negative FVA means the adjustment made the forecast worse. In that case, the problem is not the model. It is the adjustment process.</p>
-  <p>Three things to keep the number fair:</p>
+  <p>A negative FVA means the override made the forecast worse. Then the conversation changes: the model was better, and what needs review is the override process.</p>
+  <p>I learned to take three precautions so the number is fair to whoever makes the override:</p>
   <ul>
-    <li>Calculate it by family and by who made the adjustment. An override can help one family and hurt another.</li>
-    <li>Look at least at three months in a row. A single month can be an exception.</li>
-    <li>Always compare on the same horizon (for example, Lag 1 or Lag 3). A forecast made one month ahead and one made three months ahead naturally have different errors.</li>
+    <li>Calculate it by family and by who made the override. An override can help one family and hurt another.</li>
+    <li>Look at least at three months in a row. One month on its own can be an exception.</li>
+    <li>Always compare on the same horizon. I tracked Lag 1 and Lag 3: a forecast made one month ahead and one made three months ahead have different errors by nature.</li>
   </ul>
 
-  <h2>3. Check the bias</h2>
-  <p>Absolute error tells you how big the error is. Bias tells you the direction. If the error always goes the same way, it is not noise: it is a pattern.</p>
+  <h2>3. Which way the error goes (bias)</h2>
+  <p>Absolute error shows how big the error is. Bias shows its direction. When the error always goes the same way, it is no longer noise.</p>
   <p><code>Bias = sum of (forecast - actual) ÷ sum of actual</code></p>
-  <ul>
-    <li><strong>Positive bias:</strong> the forecast sits above actual demand. The result is excess stock, high coverage and expiry risk.</li>
-    <li><strong>Negative bias:</strong> the forecast sits below actual demand. The result is shortages and stockouts.</li>
-  </ul>
-  <p>In the video example, the adjusted forecast was above actual demand in 12 out of 12 months, with a +15% bias. That is not bad luck. It is an optimistic adjustment made every month, and it shows up straight in inventory.</p>
+  <p>With positive bias, the forecast sits above actuals: stock piles up, coverage rises and so does the risk of expiry, which for pharmaceutical products turns into provisions and destruction. With negative bias, the forecast sits below actuals and the result is stockouts.</p>
+  <p>In the video example, the adjusted forecast was above actuals in 12 out of 12 months, with a bias of +15%. Twelve months in a row is not bad luck. It is an optimistic override repeated every month, and it shows up straight in inventory.</p>
 
-  <h2>4. Turn it into action</h2>
-  <p>With the three cuts on the table, the meeting changes topic. Instead of "who got it wrong", the agenda becomes:</p>
+  <h2>4. From analysis to action</h2>
+  <p>With the three cuts on the table, the meeting agenda changes:</p>
   <ol>
     <li>Which families explain most of the error?</li>
     <li>Where is the manual override making the number worse?</li>
     <li>Does the error always go the same way?</li>
     <li>Who does what before the next meeting?</li>
   </ol>
-  <p>Each critical family leaves with an action, an owner and a deadline. Overrides with negative FVA are reviewed or dropped. And the same three numbers come back at the next meeting to show whether things improved.</p>
+  <p>Each critical family leaves with an action, an owner and a deadline. Overrides with negative FVA are reviewed or stopped. And the same numbers come back at the next meeting to show whether things improved.</p>
 
-  <div class="callout green">
-    <p><strong>In short:</strong> break the error down by family, compare statistical against adjusted and look at the direction of the error. With these three cuts, the meeting stops being about blame and becomes about action.</p>
-  </div>
+  <h2>What I take from it</h2>
+  <p>Measure before arguing, and always measure the same way: same metric, same horizon, same cut. That idea is also behind the forecast qualification model I built in Power BI and DAX. It classifies each item's demand pattern (Syntetos-Boylan) and recommends, using 8 criteria, when the statistical forecast can go ahead without manual review. That way the team spends its time where the risk is higher.</p>
 
-  <h2>Checklist to download</h2>
-  <p>I put the four steps, the formulas and the meeting questions on a single A4 page, to use at month-end close.</p>
-  <p><a class="btn btn-primary btn-sm" href="../assets/docs/forecast-checklist.pdf" download>Download the checklist (PDF, 1 page)</a></p>
+  <h2>Month-end checklist</h2>
+  <p>I put the four steps, the formulas and the meeting questions on a single A4 page (in Portuguese).</p>
+  <p><a class="btn btn-primary btn-sm" href="../assets/docs/checklist-do-forecast.pdf" download>Download the checklist (PDF, 1 page)</a></p>
 
-  <p class="note">All numbers in this article and in the video are fictional and only serve as an example. The video was made with code and AI: narration generated with ElevenLabs, animations built in HTML and rendered with Playwright and ffmpeg.</p>
+  <p class="note">All numbers in this article and in the video are fictional and only serve as an example. No company data was used.</p>
 
     <div class="share" data-share="forecast"><span>Share</span></div>
 
   <aside class="cta-card" aria-label="Contact">
-    <div><h2>Enjoyed this?</h2><p>I write about planning, data and international trade. Let's talk.</p></div>
+    <div><h2>Let's talk?</h2><p>If you work with demand planning or IBP and want to swap experiences, get in touch.</p></div>
     <div class="btn-row">
-      <a class="btn btn-wa btn-sm" href="https://wa.me/5511944021458?text=Hi%20Alexandre%2C%20I%20read%20your%20article%20on%20forecast%20error%20and%20would%20like%20to%20talk." target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-forecast-en">WhatsApp</a>
+      <a class="btn btn-wa btn-sm" href="/whatsapp/en" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-forecast-en">WhatsApp</a>
       <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-forecast-en">Download resume</a>
       <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-forecast-en">LinkedIn</a>
     </div>

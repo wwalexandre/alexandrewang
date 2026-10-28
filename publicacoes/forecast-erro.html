@@ -49,7 +49,7 @@
     <div class="crumb"><a href="../index.html#publicacoes">← Publicações</a></div>
     <div class="kicker">Planejamento de demanda · Forecast</div>
     <h1>Seu forecast erra? Meça antes de culpar o comercial.</h1>
-    <p class="lead">Toda reunião de demanda tem a mesma briga, e quase nunca alguém mostra um número. Este é o texto completo do vídeo, com os três cortes que eu uso para abrir o erro, um exemplo e um checklist para baixar.</p>
+    <p class="lead">Na Sanofi, parte do meu trabalho no IBP era acompanhar a acuracidade do forecast: MAPE, Bias e FVA, em Lag 1 e Lag 3, comparando o forecast estatístico com o comercial. Aqui estão os três cortes que mais me ajudaram a tirar a reunião de demanda da discussão de culpa. Os números do exemplo são fictícios.</p>
     <div class="meta"><span>Leitura de 5 min</span><span>Vídeo de 0:58</span><span>Out 2026</span></div>
   </div>
 </header>
@@ -62,20 +62,16 @@
       <track kind="captions" srclang="pt" label="Português" src="../assets/video/forecast-erro-pt.vtt">
       <track kind="subtitles" srclang="en" label="English" src="../assets/video/forecast-erro-en.vtt">
     </video>
-    <figcaption style="text-align:center">Vídeo de 58 segundos no formato Reel. Narração gerada com IA (ElevenLabs). Todos os números são fictícios.</figcaption>
+    <figcaption style="text-align:center">O vídeo que publiquei no LinkedIn sobre o tema. Os números são fictícios.<span class="credit">Voz: elevenlabs.io</span></figcaption>
   </figure>
 
-  <h2>A briga de toda reunião</h2>
-  <p>O forecast errou 40% no mês. O planejamento diz que o comercial mudou o número. O comercial diz que o mercado mudou. A reunião acaba sem conclusão, e no mês seguinte a conversa se repete.</p>
-  <p>O problema não é a falta de opinião. É a falta de um número que mostre <strong>onde</strong> o forecast erra e <strong>quem</strong> mexeu nele. Antes de discutir culpa, vale abrir o erro em três cortes.</p>
+  <h2>De onde vem este texto</h2>
+  <p>Em reunião de demanda, erro de forecast vira discussão rápido. O planejamento aponta o ajuste do comercial. O comercial aponta o mercado. O mês fecha sem decisão, e no mês seguinte a conversa se repete.</p>
+  <p>O que eu vi funcionar foi chegar com o erro já aberto em números: onde o forecast erra, para que lado e se o ajuste manual ajudou. Com isso na tela, ninguém precisa defender opinião. São três cortes, sempre na mesma ordem.</p>
 
-  <div class="callout">
-    <p><strong>A pergunta certa não é "quem errou".</strong> É "onde errou, em que direção e se o ajuste manual ajudou ou atrapalhou".</p>
-  </div>
-
-  <h2>1. Abra o erro por família de produto</h2>
-  <p>Um erro de 40% no total esconde onde está o problema. Quando você separa por família, quase sempre aparece um padrão de Pareto: poucas famílias explicam a maior parte do erro.</p>
-  <p>Para medir o peso de cada família, some o erro absoluto dela e divida pelo erro absoluto total:</p>
+  <h2>1. Erro por família de produto</h2>
+  <p>É o primeiro corte que eu faço. Um erro de 40% no total não diz onde agir. Separando por família, quase sempre aparece um Pareto: poucas famílias explicam a maior parte do erro.</p>
+  <p>O peso de cada família no erro é o erro absoluto dela dividido pelo erro absoluto total:</p>
   <p><code>Peso no erro = soma do |real - forecast| da família ÷ soma do |real - forecast| total</code></p>
   <div class="table-wrap">
     <table>
@@ -88,11 +84,11 @@
       </tbody>
     </table>
   </div>
-  <p>No exemplo, 3 de 8 famílias explicam 70% do erro. A reunião começa por elas. As outras cinco podem esperar.</p>
-  <p class="note">Para o erro total, prefira o erro ponderado (WMAPE: soma dos erros absolutos dividida pela soma do real) à média simples dos percentuais. Na média simples, um item que vende 2 unidades e erra 1 pesa tanto quanto o item mais vendido.</p>
+  <p>No exemplo, 3 de 8 famílias explicam 70% do erro. A reunião começa por elas.</p>
+  <p class="note">Para o erro total, eu prefiro o erro ponderado (WMAPE: soma dos erros absolutos dividida pela soma do real) à média simples dos percentuais. Na média simples, um item que vende 2 unidades e erra 1 pesa tanto quanto o item mais vendido.</p>
 
-  <h2>2. Compare o estatístico com o ajustado (FVA)</h2>
-  <p>Quase todo processo de demanda tem duas versões do número: o forecast estatístico, que sai do modelo, e o forecast ajustado, depois das correções manuais do comercial ou do planejamento. O FVA (Forecast Value Add) mede se esse ajuste agregou valor:</p>
+  <h2>2. O ajuste manual ajudou? (FVA)</h2>
+  <p>Todo processo de demanda que conheci tinha duas versões do número: o forecast estatístico, que sai do modelo, e o forecast ajustado depois das correções do comercial ou do planejamento. O FVA (Forecast Value Add) mostra se esse ajuste melhorou ou piorou o resultado:</p>
   <p><code>FVA = erro do forecast estatístico - erro do forecast ajustado</code></p>
   <div class="table-wrap">
     <table>
@@ -104,49 +100,45 @@
       </tbody>
     </table>
   </div>
-  <p>FVA negativo quer dizer que o ajuste piorou o forecast. Nesse caso, o problema não é o modelo. É o processo de ajuste.</p>
-  <p>Três cuidados para o número ser justo:</p>
+  <p>FVA negativo quer dizer que o ajuste piorou o forecast. Aí a conversa muda: o modelo estava melhor, e o que precisa ser revisto é o processo de ajuste.</p>
+  <p>Aprendi a tomar três cuidados para o número ser justo com quem ajusta:</p>
   <ul>
-    <li>Calcule por família e por quem fez o ajuste. Um ajuste pode ajudar numa família e atrapalhar em outra.</li>
-    <li>Olhe pelo menos três meses seguidos. Um mês isolado pode ser exceção.</li>
-    <li>Compare sempre no mesmo horizonte (por exemplo, Lag 1 ou Lag 3). O forecast feito um mês antes e o feito três meses antes têm erros diferentes por natureza.</li>
+    <li>Calcular por família e por quem fez o ajuste. Um ajuste pode ajudar numa família e atrapalhar em outra.</li>
+    <li>Olhar pelo menos três meses seguidos. Um mês isolado pode ser exceção.</li>
+    <li>Comparar sempre no mesmo horizonte. Eu acompanhava Lag 1 e Lag 3: o forecast feito um mês antes e o feito três meses antes têm erros diferentes por natureza.</li>
   </ul>
 
-  <h2>3. Veja o viés (Bias)</h2>
-  <p>O erro absoluto diz o tamanho do erro. O Bias diz a direção. Se o erro vai sempre para o mesmo lado, não é ruído: é um padrão.</p>
+  <h2>3. Para que lado o erro vai (Bias)</h2>
+  <p>O erro absoluto mostra o tamanho do erro. O Bias mostra a direção. Quando o erro vai sempre para o mesmo lado, deixou de ser ruído.</p>
   <p><code>Bias = soma do (forecast - real) ÷ soma do real</code></p>
-  <ul>
-    <li><strong>Bias positivo:</strong> o forecast fica acima do real. O resultado é estoque sobrando, cobertura alta e risco de vencimento.</li>
-    <li><strong>Bias negativo:</strong> o forecast fica abaixo do real. O resultado é falta de produto e ruptura.</li>
-  </ul>
-  <p>No exemplo do vídeo, o forecast ajustado ficou acima do real em 12 de 12 meses, com Bias de +15%. Isso não é azar. É um ajuste otimista feito todo mês, e ele aparece direto no estoque.</p>
+  <p>Com Bias positivo, o forecast fica acima do real: sobra estoque, a cobertura sobe e aumenta o risco de vencimento, que em produto farmacêutico vira provisão e destruição. Com Bias negativo, o forecast fica abaixo do real e o resultado é falta de produto.</p>
+  <p>No exemplo do vídeo, o forecast ajustado ficou acima do real em 12 de 12 meses, com Bias de +15%. Doze meses seguidos não são azar. É um ajuste otimista repetido todo mês, e ele aparece direto no estoque.</p>
 
-  <h2>4. Transforme em ação</h2>
-  <p>Com os três cortes na mesa, a reunião muda de assunto. Em vez de "quem errou", a pauta vira:</p>
+  <h2>4. Da análise para a ação</h2>
+  <p>Com os três cortes na mesa, a pauta da reunião muda:</p>
   <ol>
     <li>Quais famílias explicam a maior parte do erro?</li>
     <li>Onde o ajuste manual está piorando o número?</li>
     <li>O erro vai sempre para o mesmo lado?</li>
     <li>Quem faz o quê até a próxima reunião?</li>
   </ol>
-  <p>Cada família crítica sai com uma ação, um dono e um prazo. Ajustes com FVA negativo são revistos ou deixam de ser feitos. E os mesmos três números voltam na reunião seguinte, para mostrar se melhorou.</p>
+  <p>Cada família crítica sai com uma ação, um dono e um prazo. Ajustes com FVA negativo são revistos ou deixam de ser feitos. E os mesmos números voltam na reunião seguinte, para mostrar se melhorou.</p>
 
-  <div class="callout green">
-    <p><strong>Resumo:</strong> abra o erro por família, compare o estatístico com o ajustado e olhe a direção do erro. Com esses três cortes, a reunião deixa de ser sobre culpa e vira sobre ação.</p>
-  </div>
+  <h2>O que eu levo disso</h2>
+  <p>Medir antes de discutir, e medir sempre do mesmo jeito: mesma métrica, mesmo horizonte, mesmo corte. Essa ideia também está no modelo de qualificação de forecast que construí em Power BI e DAX. Ele classifica o padrão de demanda de cada item (Syntetos-Boylan) e recomenda, por 8 critérios, quando o estatístico pode seguir sem revisão manual. Assim o time gasta tempo onde o risco é maior.</p>
 
-  <h2>Checklist para baixar</h2>
-  <p>Juntei os quatro passos, as fórmulas e as perguntas da reunião numa página A4, para usar no fechamento do mês.</p>
+  <h2>Checklist do fechamento do mês</h2>
+  <p>Juntei os quatro passos, as fórmulas e as perguntas da reunião numa página A4.</p>
   <p><a class="btn btn-primary btn-sm" href="../assets/docs/checklist-do-forecast.pdf" download>Baixar o checklist (PDF, 1 página)</a></p>
 
-  <p class="note">Todos os números deste artigo e do vídeo são fictícios e servem só de exemplo. O vídeo foi produzido com código e IA: narração gerada com ElevenLabs, animações feitas em HTML e renderizadas com Playwright e ffmpeg.</p>
+  <p class="note">Todos os números deste artigo e do vídeo são fictícios e servem só de exemplo. Nenhum dado de empresa foi usado.</p>
 
     <div class="share" data-share="forecast"><span>Compartilhar</span></div>
 
   <aside class="cta-card" aria-label="Contato">
-    <div><h2>Gostou do conteúdo?</h2><p>Publico sobre planejamento, dados e comércio exterior. Vamos conversar.</p></div>
+    <div><h2>Vamos conversar?</h2><p>Se você trabalha com demanda ou IBP e quer trocar experiências, me chama.</p></div>
     <div class="btn-row">
-      <a class="btn btn-wa btn-sm" href="https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Li%20o%20seu%20artigo%20sobre%20erro%20de%20forecast%20e%20gostaria%20de%20conversar." target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-forecast">WhatsApp</a>
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-forecast">WhatsApp</a>
       <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-forecast">Baixar currículo</a>
       <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-forecast">LinkedIn</a>
     </div>
