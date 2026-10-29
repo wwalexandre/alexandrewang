@@ -479,3 +479,75 @@ pre .s { color: var(--teal); }
 .sim-alert { margin: 12px 0 0; padding: 10px 12px; border-left: 4px solid var(--orange); background: var(--bg); font-size: 14px; }
 @media (max-width: 520px) { .sim-stop { font-size: 10px; } .sim-flag { font-size: 10px; } }
 figcaption .credit { display: block; margin-top: 4px; font-size: 11px; opacity: .75; }
+
+/* ---------- VALIDADOR (demo que roda no navegador) ---------- */
+.vd li { margin: 0; }
+.vd .vd-kit, .vd .vd-files { list-style: none; padding: 0; display: grid; gap: 8px; }
+.vd .vd-kit { margin: 20px 0; }
+.vd .vd-files { margin: 0 0 12px; }
+.vd-kit li, .vd-files li { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.vd-ext { flex: none; width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; font: 600 11px/1 var(--mono); color: #fff; }
+.vd-ext.xls { background: var(--green); }
+.vd-ext.pdf { background: #B83A2E; }
+.vd-name { flex: 1; min-width: 0; display: grid; }
+.vd-name b { font-size: 15px; overflow-wrap: anywhere; }
+.vd-name small { color: var(--muted); font-size: 13px; line-height: 1.4; }
+.vd-name em { color: var(--orange-ink); font-style: normal; }
+.vd-kit-act { display: flex; gap: 2px; flex: none; }
+.vd-link { font: 600 14px/1 var(--font); color: var(--link); background: none; border: 0; padding: 9px 8px; cursor: pointer; text-decoration: none; border-radius: 6px; }
+.vd-link:hover { background: var(--surface-2); }
+.vd-drop { display: grid; gap: 6px; margin: 24px 0 12px; padding: 22px 18px; border: 2px dashed var(--line); border-radius: var(--radius); text-align: center; cursor: pointer; background: var(--surface); }
+.vd-drop:hover, .vd-drop.on, .vd-drop:focus-within { border-color: var(--orange); }
+.vd-drop b { font-size: 16px; }
+.vd-drop span, .vd-drop small { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.vd-drop small { font-size: 13px; }
+.vd-files select { font: 500 13px var(--font); padding: 7px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); max-width: 150px; }
+.vd-x { flex: none; width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+.vd-x:hover { border-color: var(--orange); color: var(--text); }
+.vd-status { font-size: 14px; color: var(--muted); min-height: 1.6em; margin: 10px 0 0; }
+.vd-status.err { color: #C0392B; }
+.vd-report { margin-top: 16px; scroll-margin-top: 80px; }
+.vd-head { display: grid; gap: 12px; padding: 18px 20px; background: var(--navy); color: #fff; border-radius: var(--radius) var(--radius) 0 0; }
+@media (min-width: 640px) { .vd-head { grid-template-columns: 1fr auto; align-items: center; } }
+.vd-head small { display: block; color: #9DABBA; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.vd-head b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.1; }
+.vd-head span { color: #C9D3DD; font-size: 14px; }
+.vd-count { display: flex; flex-wrap: wrap; gap: 6px; }
+.vd-count .pill { font-size: 12px; padding: 6px 9px; }
+.vd-head .vd-meta { grid-column: 1 / -1; margin: 0; font-size: 13px; color: #9DABBA; }
+.vd-checks { border: 1px solid var(--line); border-top: 0; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; background: var(--surface); }
+.vd-check + .vd-check { border-top: 1px solid var(--line); }
+.vd-check summary { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; list-style: none; }
+.vd-check summary::-webkit-details-marker { display: none; }
+.vd-check summary:hover { background: var(--surface-2); }
+.vd-check.fail summary { box-shadow: inset 3px 0 0 #C0392B; }
+.vd-check.warn summary { box-shadow: inset 3px 0 0 var(--orange); }
+.vd-id { flex: none; width: 30px; font: 600 13px/1 var(--mono); color: var(--muted); }
+.vd-t { flex: 1; min-width: 0; display: grid; }
+.vd-t b { font-size: 15px; }
+.vd-t small { color: var(--muted); font-size: 12.5px; line-height: 1.4; }
+.vd .vd-check ul { list-style: none; margin: 0; padding: 2px 16px 14px 58px; display: grid; gap: 8px; }
+.vd .vd-check li { display: flex; gap: 10px; align-items: baseline; font-size: 15px; line-height: 1.5; }
+.vd-check li .pill { flex: none; }
+@media (max-width: 560px) {
+  .vd .vd-check ul { padding-left: 16px; }
+  .vd .vd-check li { flex-direction: column; gap: 4px; }
+  .vd-files li { flex-wrap: wrap; }
+  .vd-files select { order: 3; max-width: none; flex: 1 0 100%; }
+}
+.vd-mail { margin-top: 24px; }
+.vd-mail-top { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.article .vd-mail h3 { margin: 0; }
+.vd-mail textarea { width: 100%; font: 13px/1.55 var(--mono); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); color: var(--text); resize: vertical; }
+.vd-dialog { border: 0; border-radius: 16px; padding: 0; width: calc(100% - 32px); max-width: 980px; max-height: 85vh; background: var(--surface); color: var(--text); box-shadow: 0 24px 64px rgba(0, 0, 0, .35); overflow: hidden; }
+.vd-dialog[open] { display: flex; flex-direction: column; }
+.vd-dialog::backdrop { background: rgba(10, 20, 32, .6); }
+.vd-dialog-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.vd-dialog-top b { overflow-wrap: anywhere; }
+.vd-sheet { flex: 1; overflow: auto; }
+.vd-sheet table { font: 12.5px/1.4 var(--font); }
+.vd-sheet td { white-space: nowrap; padding: 6px 10px; border: 1px solid var(--line); }
+.vd-sheet th { position: sticky; left: 0; min-width: 34px; padding: 4px 8px; border: 1px solid var(--line); font: 500 11px/1.2 var(--mono); color: var(--muted); text-align: center; background: var(--surface-2); }
+.vd-sheet tr:first-child th { top: 0; left: auto; z-index: 1; }
+.vd-sheet tr:first-child th:first-child { left: 0; z-index: 2; }
+.article .vd > h2:first-child { margin-top: 0; }

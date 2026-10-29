@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Import Document Checker | Alexandre Wang</title>
-<meta name="description" content="Python script with OCR (Tesseract) that cross-checks a shipment's invoice, packing list, shipping list and certificates of analysis, flagging mismatches in quantity, batch and expiry.">
+<meta name="description" content="Try it in your browser: the checker cross-checks a shipment's invoice, packing list, shipping list and certificates of analysis and flags mismatches in quantity, lot and expiry. Sample kit with fictional data.">
 <link rel="canonical" href="https://alexandrewang.vercel.app/projetos/validador-documentos-en.html">
 <link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/validador-documentos.html">
 <link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/validador-documentos-en.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Import document checker with Python and OCR">
-<meta property="og:description" content="12 automatic checks across invoice, packing list, shipping list and COA. Demo with fictional data.">
+<meta property="og:title" content="Import document checker: try it in your browser">
+<meta property="og:description" content="12 automatic checks across invoice, packing list, shipping list and COA. Run it with the sample kit or your own files, with nothing sent to a server.">
 <meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/validador.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0F1C2C">
@@ -21,6 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/style.css">
 <script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/validador.js" defer></script>
 <style>
   .flow { width: 100%; height: auto; margin: 8px 0 4px; }
   .flow .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
@@ -61,12 +62,41 @@
     <div class="crumb"><a href="../en.html#projects">← Projects</a></div>
     <div class="kicker">Automation · International trade</div>
     <h1>Import document checker</h1>
-    <p class="lead">Before a shipment is released, someone has to check that the invoice, packing list, shipping list and certificates of analysis tell the same story. I wrote a Python script that does this check, including on scanned documents, and delivers a ready report.</p>
-    <div class="meta"><span>Python · pandas</span><span>PyMuPDF</span><span>Tesseract OCR · OpenCV</span><span>Demo with fictional data</span></div>
+    <p class="lead">Before a shipment is released, someone has to check that the invoice, packing list, shipping list and certificates of analysis tell the same story. I wrote a Python script that does this check and delivers a ready report. Here the same check runs in your browser.</p>
+    <div class="meta"><span>JavaScript · SheetJS · pdf.js</span><span>Python · pandas</span><span>Tesseract OCR</span><span>Fictional data</span></div>
+    <div class="btn-row" style="margin-top:22px"><a class="btn btn-primary" href="#try">Try it now</a></div>
   </div>
 </header>
 
 <main id="content" class="article">
+
+  <section id="validador" class="vd" aria-labelledby="try">
+    <h2 id="try">Try it now</h2>
+    <p>I put together a fictional shipment with the five documents a supplier sends. There are a few errors hidden in them. Click check and see what the checker finds.</p>
+    <ul class="vd-kit">
+      <li><span class="vd-ext xls">XLS</span><span class="vd-name"><b>Invoice</b><small>6 items, prices and totals</small></span><span class="vd-kit-act"><button type="button" class="vd-link" data-ver="INV-2026-0418_Invoice.xlsx">View</button><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_Invoice.xlsx" download>Download</a></span></li>
+      <li><span class="vd-ext xls">XLS</span><span class="vd-name"><b>Packing list</b><small>Pieces, cartons and weights per family</small></span><span class="vd-kit-act"><button type="button" class="vd-link" data-ver="INV-2026-0418_Packing_List.xlsx">View</button><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_Packing_List.xlsx" download>Download</a></span></li>
+      <li><span class="vd-ext xls">XLS</span><span class="vd-name"><b>Shipping list</b><small>Carton by carton: lots, serials and expiry dates</small></span><span class="vd-kit-act"><button type="button" class="vd-link" data-ver="INV-2026-0418_Shipping_List.xlsx">View</button><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_Shipping_List.xlsx" download>Download</a></span></li>
+      <li><span class="vd-ext pdf">PDF</span><span class="vd-name"><b>Certificate of analysis</b><small>Quality release lot by lot</small></span><span class="vd-kit-act"><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_COA.pdf" target="_blank" rel="noopener">View</a><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_COA.pdf" download>Download</a></span></li>
+      <li><span class="vd-ext pdf">PDF</span><span class="vd-name"><b>Signed invoice and packing list</b><small>The final documents, signed and stamped</small></span><span class="vd-kit-act"><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_INV-PL_assinado.pdf" target="_blank" rel="noopener">View</a><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_INV-PL_assinado.pdf" download>Download</a></span></li>
+    </ul>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="vdRunKit">Check the sample kit</button>
+      <a class="btn btn-outline" href="../assets/docs/validador/kit-exemplo-validador.zip" download>Download the kit (.zip)</a>
+    </div>
+    <label class="vd-drop" id="vdDrop">
+      <input type="file" id="vdInput" class="sr-only" multiple accept=".xlsx,.xlsm,.xls,.csv,.pdf">
+      <b>Or try it with your own files</b>
+      <span>Drop them here or click to choose. Excel and text PDFs. Your file replaces the kit document of the same type: download the kit, change a number or a lot and upload just that file.</span>
+      <small>Files are read in your browser. Nothing is sent to a server.</small>
+    </label>
+    <ul class="vd-files" id="vdFiles" hidden></ul>
+    <button type="button" class="btn btn-primary" id="vdRun" hidden>Check these files</button>
+    <p class="vd-status" id="vdStatus" role="status" aria-live="polite"></p>
+    <div class="vd-report" id="vdReport" hidden></div>
+    <p class="note">Demo rules: at least 18 months of shelf life at arrival (invoice ETA), manufactured up to 6 months before the invoice, and a fictional authorization for SKU-2214, valid since 2025-06-01.</p>
+    <noscript><p class="note">The demo needs JavaScript turned on.</p></noscript>
+  </section>
 
   <h2>Why it matters</h2>
   <p>International trade is a chain of deadlines. A quantity that does not match, a repeated batch or a short expiry found too late turns into cargo stuck at the terminal, storage costs and a risk of running out of product at the end of the line.</p>
@@ -122,6 +152,7 @@
     </svg>
     <figcaption>From document to report. An unreadable certificate does not stop the run: the problem page becomes a warning.</figcaption>
   </figure>
+  <p>The version on this page follows the same path in JavaScript. SheetJS reads the Excel files, pdf.js reads the text in the PDFs and the 12 checks run in your browser. Only OCR for scanned PDFs was left out, because it would make the page too heavy.</p>
 
   <h3>Three result levels</h3>
   <ul>
@@ -150,33 +181,6 @@
       </tbody>
     </table>
   </div>
-
-  <h2>Sample report</h2>
-  <p>Output of a run with fictional documents. The names, numbers and batches below are made up.</p>
-  <div class="report-head">
-    <span>Invoice <b>INV-2026-0418</b> · Example Medical Devices Co.</span>
-    <span>Air shipment · 6 SKUs · 14 batches</span>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
-      <tbody>
-        <tr><td>A. Header</td><td><span class="pill ok">OK</span></td><td>Same data on all 5 documents.</td></tr>
-        <tr><td>A2. Importer tax ID</td><td><span class="pill ok">OK</span></td><td>Valid and the same on every document.</td></tr>
-        <tr><td>B. Quantity per SKU</td><td><span class="pill fail">FAIL</span></td><td>SKU-1042: invoice 120 units, shipping list 100 units.</td></tr>
-        <tr><td>C. Quantity per family</td><td><span class="pill ok">OK</span></td><td>Totals match: 640 units.</td></tr>
-        <tr><td>D. Invoice values</td><td><span class="pill ok">OK</span></td><td>6 lines checked.</td></tr>
-        <tr><td>E. Weights</td><td><span class="pill warn">WARNING</span></td><td>Sum of lines 412.6 kg; declared total 415.0 kg.</td></tr>
-        <tr><td>F. Cartons</td><td><span class="pill ok">OK</span></td><td>18 cartons on both documents.</td></tr>
-        <tr><td>G. Batches and serials</td><td><span class="pill fail">FAIL</span></td><td>Serial SN-00871 appears in batches L2405 and L2406.</td></tr>
-        <tr><td>H. Expiry</td><td><span class="pill fail">FAIL</span></td><td>Batch L2398 arrives with 11 months of shelf life (minimum 18).</td></tr>
-        <tr><td>I. Certificates of analysis</td><td><span class="pill warn">WARNING</span></td><td>Batch read as "L24O6" on the certificate. Probably L2406; check the PDF.</td></tr>
-        <tr><td>J. Final documents</td><td><span class="pill ok">OK</span></td><td>Signed PDF matches the spreadsheets.</td></tr>
-        <tr><td>K. Import approval</td><td><span class="pill ok">OK</span></td><td>All batches made after the approval date.</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="summary"><span class="pill fail">3 FAILS</span><span class="pill warn">2 WARNINGS</span><span class="pill ok">7 OK</span></div>
 
   <h2>Pieces of the logic</h2>
   <p>Simplified versions of two parts of the script, written for this page.</p>
@@ -208,7 +212,7 @@
   </ul>
 
   <div class="callout green">
-    <p><strong>About the code:</strong> the original script works with real supplier documents and is not public. The snippets and the report on this page were recreated with fictional data.</p>
+    <p><strong>About the code:</strong> the original script works with real supplier documents and is not public. The version on this page was rewritten in JavaScript and the sample kit was built from scratch: companies, products, lots and numbers are made up.</p>
   </div>
 
   <aside class="cta-card" aria-label="Contact">

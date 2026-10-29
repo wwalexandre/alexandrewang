@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Validador de Documentos | Alexandre Wang</title>
-<meta name="description" content="Script em Python com OCR (Tesseract) que confere invoice, packing list, shipping list e certificados de análise de um embarque e aponta divergências de quantidade, lote e validade.">
+<meta name="description" content="Teste no navegador: o validador confere invoice, packing list, shipping list e certificados de análise de um embarque e aponta divergências de quantidade, lote e validade. Kit de exemplo com dados fictícios.">
 <link rel="canonical" href="https://alexandrewang.vercel.app/projetos/validador-documentos.html">
 <link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/validador-documentos.html">
 <link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/validador-documentos-en.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Validador de documentos de importação com Python e OCR">
-<meta property="og:description" content="12 checagens automáticas entre invoice, packing list, shipping list e COA. Demonstração com dados fictícios.">
+<meta property="og:title" content="Validador de documentos de importação: teste no navegador">
+<meta property="og:description" content="12 checagens automáticas entre invoice, packing list, shipping list e COA. Rode com o kit de exemplo ou com os seus arquivos, sem enviar nada para servidor.">
 <meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/validador.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0F1C2C">
@@ -21,6 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/style.css">
 <script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/validador.js" defer></script>
 <style>
   .flow { width: 100%; height: auto; margin: 8px 0 4px; }
   .flow .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
@@ -61,12 +62,41 @@
     <div class="crumb"><a href="../index.html#projetos">← Projetos</a></div>
     <div class="kicker">Automação · Comércio exterior</div>
     <h1>Validador de documentos de importação</h1>
-    <p class="lead">Antes de liberar um embarque, alguém precisa conferir se invoice, packing list, shipping list e certificados de análise contam a mesma história. Escrevi um script em Python que faz essa conferência, inclusive em documentos escaneados, e entrega um relatório pronto.</p>
-    <div class="meta"><span>Python · pandas</span><span>PyMuPDF</span><span>Tesseract OCR · OpenCV</span><span>Demo com dados fictícios</span></div>
+    <p class="lead">Antes de liberar um embarque, alguém precisa conferir se invoice, packing list, shipping list e certificados de análise contam a mesma história. Escrevi um script em Python que faz essa conferência e entrega um relatório pronto. Aqui a mesma conferência roda no seu navegador.</p>
+    <div class="meta"><span>JavaScript · SheetJS · pdf.js</span><span>Python · pandas</span><span>Tesseract OCR</span><span>Dados fictícios</span></div>
+    <div class="btn-row" style="margin-top:22px"><a class="btn btn-primary" href="#testar">Testar agora</a></div>
   </div>
 </header>
 
 <main id="conteudo" class="article">
+
+  <section id="validador" class="vd" aria-labelledby="testar">
+    <h2 id="testar">Teste agora</h2>
+    <p>Montei um embarque fictício com os cinco documentos que chegam do fornecedor. Tem alguns erros escondidos neles. Clique em conferir e veja o que o validador encontra.</p>
+    <ul class="vd-kit">
+      <li><span class="vd-ext xls">XLS</span><span class="vd-name"><b>Invoice</b><small>6 itens, preços e totais</small></span><span class="vd-kit-act"><button type="button" class="vd-link" data-ver="INV-2026-0418_Invoice.xlsx">Ver</button><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_Invoice.xlsx" download>Baixar</a></span></li>
+      <li><span class="vd-ext xls">XLS</span><span class="vd-name"><b>Packing list</b><small>Peças, caixas e pesos por família</small></span><span class="vd-kit-act"><button type="button" class="vd-link" data-ver="INV-2026-0418_Packing_List.xlsx">Ver</button><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_Packing_List.xlsx" download>Baixar</a></span></li>
+      <li><span class="vd-ext xls">XLS</span><span class="vd-name"><b>Shipping list</b><small>Caixa a caixa: lotes, séries e validades</small></span><span class="vd-kit-act"><button type="button" class="vd-link" data-ver="INV-2026-0418_Shipping_List.xlsx">Ver</button><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_Shipping_List.xlsx" download>Baixar</a></span></li>
+      <li><span class="vd-ext pdf">PDF</span><span class="vd-name"><b>Certificado de análise</b><small>Liberação de qualidade lote a lote</small></span><span class="vd-kit-act"><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_COA.pdf" target="_blank" rel="noopener">Ver</a><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_COA.pdf" download>Baixar</a></span></li>
+      <li><span class="vd-ext pdf">PDF</span><span class="vd-name"><b>Invoice e packing list assinados</b><small>Os documentos finais, com assinatura e carimbo</small></span><span class="vd-kit-act"><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_INV-PL_assinado.pdf" target="_blank" rel="noopener">Ver</a><a class="vd-link" href="../assets/docs/validador/INV-2026-0418_INV-PL_assinado.pdf" download>Baixar</a></span></li>
+    </ul>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="vdRunKit">Conferir o kit de exemplo</button>
+      <a class="btn btn-outline" href="../assets/docs/validador/kit-exemplo-validador.zip" download>Baixar o kit (.zip)</a>
+    </div>
+    <label class="vd-drop" id="vdDrop">
+      <input type="file" id="vdInput" class="sr-only" multiple accept=".xlsx,.xlsm,.xls,.csv,.pdf">
+      <b>Ou teste com os seus arquivos</b>
+      <span>Arraste aqui ou clique para escolher. Excel e PDF com texto. Um arquivo seu entra no lugar do documento do kit do mesmo tipo: baixe o kit, mude um número ou um lote e suba só aquele arquivo.</span>
+      <small>Os arquivos são lidos no seu navegador. Nada é enviado para servidor.</small>
+    </label>
+    <ul class="vd-files" id="vdFiles" hidden></ul>
+    <button type="button" class="btn btn-primary" id="vdRun" hidden>Conferir estes arquivos</button>
+    <p class="vd-status" id="vdStatus" role="status" aria-live="polite"></p>
+    <div class="vd-report" id="vdReport" hidden></div>
+    <p class="note">Regras desta demo: validade mínima de 18 meses na chegada (ETA da invoice), fabricação até 6 meses antes da invoice e uma anuência fictícia para o SKU-2214, válida desde 01/06/2025.</p>
+    <noscript><p class="note">A demonstração precisa de JavaScript ligado.</p></noscript>
+  </section>
 
   <h2>Por que isso importa</h2>
   <p>Comércio exterior é uma cadeia de prazos. Uma quantidade que não bate, um lote repetido ou uma validade curta descoberta tarde vira carga parada no terminal, custo de armazenagem e risco de faltar produto na ponta.</p>
@@ -122,6 +152,7 @@
     </svg>
     <figcaption>Do documento ao relatório. Um certificado ilegível não derruba a execução: a página com problema vira um ponto de atenção.</figcaption>
   </figure>
+  <p>A versão desta página faz o mesmo caminho em JavaScript. O SheetJS lê o Excel, o pdf.js lê o texto dos PDFs e as 12 checagens rodam no seu navegador. Só o OCR de PDF escaneado ficou de fora, porque pesaria demais para uma página.</p>
 
   <h3>Três níveis de resultado</h3>
   <ul>
@@ -150,33 +181,6 @@
       </tbody>
     </table>
   </div>
-
-  <h2>Exemplo de relatório</h2>
-  <p>Resultado de uma execução com documentos fictícios. Os nomes, números e lotes abaixo são inventados.</p>
-  <div class="report-head">
-    <span>Invoice <b>INV-2026-0418</b> · Example Medical Devices Co.</span>
-    <span>Embarque aéreo · 6 SKUs · 14 lotes</span>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Checagem</th><th>Status</th><th>Detalhe</th></tr></thead>
-      <tbody>
-        <tr><td>A. Cabeçalho</td><td><span class="pill ok">OK</span></td><td>Dados iguais nos 5 documentos.</td></tr>
-        <tr><td>A2. CNPJ do importador</td><td><span class="pill ok">OK</span></td><td>Válido e igual em todos os documentos.</td></tr>
-        <tr><td>B. Quantidade por SKU</td><td><span class="pill fail">FALHA</span></td><td>SKU-1042: invoice 120 un, shipping list 100 un.</td></tr>
-        <tr><td>C. Quantidade por família</td><td><span class="pill ok">OK</span></td><td>Totais batem: 640 un.</td></tr>
-        <tr><td>D. Valores da invoice</td><td><span class="pill ok">OK</span></td><td>6 linhas conferidas.</td></tr>
-        <tr><td>E. Pesos</td><td><span class="pill warn">ATENÇÃO</span></td><td>Soma das linhas 412,6 kg; total declarado 415,0 kg.</td></tr>
-        <tr><td>F. Caixas</td><td><span class="pill ok">OK</span></td><td>18 caixas nos dois documentos.</td></tr>
-        <tr><td>G. Lotes e séries</td><td><span class="pill fail">FALHA</span></td><td>Série SN-00871 aparece nos lotes L2405 e L2406.</td></tr>
-        <tr><td>H. Validade</td><td><span class="pill fail">FALHA</span></td><td>Lote L2398 chega com 11 meses de validade (mínimo 18).</td></tr>
-        <tr><td>I. Certificados de análise</td><td><span class="pill warn">ATENÇÃO</span></td><td>Lote lido como "L24O6" no certificado. Provável L2406; conferir no PDF.</td></tr>
-        <tr><td>J. Documentos finais</td><td><span class="pill ok">OK</span></td><td>PDF assinado bate com as planilhas.</td></tr>
-        <tr><td>K. Anuência</td><td><span class="pill ok">OK</span></td><td>Todos os lotes fabricados depois da data da anuência.</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="summary"><span class="pill fail">3 FALHAS</span><span class="pill warn">2 ATENÇÃO</span><span class="pill ok">7 OK</span></div>
 
   <h2>Trechos da lógica</h2>
   <p>Versões simplificadas, escritas para esta página, de duas partes do script.</p>
@@ -208,7 +212,7 @@
   </ul>
 
   <div class="callout green">
-    <p><strong>Sobre o código:</strong> o script original trabalha com documentos reais de fornecedores e não é público. Os trechos e o relatório desta página foram recriados com dados fictícios.</p>
+    <p><strong>Sobre o código:</strong> o script original trabalha com documentos reais de fornecedores e não é público. A versão desta página foi reescrita em JavaScript e o kit de exemplo foi montado do zero: empresas, produtos, lotes e números são inventados.</p>
   </div>
 
     <aside class="cta-card" aria-label="Contato">
