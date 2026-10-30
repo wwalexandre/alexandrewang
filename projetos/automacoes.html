@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automações com Power Automate | Alexandre Wang</title>
+<meta name="description" content="Seis fluxos de Power Automate que montei na Sanofi, na Hypera e na Abbott: bases salvas e preparadas sozinhas, alertas no Teams, KPIs diários, tarefas e aprovações. Diagramas redesenhados, sem telas internas.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/automacoes.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/automacoes.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/automacoes-en.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Automações com Power Automate: 6 fluxos em 3 empresas">
+<meta property="og:description" content="Bases salvas e preparadas sozinhas, alertas no Teams, KPIs diários, tarefas e aprovações. Veja cada fluxo rodar.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/automacoes.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/automacoes.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="automacoes.html" class="on" aria-current="true">PT</a><a href="automacoes-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a></div>
+    <div class="kicker">Automação · Power Platform</div>
+    <h1>Automações com Power Automate</h1>
+    <p class="lead">Fluxos que montei na Sanofi, na Hypera e na Abbott para tirar trabalho repetitivo do dia a dia: salvar e preparar bases, avisar o time na hora certa e mandar indicador sem ninguém precisar pedir.</p>
+    <div class="meta"><span>Power Automate</span><span>Office Scripts</span><span>Teams · Outlook · SharePoint</span><span>Planner</span><span>Power Apps · Power BI</span></div>
+    <div class="stats pa-stats">
+      <div class="stat"><b>6</b><span>fluxos</span></div>
+      <div class="stat"><b>3</b><span>empresas</span></div>
+      <div class="stat"><b>2</b><span>reconhecidos pelas empresas</span></div>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo">
+  <div class="wrap pa-wrap">
+    <p class="pa-intro">Cada fluxo foi redesenhado no formato do editor do Power Automate. Clique em "Ver o fluxo rodar" para acompanhar uma execução, passo a passo, como no histórico do próprio Power Automate.</p>
+    <div class="filters pa-filters" role="group" aria-label="Filtrar por empresa">
+      <button class="filter" type="button" data-co="all" aria-pressed="true">Todas</button>
+      <button class="filter" type="button" data-co="sanofi" aria-pressed="false">Sanofi</button>
+      <button class="filter" type="button" data-co="hypera" aria-pressed="false">Hypera Pharma</button>
+      <button class="filter" type="button" data-co="abbott" aria-pressed="false">Abbott</button>
+    </div>
+
+    <article class="pa-item" id="sanofi-anexos" data-co="sanofi">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
+        <h2>Bases mensais salvas e preparadas sozinhas</h2>
+        <dl class="psi">
+          <div><dt>Problema</dt><dd>Todo mês as bases do relatório de ODR chegavam por e-mail, e alguém precisava baixar, renomear, achar a pasta certa e limpar as abas antes do fechamento.</dd></div>
+          <div><dt>Solução</dt><dd>Fluxo que pega só o Excel do e-mail, salva na pasta do mês anterior no SharePoint com nome padronizado e roda um Office Script que deixa a base pronta para o dashboard.</dd></div>
+          <div><dt>Resultado</dt><dd>Base no lugar certo assim que o e-mail chega, no mesmo formato todo mês. O mesmo padrão virou um segundo fluxo, para a base TOP 20 de P&amp;D.</dd></div>
+        </dl>
+        <h3>O que aprendi</h3>
+        <p>O arquivo chegava vazio no SharePoint porque o fluxo gravava só o nome do anexo. A correção foi gravar o conteúdo, convertido de base64. E a pasta é calculada pela data, então o fluxo não precisa de ajuste todo mês.</p>
+<pre><span class="c">// mês anterior, para a pasta e o nome do arquivo</span>
+formatDateTime(addDays(startOfMonth(utcNow()), <span class="s">-1</span>), <span class="s">'MM'</span>)
+
+<span class="c">// conteúdo do anexo, não só o nome</span>
+base64ToBinary(items(<span class="s">'Aplicar_a_cada'</span>)?[<span class="s">'contentBytes'</span>])</pre>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Office Scripts</span><span class="tag">Outlook</span><span class="tag">SharePoint</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="sanofi-anexos" role="img" aria-label="Diagrama do fluxo: e-mail com anexo, para cada anexo Excel cria o arquivo na pasta do mês anterior e roda o Office Script"></div></div>
+    </article>
+
+    <article class="pa-item" id="sanofi-planner" data-co="sanofi">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
+        <h2>Tarefas e aprovações direto do Teams</h2>
+        <dl class="psi">
+          <div><dt>Problema</dt><dd>Pedidos e pendências do time se perdiam no meio das conversas do Teams.</dd></div>
+          <div><dt>Solução</dt><dd>Fluxo que transforma uma mensagem em tarefa no Planner, com dono e prazo, e roda a aprovação quando o pedido precisa de um sim.</dd></div>
+          <div><dt>Resultado</dt><dd>Cada pedido com responsável, prazo e o registro da aprovação num lugar só.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Teams</span><span class="tag">Planner</span><span class="tag">Aprovações</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="sanofi-planner" role="img" aria-label="Diagrama do fluxo: mensagem do Teams vira tarefa no Planner e passa por aprovação"></div></div>
+    </article>
+
+    <article class="pa-item" id="hypera-alerta" data-co="hypera">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>jul 2025</span></div>
+        <span class="award">★ Reconhecimento Trabalho em Equipe</span>
+        <h2>Alerta de ordem sem material separado</h2>
+        <dl class="psi">
+          <div><dt>Problema</dt><dd>Ordens de produção liberadas ficavam esperando material, e ninguém sabia a tempo de evitar a parada da linha.</dd></div>
+          <div><dt>Solução</dt><dd>Fluxo que confere as ordens liberadas e avisa o time no Teams quando alguma passa de 1 hora sem material separado.</dd></div>
+          <div><dt>Resultado</dt><dd>O time age antes de a linha parar. O alerta foi reconhecido pela empresa.</dd></div>
+        </dl>
+        <h3>O que aprendi</h3>
+        <p>Alerta bom é o que só fala quando alguém precisa agir. A mensagem já diz qual ordem, em qual linha e há quanto tempo está esperando, para o time agir sem ter que investigar.</p>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Teams</span><span class="tag">Excel</span><span class="tag">SAP ECC</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="hypera-alerta" role="img" aria-label="Diagrama do fluxo: recorrência, lista as ordens liberadas, filtra as que passaram de 1 hora sem separação e avisa no Teams"></div></div>
+    </article>
+
+    <article class="pa-item" id="hypera-kpis" data-co="hypera">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>2024 a 2025</span></div>
+        <h2>KPIs de produção enviados no Teams</h2>
+        <dl class="psi">
+          <div><dt>Problema</dt><dd>O volume produzido por linha era reportado à mão.</dd></div>
+          <div><dt>Solução</dt><dd>Envio diário automático do volume por linha no Teams e, no fim do trimestre, o resultado consolidado.</dd></div>
+          <div><dt>Resultado</dt><dd>Liderança com os números todo dia, sem precisar pedir.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Power BI</span><span class="tag">Teams</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="hypera-kpis" role="img" aria-label="Diagrama do fluxo: todo dia consulta o volume por linha no Power BI, monta uma tabela e publica no Teams"></div></div>
+    </article>
+
+    <article class="pa-item" id="abbott-extracao" data-co="abbott">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Abbott</span><span>2022 a 2024</span></div>
+        <h2>Indicadores com extração automática</h2>
+        <dl class="psi">
+          <div><dt>Problema</dt><dd>Os indicadores da produção dependiam de extrair relatórios do SAP BO e colar na base à mão.</dd></div>
+          <div><dt>Solução</dt><dd>Relatórios agendados no SAP BO, salvos pelo Power Automate na base que o Power BI usa.</dd></div>
+          <div><dt>Resultado</dt><dd>Indicadores atualizados sem trabalho manual de extração.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">SAP BO</span><span class="tag">SharePoint</span><span class="tag">Power BI</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="abbott-extracao" role="img" aria-label="Diagrama do fluxo: relatório agendado do SAP BO chega por e-mail, substitui a base e atualiza o Power BI"></div></div>
+    </article>
+
+    <article class="pa-item" id="abbott-app" data-co="abbott">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Abbott</span><span>jun 2024</span></div>
+        <span class="award">★ Abbott Excellence Award, Achieving</span>
+        <h2>App e dashboard da equipe técnica</h2>
+        <dl class="psi">
+          <div><dt>Problema</dt><dd>Atividades e desvios da equipe técnica sem acompanhamento estruturado.</dd></div>
+          <div><dt>Solução</dt><dd>App em Power Apps para registrar, fluxo que avisa o treinador quando há não conformidade e dashboard de KPIs em Power BI.</dd></div>
+          <div><dt>Resultado</dt><dd>Treinadores enxergam os desvios e agem mais cedo. Projeto premiado com o Abbott Excellence Award.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Apps</span><span class="tag">Power Automate</span><span class="tag">SharePoint</span><span class="tag">Power BI</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="abbott-app" role="img" aria-label="Diagrama do fluxo: registro no app vira item na lista, não conformidade gera aviso ao treinador e tudo alimenta o dashboard"></div></div>
+    </article>
+  </div>
+
+  <div class="article pa-patterns">
+    <h2>Padrões que eu repito</h2>
+    <ul>
+      <li><strong>Gatilho no evento quando dá.</strong> O fluxo de bases roda quando o e-mail chega, não num horário fixo.</li>
+      <li><strong>Data calculada, não digitada.</strong> Pasta e nome do arquivo saem da data de hoje, então ninguém precisa mexer no fluxo todo mês.</li>
+      <li><strong>Avisar só quando alguém precisa agir.</strong> O alerta da Hypera fica em silêncio até uma ordem passar de 1 hora.</li>
+      <li><strong>Documentar e passar adiante.</strong> Na Sanofi, os fluxos rodavam na minha conta. Antes de sair, documentei cada um e fiz o handoff para o time.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>Sobre os diagramas:</strong> foram redesenhados para esta página. Pastas, canais e nomes viraram exemplos, e nenhuma tela interna das empresas aparece.</p>
+    </div>
+
+    <aside class="cta-card" aria-label="Contato">
+      <div><h2>Quer conversar sobre automação?</h2><p>Estou aberto a vagas em Demand Planning, IBP, Supply Chain Analytics e PCP.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-automacoes">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-automacoes">Baixar currículo</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-automacoes">LinkedIn</a>
+      </div>
+    </aside>
+
+    <div class="next-links">
+      <a href="validador-documentos.html"><small>Outro projeto</small>Validador de documentos de importação (teste no navegador)</a>
+      <a href="boletim-ruptura.html"><small>Outro projeto</small>Boletim de Ruptura de Lojas (dashboard interativo)</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>

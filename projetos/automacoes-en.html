@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Automate Flows | Alexandre Wang</title>
+<meta name="description" content="Six Power Automate flows I built at Sanofi, Hypera and Abbott: data files saved and prepared on their own, Teams alerts, daily KPIs, tasks and approvals. Redrawn diagrams, no internal screens.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/automacoes-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/automacoes.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/automacoes-en.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Power Automate flows: 6 flows at 3 companies">
+<meta property="og:description" content="Data files saved and prepared on their own, Teams alerts, daily KPIs, tasks and approvals. Watch each flow run.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/automacoes.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/automacoes.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="automacoes.html" hreflang="pt-BR">PT</a><a href="automacoes-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#projects">← Projects</a></div>
+    <div class="kicker">Automation · Power Platform</div>
+    <h1>Power Automate flows</h1>
+    <p class="lead">Flows I built at Sanofi, Hypera and Abbott to take repetitive work off the daily routine: saving and preparing data files, alerting the team at the right time and sending KPIs without anyone having to ask.</p>
+    <div class="meta"><span>Power Automate</span><span>Office Scripts</span><span>Teams · Outlook · SharePoint</span><span>Planner</span><span>Power Apps · Power BI</span></div>
+    <div class="stats pa-stats">
+      <div class="stat"><b>6</b><span>flows</span></div>
+      <div class="stat"><b>3</b><span>companies</span></div>
+      <div class="stat"><b>2</b><span>recognized by the companies</span></div>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+  <div class="wrap pa-wrap">
+    <p class="pa-intro">Each flow was redrawn in the style of the Power Automate designer. Click "Watch it run" to follow one run, step by step, like the run history in Power Automate itself.</p>
+    <div class="filters pa-filters" role="group" aria-label="Filter by company">
+      <button class="filter" type="button" data-co="all" aria-pressed="true">All</button>
+      <button class="filter" type="button" data-co="sanofi" aria-pressed="false">Sanofi</button>
+      <button class="filter" type="button" data-co="hypera" aria-pressed="false">Hypera Pharma</button>
+      <button class="filter" type="button" data-co="abbott" aria-pressed="false">Abbott</button>
+    </div>
+
+    <article class="pa-item" id="sanofi-anexos" data-co="sanofi">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
+        <h2>Monthly data files saved and prepared on their own</h2>
+        <dl class="psi">
+          <div><dt>Problem</dt><dd>Every month the ODR report files arrived by email, and someone had to download, rename, find the right folder and clean up the sheets before closing.</dd></div>
+          <div><dt>Solution</dt><dd>A flow that takes only the Excel file from the email, saves it to the previous month's SharePoint folder with a standard name and runs an Office Script that gets the file ready for the dashboard.</dd></div>
+          <div><dt>Result</dt><dd>The file is in the right place as soon as the email arrives, in the same format every month. The same pattern became a second flow, for the R&amp;D TOP 20 file.</dd></div>
+        </dl>
+        <h3>What I learned</h3>
+        <p>The file reached SharePoint empty because the flow saved only the attachment name. The fix was to save the content, converted from base64. And the folder is calculated from the date, so the flow needs no monthly changes.</p>
+<pre><span class="c">// previous month, for the folder and the file name</span>
+formatDateTime(addDays(startOfMonth(utcNow()), <span class="s">-1</span>), <span class="s">'MM'</span>)
+
+<span class="c">// the attachment content, not just its name</span>
+base64ToBinary(items(<span class="s">'Apply_to_each'</span>)?[<span class="s">'contentBytes'</span>])</pre>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Office Scripts</span><span class="tag">Outlook</span><span class="tag">SharePoint</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="sanofi-anexos" role="img" aria-label="Flow diagram: email with attachment, for each Excel attachment create the file in the previous month folder and run the Office Script"></div></div>
+    </article>
+
+    <article class="pa-item" id="sanofi-planner" data-co="sanofi">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
+        <h2>Tasks and approvals straight from Teams</h2>
+        <dl class="psi">
+          <div><dt>Problem</dt><dd>Team requests and open items got lost in Teams conversations.</dd></div>
+          <div><dt>Solution</dt><dd>A flow that turns a message into a Planner task, with an owner and a due date, and runs an approval when the request needs a yes.</dd></div>
+          <div><dt>Result</dt><dd>Every request with an owner, a due date and the approval record in one place.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Teams</span><span class="tag">Planner</span><span class="tag">Approvals</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="sanofi-planner" role="img" aria-label="Flow diagram: a Teams message becomes a Planner task and goes through an approval"></div></div>
+    </article>
+
+    <article class="pa-item" id="hypera-alerta" data-co="hypera">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>Jul 2025</span></div>
+        <span class="award">★ Teamwork recognition</span>
+        <h2>Alert for orders without picked material</h2>
+        <dl class="psi">
+          <div><dt>Problem</dt><dd>Released production orders sat waiting for material, and nobody knew in time to keep the line from stopping.</dd></div>
+          <div><dt>Solution</dt><dd>A flow that checks released orders and alerts the team on Teams when one goes past 1 hour with no material picked.</dd></div>
+          <div><dt>Result</dt><dd>The team acts before the line stops. The alert was recognized by the company.</dd></div>
+        </dl>
+        <h3>What I learned</h3>
+        <p>A good alert only speaks when someone needs to act. The message already says which order, on which line and how long it has been waiting, so the team can act without digging.</p>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Teams</span><span class="tag">Excel</span><span class="tag">SAP ECC</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="hypera-alerta" role="img" aria-label="Flow diagram: recurrence, list released orders, filter those over 1 hour without picking and post on Teams"></div></div>
+    </article>
+
+    <article class="pa-item" id="hypera-kpis" data-co="hypera">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>2024 to 2025</span></div>
+        <h2>Production KPIs delivered on Teams</h2>
+        <dl class="psi">
+          <div><dt>Problem</dt><dd>Output per line was reported by hand.</dd></div>
+          <div><dt>Solution</dt><dd>Automated daily output per line on Teams and, at quarter end, the consolidated result.</dd></div>
+          <div><dt>Result</dt><dd>Leadership gets the numbers every day without asking.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">Power BI</span><span class="tag">Teams</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="hypera-kpis" role="img" aria-label="Flow diagram: every day query the output per line in Power BI, build a table and post it on Teams"></div></div>
+    </article>
+
+    <article class="pa-item" id="abbott-extracao" data-co="abbott">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Abbott</span><span>2022 to 2024</span></div>
+        <h2>KPIs with automated extraction</h2>
+        <dl class="psi">
+          <div><dt>Problem</dt><dd>Production KPIs depended on pulling SAP BO reports and pasting them into the base by hand.</dd></div>
+          <div><dt>Solution</dt><dd>Scheduled SAP BO reports, saved by Power Automate into the base Power BI reads.</dd></div>
+          <div><dt>Result</dt><dd>KPIs refreshed with no manual extraction.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Automate</span><span class="tag">SAP BO</span><span class="tag">SharePoint</span><span class="tag">Power BI</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="abbott-extracao" role="img" aria-label="Flow diagram: a scheduled SAP BO report arrives by email, replaces the base and refreshes Power BI"></div></div>
+    </article>
+
+    <article class="pa-item" id="abbott-app" data-co="abbott">
+      <div class="pa-text">
+        <div class="proj-top"><span class="proj-co">Abbott</span><span>Jun 2024</span></div>
+        <span class="award">★ Abbott Excellence Award, Achieving</span>
+        <h2>App and dashboard for the technical team</h2>
+        <dl class="psi">
+          <div><dt>Problem</dt><dd>Technical team activities and deviations without structured tracking.</dd></div>
+          <div><dt>Solution</dt><dd>A Power Apps app for logging, a flow that notifies the trainer when there is a non-conformity and a Power BI KPI dashboard.</dd></div>
+          <div><dt>Result</dt><dd>Trainers see deviations and act earlier. The project won the Abbott Excellence Award.</dd></div>
+        </dl>
+        <div class="tags"><span class="tag">Power Apps</span><span class="tag">Power Automate</span><span class="tag">SharePoint</span><span class="tag">Power BI</span></div>
+      </div>
+      <div><div class="pa-flow" data-fluxo="abbott-app" role="img" aria-label="Flow diagram: an app entry becomes a list item, a non-conformity notifies the trainer and everything feeds the dashboard"></div></div>
+    </article>
+  </div>
+
+  <div class="article pa-patterns">
+    <h2>Patterns I repeat</h2>
+    <ul>
+      <li><strong>Trigger on the event when possible.</strong> The data file flow runs when the email arrives, not at a fixed time.</li>
+      <li><strong>Calculated dates, not typed ones.</strong> Folder and file name come from today's date, so nobody has to touch the flow every month.</li>
+      <li><strong>Alert only when someone needs to act.</strong> The Hypera alert stays quiet until an order goes past 1 hour.</li>
+      <li><strong>Document and hand over.</strong> At Sanofi the flows ran on my account. Before leaving, I documented each one and handed them over to the team.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>About the diagrams:</strong> they were redrawn for this page. Folders, channels and names were replaced with examples, and no internal company screens are shown.</p>
+    </div>
+
+    <aside class="cta-card" aria-label="Contact">
+      <div><h2>Want to talk about automation?</h2><p>I am open to roles in Demand Planning, IBP, Supply Chain Analytics and Production Planning.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp/en" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-automacoes-en">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-automacoes-en">Download resume</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-automacoes-en">LinkedIn</a>
+      </div>
+    </aside>
+
+    <div class="next-links">
+      <a href="validador-documentos-en.html"><small>Another project</small>Import document checker (try it in the browser)</a>
+      <a href="boletim-ruptura-en.html"><small>Another project</small>Store Stockout Bulletin (interactive dashboard)</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+  </div>
+</footer>
+</body>
+</html>
