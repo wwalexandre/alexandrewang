@@ -13,6 +13,7 @@ Site no ar: https://alexandrewang.vercel.app
 | `projetos/boletim-ruptura.html` | Dashboard interativo de ruptura de lojas (réplica web de um projeto em Power BI) |
 | `projetos/validador-documentos.html` | Validador de documentos de importação que roda no navegador (`assets/js/validador.js`), com kit fictício em `assets/docs/validador/` gerado por `07-Site/ferramentas/validador-kit/gerar_kit.js` |
 | `projetos/automacoes.html` | Seis fluxos de Power Automate (Sanofi, Hypera, Abbott) desenhados no formato do editor, com animação de execução (`assets/js/automacoes.js`) |
+| `projetos/sop-mensal.html` | S&OP mensal slide a slide: prints dos 19 slides com o que cada um precisa ter, filtro e visualizador (`assets/js/sop.js`), e o modelo PPTX em PT e EN em `assets/docs/sop/`, liberado depois do e-mail. O deck e os prints saem de `07-Site/ferramentas/sop-deck/` (`npm run gerar` e `exportar_slides.ps1`) |
 | `projetos/cacador-vencimentos.html` | Caçador de Vencimentos: app feito no Lovable que simula o consumo FEFO lote a lote e mostra a perda projetada por validade (o app fica em cacador-de-vencimentos.lovable.app) |
 | `publicacoes/importacao-jogo.html` | Artigo e vídeo "Importação, o jogo dos prazos": o fluxo de importação aérea como jogo de tabuleiro, com casos reais anonimizados |
 | `publicacoes/forecast-erro.html` | Artigo completo e vídeo sobre erro de forecast: erro por família, FVA e Bias, com checklist em PDF |
