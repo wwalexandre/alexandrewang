@@ -367,6 +367,135 @@ const CV_TXT = {
   }));
 })();
 
+// Arquivos para baixar (modelos): mesma janela do currículo. O aviso nunca segura o download
+const FILE_TXT = {
+  pt: {
+    title: 'Baixar o modelo',
+    lead: 'Deixe seu e-mail para baixar o arquivo.',
+    label: 'Seu e-mail',
+    placeholder: 'nome@empresa.com',
+    submit: 'Baixar',
+    cancel: 'Cancelar',
+    privacy: 'Uso seu e-mail só para saber quem baixou o modelo e, se fizer sentido, entrar em contato. Não compartilho com ninguém.',
+    invalid: 'Digite um e-mail válido.',
+    doneTitle: 'Download iniciado',
+    doneText: 'Obrigado! Se quiser trocar ideia sobre S&amp;OP, me chama no WhatsApp.',
+    whatsapp: 'Falar no WhatsApp',
+    close: 'Fechar',
+    subject: 'Novo download: '
+  },
+  en: {
+    title: 'Download the template',
+    lead: 'Leave your email to download the file.',
+    label: 'Your email',
+    placeholder: 'name@company.com',
+    submit: 'Download',
+    cancel: 'Cancel',
+    privacy: 'I only use your email to know who downloaded the template and, if it makes sense, to get in touch. I never share it.',
+    invalid: 'Please enter a valid email.',
+    doneTitle: 'Download started',
+    doneText: 'Thank you! If you would like to talk about S&amp;OP, message me on WhatsApp.',
+    whatsapp: 'Message on WhatsApp',
+    close: 'Close',
+    subject: 'New download: '
+  }
+};
+
+(function fileGate() {
+  const botoes = document.querySelectorAll('a[data-lead-file]');
+  if (!botoes.length) return;
+  const t = FILE_TXT[LANG];
+  const dlg = document.createElement('dialog');
+  dlg.className = 'cv-dialog file-dialog';
+  dlg.setAttribute('aria-labelledby', 'fileTitle');
+  dlg.innerHTML =
+    '<form method="dialog" id="fileForm" novalidate>' +
+      '<h2 id="fileTitle">' + t.title + '</h2>' +
+      '<p>' + t.lead + '</p>' +
+      '<label for="fileEmail">' + t.label + '</label>' +
+      '<input type="email" id="fileEmail" name="email" autocomplete="email" placeholder="' + t.placeholder + '" required>' +
+      '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<span class="err" id="fileErr" role="alert"></span>' +
+      '<small>' + t.privacy + '</small>' +
+      '<div class="row"><button type="button" class="btn btn-outline btn-sm" id="fileCancel">' + t.cancel + '</button>' +
+      '<button type="submit" class="btn btn-primary btn-sm">' + t.submit + '</button></div>' +
+    '</form>' +
+    '<div class="done" id="fileDone" hidden>' +
+      '<h2>' + t.doneTitle + '</h2>' +
+      '<p>' + t.doneText + '</p>' +
+      '<div class="row"><button type="button" class="btn btn-outline btn-sm" id="fileClose">' + t.close + '</button>' +
+      '<a class="btn btn-wa btn-sm" href="' + (LANG === 'en' ? '/whatsapp/en' : '/whatsapp') + '" target="_blank" rel="noopener">' + t.whatsapp + '</a></div>' +
+    '</div>';
+  document.body.appendChild(dlg);
+
+  const form = dlg.querySelector('#fileForm');
+  const done = dlg.querySelector('#fileDone');
+  const email = dlg.querySelector('#fileEmail');
+  const err = dlg.querySelector('#fileErr');
+  let atual = null; // botão que abriu a janela
+
+  const show = () => (dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', ''));
+  const avisar = value => fetch(LEAD_ENDPOINT, {
+    method: 'POST',
+    keepalive: true,
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, arquivo: atual.dataset.leadFile, _subject: t.subject + atual.dataset.leadFile, _template: 'table', _captcha: 'false' })
+  }).catch(() => {});
+  const baixar = repetido => {
+    const a = document.createElement('a');
+    a.href = atual.getAttribute('href');
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    track('modelo-sop-baixado', { arquivo: atual.dataset.leadFile, repetido: !!repetido });
+    form.hidden = true; done.hidden = false;
+  };
+  const salvo = () => {
+    try { return localStorage.getItem('lead_email') || localStorage.getItem('cv_email') || ''; } catch (e) { return ''; }
+  };
+
+  const open = btn => {
+    atual = btn;
+    err.textContent = '';
+    const ja = salvo();
+    if (ja) {
+      // Quem já deixou o e-mail (aqui ou no currículo) baixa direto, e o aviso sai do mesmo jeito
+      avisar(ja);
+      baixar(true);
+      show();
+      return;
+    }
+    form.hidden = false; done.hidden = true;
+    show();
+    email.focus();
+  };
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const value = email.value.trim();
+    if (!email.checkValidity() || !value) { err.textContent = t.invalid; email.focus(); return; }
+    if (!form._honey.value) {
+      avisar(value);
+      try { localStorage.setItem('lead_email', value); } catch (e) {}
+    }
+    baixar(false);
+  });
+
+  const close = () => {
+    if (dlg.close) dlg.close(); else dlg.removeAttribute('open');
+    if (atual) atual.focus();
+  };
+  dlg.querySelector('#fileCancel').addEventListener('click', close);
+  dlg.querySelector('#fileClose').addEventListener('click', close);
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+
+  botoes.forEach(btn => btn.addEventListener('click', e => {
+    e.preventDefault();
+    open(btn);
+  }));
+})();
+
 // Botões de compartilhar nas publicações (cada rede leva um marcador para aparecer nas estatísticas)
 (function shareBars() {
   const bars = document.querySelectorAll('[data-share]');
