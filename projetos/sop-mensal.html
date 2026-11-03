@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S&amp;OP mensal slide a slide | Alexandre Wang</title>
+<meta name="description" content="Como funciona a reunião mensal de S&amp;OP, slide a slide: 18 prints do PowerPoint com o que cada slide precisa ter, de onde vem o dado e as fórmulas de MAPE, Bias, FVA, MOH e SIT. Modelo editável para baixar.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/sop-mensal.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/sop-mensal.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/sop-mensal-en.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="S&amp;OP mensal slide a slide: os 18 slides da reunião">
+<meta property="og:description" content="Demand Review, Supply Review e reunião executiva num deck só, com cobertura (MOH), estoque no canal (SIT), FVA e SLOB. Modelo em PowerPoint para baixar.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/sop.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/sop.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="sop-mensal.html" class="on" aria-current="true">PT</a><a href="sop-mensal-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a></div>
+    <div class="kicker">Supply chain · S&amp;OP</div>
+    <h1>S&amp;OP mensal, slide a slide</h1>
+    <p class="lead">O S&amp;OP é o ciclo de todo mês em que demanda, supply e finanças fecham um plano só para os próximos meses. Aqui está o deck da reunião inteiro, com o print de cada slide, o que ele precisa ter e de onde vem cada número. No fim, o modelo em PowerPoint para você adaptar.</p>
+    <div class="meta"><span>S&amp;OP · IBP</span><span>Demand Review</span><span>Supply Review</span><span>MBR</span><span>PowerPoint</span></div>
+    <div class="btn-row sop-hero-btns">
+      <a class="btn btn-primary" href="../assets/docs/sop/modelo-sop-mensal.pptx" data-lead-file="modelo de S&amp;OP" data-umami-event="modelo-sop-clique" data-umami-event-origem="topo">Baixar o modelo (PPTX)</a>
+      <a class="btn btn-ghost" href="#slides">Ver os 18 slides</a>
+    </div>
+    <div class="stats sop-stats">
+      <div class="stat"><b>18</b><span>slides</span></div>
+      <div class="stat"><b>4</b><span>semanas de ciclo</span></div>
+      <div class="stat"><b>5</b><span>linhas, um caso de supply cada</span></div>
+      <div class="stat"><b>7</b><span>fórmulas explicadas</span></div>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo">
+  <section class="wrap sop-wrap" aria-labelledby="ciclo">
+    <h2 class="sop-h2" id="ciclo">As 4 semanas do ciclo</h2>
+    <p class="sop-intro">O deck não nasce na véspera da reunião. Cada semana tem um fórum, e cada fórum entrega uma parte do deck para o seguinte.</p>
+    <ol class="sop-ciclo">
+      <li><span class="sop-sem">Semana 1</span><h3>Fechamento e dados</h3><p><b>Quem:</b> Planejamento e BI</p><p><b>Sai:</b> base do mês fechada, com vendas, estoque, backorder e pipeline. Slides 1 a 5.</p></li>
+      <li><span class="sop-sem">Semana 2</span><h3>Demand Review</h3><p><b>Quem:</b> Demanda, Comercial e Marketing</p><p><b>Sai:</b> forecast de consenso, eventos e riscos. Slides 6 a 10.</p></li>
+      <li><span class="sop-sem">Semana 3</span><h3>Supply Review</h3><p><b>Quem:</b> Supply, Produção, Compras e Comex</p><p><b>Sai:</b> plano de compra e produção e os gaps de capacidade. Slides 11 a 15.</p></li>
+      <li><span class="sop-sem">Semana 4</span><h3>Pré-S&amp;OP e reunião executiva</h3><p><b>Quem:</b> Finanças e diretoria</p><p><b>Sai:</b> plano aprovado e decisões registradas. Slides 16 a 18, e o resumo do slide 3.</p></li>
+    </ol>
+    <div class="callout"><p>O que não fecha numa semana sobe como decisão para a reunião executiva. Por isso o último slide é de decisões, e o slide 4 do mês seguinte confere se elas foram cumpridas.</p></div>
+  </section>
+
+  <section class="wrap sop-wrap" id="slides" aria-labelledby="slides-titulo">
+    <h2 class="sop-h2" id="slides-titulo">Slide a slide</h2>
+    <p class="sop-intro">Os números são de uma empresa fictícia, a Empresa Exemplo, no ciclo de novembro de 2026 com fechamento de outubro. Ela tem cinco linhas de produto, e cada uma foi montada para mostrar um caso típico de supply:</p>
+    <div class="table-wrap sop-linhas">
+      <table>
+        <thead><tr><th>Linha</th><th>Comportamento</th><th>Onde aparece</th></tr></thead>
+        <tbody>
+          <tr><td><b>A</b> Alto giro</td><td>Produção local, volume alto e estável</td><td>Backorder, capacidade, acurácia</td></tr>
+          <tr><td><b>B</b> Importada</td><td>Lead time longo, estoque em trânsito</td><td>Pipeline de importação, cobertura</td></tr>
+          <tr><td><b>C</b> Sazonal</td><td>Pico em novembro e dezembro, com promoção</td><td>Forecast x forecast, FVA, riscos</td></tr>
+          <tr><td><b>D</b> Lançamento</td><td>No mercado desde agosto, sem histórico</td><td>Lançamentos, acurácia, receita</td></tr>
+          <tr><td><b>E</b> Cauda longa</td><td>Em descontinuação, venda caindo</td><td>Excesso de estoque, SLOB, decisões</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sop-intro">Os números fecham entre si: o resumo do slide 3 bate com os slides 5, 11 e 13. Clique em qualquer slide para ver em tela cheia.</p>
+
+    <div class="filters sop-filters" role="group" aria-label="Filtrar por etapa">
+      <button class="filter" type="button" data-etapa="todos" aria-pressed="true">Todos</button>
+      <button class="filter" type="button" data-etapa="abertura" aria-pressed="false">Abertura</button>
+      <button class="filter" type="button" data-etapa="demanda" aria-pressed="false">Demanda</button>
+      <button class="filter" type="button" data-etapa="supply" aria-pressed="false">Supply</button>
+      <button class="filter" type="button" data-etapa="financeiro" aria-pressed="false">Financeiro</button>
+      <button class="filter" type="button" data-etapa="fechamento" aria-pressed="false">Fechamento</button>
+    </div>
+
+    <article class="sop-slide" id="slide-01" data-etapa="abertura">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 1"><img src="../assets/img/sop/pt/slide-01.png" width="1600" height="900" loading="lazy" alt="Slide 1, capa: S&amp;OP mensal, ciclo de novembro de 2026, fechamento de outubro, Empresa Exemplo, com as 4 semanas do ciclo num anel."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>01</b><span>Abertura</span></div>
+        <h3>Capa</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>De qual ciclo é esta reunião e qual é o último mês fechado?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>O mês do ciclo, o mês de fechamento e a empresa ou unidade de negócio. Aqui: ciclo de novembro, fechamento de outubro.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do calendário de S&amp;OP do ano, combinado com Finanças.</dd></div>
+          <div><dt>Erro comum</dt><dd>Misturar o mês do ciclo com o mês dos dados. Quem lê precisa saber logo de cara que outubro é o último mês com venda real.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-02" data-etapa="abertura">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 2"><img src="../assets/img/sop/pt/slide-02.png" width="1600" height="900" loading="lazy" alt="Slide 2, como funciona o ciclo: quatro cartões, um por semana, com quem participa e o que sai de cada etapa."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>02</b><span>Abertura</span></div>
+        <h3>Como funciona o ciclo</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Quem decide o quê, e em que semana?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>As 4 etapas, quem participa de cada uma e o que cada reunião entrega para a próxima.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do desenho do processo: calendário e lista de participantes de cada fórum.</dd></div>
+          <div><dt>Erro comum</dt><dd>Pular a Supply Review e levar o forecast direto para a diretoria. Ela recebe a demanda sem saber se dá para atender.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-03" data-etapa="abertura">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 3"><img src="../assets/img/sop/pt/slide-03.png" width="1600" height="900" loading="lazy" alt="Slide 3, resumo executivo: atingimento de vendas de 98%, acurácia de 87,5%, cobertura de 2,2 meses e backorder de 860 unidades, três mensagens e três decisões pedidas."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>03</b><span>Abertura</span></div>
+        <h3>Resumo executivo</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O que mudou no mês e o que a diretoria precisa decidir hoje?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>4 números (atingimento de vendas no ano, acurácia, cobertura média e backorder), 3 mensagens curtas e as decisões pedidas.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Dos próprios slides do deck. É o último slide que eu monto, e cada número tem que bater com o slide de origem.</dd></div>
+          <div><dt>Erro comum</dt><dd>Mensagem que só descreve o gráfico. "Vendas 2% abaixo" não ajuda; "linha D abaixo da curva, revisar o forecast do lançamento" ajuda.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-04" data-etapa="abertura">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 4"><img src="../assets/img/sop/pt/slide-04.png" width="1600" height="900" loading="lazy" alt="Slide 4, ações do mês anterior: tabela com ação, dono, prazo e status; 2 de 4 concluídas, uma atrasada e uma em andamento."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>04</b><span>Abertura</span></div>
+        <h3>Ações do mês anterior</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O que foi combinado no ciclo passado foi feito?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Ação, dono, prazo e status. A ação atrasada que não fechar até a reunião executiva vira ponto de decisão.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Da ata da reunião executiva do mês anterior.</dd></div>
+          <div><dt>Erro comum</dt><dd>Não voltar nas ações. Sem este slide, a mesma decisão é tomada de novo todo mês.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-05" data-etapa="demanda">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 5"><img src="../assets/img/sop/pt/slide-05.png" width="1600" height="900" loading="lazy" alt="Slide 5, vendas real x forecast: colunas de venda mês a mês de janeiro a outubro com a linha do forecast e tabela de atingimento por linha, total de 98%."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>05</b><span>Demanda</span></div>
+        <h3>Vendas real x forecast</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Vendemos o que planejamos no ano?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Real e forecast no ano, a diferença, o plano que ainda falta até dezembro e o atingimento por linha.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Venda faturada do ERP e o forecast congelado de cada mês, guardado no sistema de planejamento ou numa base de snapshots.</dd></div>
+          <div><dt>Erro comum</dt><dd>Comparar com o forecast mais recente, que já foi ajustado para chegar perto do real. A régua é o forecast que valia quando o mês começou.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>Atingimento = real ÷ forecast</code>. No modelo, verde a partir de 97%, laranja entre 90% e 97% e vermelho abaixo de 90%.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-06" data-etapa="demanda">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 6"><img src="../assets/img/sop/pt/slide-06.png" width="1600" height="900" loading="lazy" alt="Slide 6, acurácia e viés: MAPE mês a mês em lag 1 e lag 3, de maio a outubro, e tabela com MAPE, bias e leitura por linha."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>06</b><span>Demanda</span></div>
+        <h3>Acurácia e viés do forecast</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O forecast acerta? E quando erra, erra sempre para o mesmo lado?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>MAPE mês a mês em lag 1 e lag 3, o viés por linha e uma leitura simples: equilibrado, forecast acima ou abaixo do real.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Dos snapshots do forecast guardados todo mês (sem eles não existe lag) e da venda real por SKU.</dd></div>
+          <div><dt>Erro comum</dt><dd>Calcular o MAPE no total da empresa. Um SKU acima compensa outro abaixo e o erro some. Aqui o cálculo é por SKU e mês.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>MAPE = Σ|real − forecast| ÷ Σ real</code> e <code>Bias = Σ(forecast − real) ÷ Σ real</code>. Lag 1 é o forecast feito um mês antes; lag 3, três meses antes. Bias entre −5% e +5% eu leio como equilibrado.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-07" data-etapa="demanda">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 7"><img src="../assets/img/sop/pt/slide-07.png" width="1600" height="900" loading="lazy" alt="Slide 7, estatístico x ajustado: colunas de MAPE do forecast estatístico e do final por linha e tabela de FVA, negativo nas linhas C e E."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>07</b><span>Demanda</span></div>
+        <h3>Estatístico x ajustado (FVA)</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O ajuste do time melhorou ou piorou o forecast estatístico?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>MAPE do estatístico e do final por linha, o FVA de cada uma e onde o ajuste piorou.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do estatístico e do final guardados lado a lado no mesmo snapshot, no sistema de planejamento ou na base do time.</dd></div>
+          <div><dt>Erro comum</dt><dd>Usar FVA negativo como bronca. Ele aponta qual premissa revisar: aqui, a promoção da linha C e a saída da linha E.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>FVA = MAPE do estatístico − MAPE do final</code>, em pontos percentuais. Positivo: o ajuste ajudou. Negativo: o estatístico sozinho teria errado menos.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-08" data-etapa="demanda">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 8"><img src="../assets/img/sop/pt/slide-08.png" width="1600" height="900" loading="lazy" alt="Slide 8, forecast x forecast: linhas do ciclo atual e do anterior nos próximos 6 meses e tabela das maiores mudanças por SKU, com o motivo."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>08</b><span>Demanda</span></div>
+        <h3>Forecast x forecast</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O que mudou no plano desde o ciclo passado, e por quê?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>O ciclo atual contra o anterior nos próximos 6 meses e as maiores altas e quedas por SKU, cada uma com o motivo.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>De dois snapshots do forecast: o deste ciclo e o do ciclo anterior.</dd></div>
+          <div><dt>Erro comum</dt><dd>Mostrar a mudança sem o motivo. Toda variação grande precisa de alguém que explique de onde ela veio.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-09" data-etapa="demanda">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 9"><img src="../assets/img/sop/pt/slide-09.png" width="1600" height="900" loading="lazy" alt="Slide 9, lançamentos, promoções e descontinuações: tabela por SKU com tipo, início, volume de 6 meses e status, e o total de cada tipo."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>09</b><span>Demanda</span></div>
+        <h3>Lançamentos, promoções e descontinuações</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Que eventos mudam o volume nos próximos meses?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>SKU, tipo de evento, início, volume nos próximos 6 meses e status (aprovado, em análise, proposto).</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>De Marketing, para lançamentos e promoções, e do comitê de portfólio, para descontinuações.</dd></div>
+          <div><dt>Erro comum</dt><dd>Lançamento sem produto de comparação. Sem a curva de um item parecido, o forecast do lançamento vira chute.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-10" data-etapa="demanda">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 10"><img src="../assets/img/sop/pt/slide-10.png" width="1600" height="900" loading="lazy" alt="Slide 10, riscos e oportunidades: duas tabelas com evento, volume, probabilidade, volume ponderado e dono, e o saldo ponderado de mais 890 unidades."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>10</b><span>Demanda</span></div>
+        <h3>Riscos e oportunidades</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O que pode fazer o forecast errar, para cima ou para baixo?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Evento, volume, probabilidade, volume ponderado e dono, com oportunidades e riscos lado a lado.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Da Demand Review, com Comercial, Marketing, Comex e Produção.</dd></div>
+          <div><dt>Erro comum</dt><dd>Jogar o risco direto dentro do forecast. Ele fica fora do número e só entra quando a probabilidade passa do combinado.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-11" data-etapa="supply">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 11"><img src="../assets/img/sop/pt/slide-11.png" width="1600" height="900" loading="lazy" alt="Slide 11, cobertura de estoque: tabela por linha e SKU com armazém, trânsito, total, média do forecast, MOH, status e mês anterior; A-101 e B-202 abaixo da meta e linha E em excesso."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>11</b><span>Supply</span></div>
+        <h3>Cobertura de estoque (MOH)</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Para quantos meses de venda o estoque dá, e onde está fora da faixa?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Por linha e SKU: armazém, trânsito, total, média do forecast dos próximos 3 meses, MOH, status, o MOH do mês anterior e a ação pedida.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Da posição de estoque no fim do mês no ERP (no SAP, MB52 ou MMBE), dos pedidos em trânsito e do forecast do ciclo.</dd></div>
+          <div><dt>Erro comum</dt><dd>Dividir pela venda passada. A cobertura olha para a frente: o estoque de hoje contra o forecast dos próximos meses.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>MOH = (armazém + trânsito) ÷ média do forecast dos próximos 3 meses</code>. Faixa do modelo: de 1,5 a 4 meses. Abaixo é risco de ruptura; acima, de excesso e de perda.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-12" data-etapa="supply">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 12"><img src="../assets/img/sop/pt/slide-12.png" width="1600" height="900" loading="lazy" alt="Slide 12, estoque no canal: dias de estoque nos distribuidores de janeiro a outubro contra a faixa de 30 a 45 dias, com ruptura em junho e julho e 51 dias em outubro."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>12</b><span>Supply</span></div>
+        <h3>Estoque no canal (SIT)</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O distribuidor está comprando para vender ou para estocar?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Dias de estoque no canal mês a mês, com a faixa meta e uma leitura do que fazer no sell-in do mês seguinte.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do relatório de estoque e de sell-out que os distribuidores mandam todo mês.</dd></div>
+          <div><dt>Erro comum</dt><dd>Olhar só o sell-in. Empurrar volume para um canal cheio vira queda de pedido ou devolução nos meses seguintes.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>Dias no canal = estoque nos distribuidores ÷ média do sell-out dos últimos 3 meses × 30</code>. Faixa do modelo: de 30 a 45 dias.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-13" data-etapa="supply">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 13"><img src="../assets/img/sop/pt/slide-13.png" width="1600" height="900" loading="lazy" alt="Slide 13, backorder: 860 unidades, R$ 33.280, 21 clientes e 3 linhas afetadas, colunas de maio a outubro e tabela dos SKUs com mais backorder."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>13</b><span>Supply</span></div>
+        <h3>Backorder</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Quanto pedido de cliente está parado, e onde?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Unidades, valor, clientes e linhas afetadas, a evolução mês a mês e os SKUs com mais backorder.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Da carteira de pedidos em aberto no ERP.</dd></div>
+          <div><dt>Erro comum</dt><dd>Mostrar só o total. Cada SKU precisa da causa (capacidade, importação atrasada ou forecast baixo) e da data prevista para atender.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-14" data-etapa="supply">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 14"><img src="../assets/img/sop/pt/slide-14.png" width="1600" height="900" loading="lazy" alt="Slide 14, pipeline de importação: cinco pedidos, cada um numa linha com as etapas pronto na origem, em trânsito, desembaraço, recebimento e disponível, e a etapa atual em laranja."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>14</b><span>Supply</span></div>
+        <h3>Pipeline de importação</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Onde está cada embarque e quando vira estoque disponível?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Pedido, SKU, quantidade, ETA e a etapa de cada embarque: pronto na origem, em trânsito, desembaraço, recebimento e disponível.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do follow-up de importação com o agente de carga e o despachante.</dd></div>
+          <div><dt>Erro comum</dt><dd>Usar a ETA como data de estoque disponível. Entre o navio chegar e o produto ser liberado ainda tem desembaraço e recebimento, e é ali que o atraso costuma aparecer.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-15" data-etapa="supply">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 15"><img src="../assets/img/sop/pt/slide-15.png" width="1600" height="900" loading="lazy" alt="Slide 15, plano de compra e produção: pedido sugerido por linha de novembro a janeiro, horas disponíveis x horas do plano e ocupação de 90%, 105% e 85%."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>15</b><span>Supply</span></div>
+        <h3>Plano de compra e produção</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Quanto comprar e produzir nos próximos 3 meses, e a fábrica dá conta?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Pedido sugerido por linha e mês, horas disponíveis contra horas do plano e a ocupação de cada mês.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do forecast do ciclo, do estoque projetado e da capacidade da fábrica em horas, que sai do MPS.</dd></div>
+          <div><dt>Erro comum</dt><dd>Fechar o plano sem olhar a capacidade. Aqui dezembro passa de 100%, e a escolha entre antecipar produção e fazer hora extra precisa sair desta reunião.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>Pedido = máx(0; 1,5 × máx(fcst N; fcst N+1) + fcst N − estoque projetado)</code>, em que 1,5 é a cobertura alvo em meses. <code>Ocupação = horas do plano ÷ horas disponíveis</code>.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-16" data-etapa="financeiro">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 16"><img src="../assets/img/sop/pt/slide-16.png" width="1600" height="900" loading="lazy" alt="Slide 16, receita x orçamento: R$ 13,9 milhões contra R$ 14,6 milhões, atingimento de 95,6%, colunas por linha e tabela com o gap de cada uma."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>16</b><span>Financeiro</span></div>
+        <h3>Receita x orçamento</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O volume vendido está virando a receita do orçamento?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Receita e orçamento no ano, o atingimento, quanto do orçamento anual já foi feito e o gap por linha.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Da receita do fechamento contábil e do orçamento do ano, junto com Finanças.</dd></div>
+          <div><dt>Erro comum</dt><dd>Volume e receita contando histórias diferentes sem explicação. Quando o volume está perto do plano e a receita não, a resposta costuma ser mix ou preço, e o slide precisa dizer qual.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>Atingimento = receita ÷ orçamento do período</code> e <code>Gap = receita − orçamento</code>, por linha e no total.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-17" data-etapa="financeiro">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 17"><img src="../assets/img/sop/pt/slide-17.png" width="1600" height="900" loading="lazy" alt="Slide 17, estoque em risco: barras por faixa de vencimento e de estoque parado, tabela com a ação de cada faixa e total de R$ 1.271.000."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>17</b><span>Financeiro</span></div>
+        <h3>Estoque em risco (SLOB)</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>Quanto do estoque pode virar perda, e o que fazer com cada faixa?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Valor por faixa de validade ou de idade do estoque e uma ação com dono para cada faixa.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do estoque por lote com data de validade ou de entrada, valorizado a custo.</dd></div>
+          <div><dt>Erro comum</dt><dd>Mostrar só o valor. Sem ação e dono, a faixa de 90 dias vira baixa no mês seguinte.</dd></div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="sop-slide" id="slide-18" data-etapa="fechamento">
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 18"><img src="../assets/img/sop/pt/slide-18.png" width="1600" height="900" loading="lazy" alt="Slide 18, decisões e escalonamentos: três decisões pedidas com opções, recomendação, dono e prazo, e a data do próximo ciclo."></button>
+      <div class="sop-text">
+        <div class="sop-num"><b>18</b><span>Fechamento</span></div>
+        <h3>Decisões e escalonamentos</h3>
+        <dl class="sop-pontos">
+          <div><dt>Pergunta que responde</dt><dd>O que sai aprovado desta reunião?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Decisão pedida, opções, recomendação, dono e prazo.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Dos gaps que sobraram da Demand Review e da Supply Review.</dd></div>
+          <div><dt>Erro comum</dt><dd>Levar o problema sem recomendação. A diretoria decide mais rápido quando a área já chega com uma proposta.</dd></div>
+        </dl>
+      </div>
+    </article>
+  </section>
+
+  <div class="article sop-fim">
+    <h2>Como adaptar ao seu setor</h2>
+    <p>A estrutura dos 18 slides vale para qualquer empresa que planeja estoque. O que muda é o peso de cada slide.</p>
+    <div class="sop-setores">
+      <div><h3>Farma</h3><p>Validade manda no SLOB, e as faixas são por vencimento. Liberação da qualidade entra no lead time, e lançamento depende de registro aprovado. Licitação pesa mais que promoção.</p></div>
+      <div><h3>Bens de consumo</h3><p>Sell-in x sell-out e estoque no canal (SIT) viram o centro da Demand Review. Promoção e trade marketing são os maiores riscos do forecast.</p></div>
+      <div><h3>Varejo</h3><p>O slide do canal vira ruptura na loja, giro e cobertura por loja. A demanda é por SKU e loja, e a reposição pesa mais que a produção.</p></div>
+      <div><h3>Indústria</h3><p>Capacidade, setup e matéria-prima mandam. O plano de produção vira o slide principal, com sequenciamento e restrição de material.</p></div>
+    </div>
+
+    <h2>Glossário</h2>
+    <dl class="sop-glossario">
+      <div><dt>S&amp;OP</dt><dd>Sales and Operations Planning: o ciclo mensal que fecha demanda, supply e finanças num plano só.</dd></div>
+      <div><dt>IBP</dt><dd>Integrated Business Planning: o S&amp;OP com o financeiro e o portfólio dentro, com horizonte mais longo.</dd></div>
+      <div><dt>MBR</dt><dd>Monthly Business Review: a reunião executiva do mês, onde o plano é aprovado.</dd></div>
+      <div><dt>Demand Review</dt><dd>Reunião em que demanda, comercial e marketing fecham o forecast de consenso.</dd></div>
+      <div><dt>Supply Review</dt><dd>Reunião em que supply, produção e compras checam se o forecast cabe na capacidade e no estoque.</dd></div>
+      <div><dt>Lag</dt><dd>Quantos meses antes o forecast foi feito. Lag 1: um mês antes do mês medido.</dd></div>
+      <div><dt>MAPE</dt><dd>Erro percentual absoluto médio, ponderado pelo volume. Quanto menor, melhor.</dd></div>
+      <div><dt>Bias</dt><dd>Viés: se o forecast erra sempre para cima (positivo) ou para baixo (negativo).</dd></div>
+      <div><dt>FVA</dt><dd>Forecast Value Added: quanto o ajuste do time melhorou o forecast estatístico.</dd></div>
+      <div><dt>MOH</dt><dd>Months on Hand: para quantos meses de forecast o estoque dá.</dd></div>
+      <div><dt>SIT</dt><dd>Stock in Trade: estoque que está no canal (distribuidores e clientes), medido em dias de sell-out.</dd></div>
+      <div><dt>Backorder</dt><dd>Pedido de cliente aceito que ainda não foi atendido.</dd></div>
+      <div><dt>SLOB</dt><dd>Slow-moving and Obsolete: estoque parado ou perto de vencer.</dd></div>
+      <div><dt>NPI</dt><dd>New Product Introduction: lançamento de produto.</dd></div>
+      <div><dt>EOL</dt><dd>End of Life: produto saindo de linha.</dd></div>
+    </dl>
+
+    <h2>Onde eu fiz isso</h2>
+    <ul class="sop-onde">
+      <li><strong>Sanofi (2026):</strong> Demand Planning no ciclo de IBP. Demand Review no Kinaxis, MAPE, Bias e FVA em lag 1 e lag 3, estoque no canal (SIT) no MBR e dashboards de ODR e SLOB para os fóruns.</li>
+      <li><strong>Hering (2025 a 2026):</strong> ruptura, giro e cobertura nas lojas próprias, com boletins automáticos para gerentes e coordenadores.</li>
+      <li><strong>Hypera Pharma (2024 a 2025):</strong> ciclo do MPS e a apresentação mensal do plano de produção e sequenciamento de 3 meses no MBR.</li>
+      <li><strong>Abbott (2022 a 2024):</strong> produção. Indicadores da equipe técnica e um projeto A3 de ganho de capacidade, a base do slide de plano e ocupação.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>Sobre os dados:</strong> tudo é fictício, de uma empresa genérica. Nenhum número, produto ou slide de empresa onde trabalhei aparece aqui.</p>
+    </div>
+
+    <aside class="cta-card" aria-label="Baixar o modelo e contato">
+      <div><h2>Baixe o modelo e adapte</h2><p>PowerPoint editável com os 18 slides e gráficos nativos: troque os números em "Editar dados". Estou aberto a vagas em Demand Planning, IBP, Supply Chain Analytics e PCP.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-sm" href="../assets/docs/sop/modelo-sop-mensal.pptx" data-lead-file="modelo de S&amp;OP" data-umami-event="modelo-sop-clique" data-umami-event-origem="cta-sop">Baixar o modelo</a>
+        <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-sop">WhatsApp</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-sop">LinkedIn</a>
+      </div>
+    </aside>
+
+    <div class="next-links">
+      <a href="boletim-ruptura.html"><small>Outro projeto</small>Boletim de Ruptura de Lojas (dashboard interativo)</a>
+      <a href="automacoes.html"><small>Outro projeto</small>Automações com Power Automate</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>

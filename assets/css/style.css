@@ -607,3 +607,61 @@ figcaption .credit { display: block; margin-top: 4px; font-size: 11px; opacity: 
 .pa-run:disabled { opacity: .6; cursor: default; }
 .pa-patterns { padding: 8px 0 0; }
 @media (prefers-reduced-motion: reduce) { .pa-card, .pa-ok { transition: none; } }
+
+/* ---------- S&OP MENSAL (slide a slide) ---------- */
+.sop-hero-btns { margin-top: 24px; }
+.sop-stats { margin-top: 26px; max-width: 760px; }
+.sop-wrap { padding-top: 48px; }
+.sop-h2 { font-family: var(--display); font-size: clamp(28px, 4.5vw, 38px); margin: 0 0 10px; }
+.sop-intro { max-width: 68ch; color: var(--muted); font-size: 17px; }
+.sop-ciclo { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; }
+@media (min-width: 720px) { .sop-ciclo { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px) { .sop-ciclo { grid-template-columns: repeat(4, 1fr); } }
+.sop-ciclo li { padding: 18px 18px 14px; border: 1px solid var(--line); border-top: 4px solid var(--orange); border-radius: var(--radius); background: var(--surface); }
+.sop-ciclo h3 { font-size: 18px; margin: 8px 0 10px; }
+.sop-ciclo p { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+.sop-ciclo p b { color: var(--text); font-weight: 600; }
+.sop-sem { font: 600 12px/1 var(--mono); color: var(--orange-ink); text-transform: uppercase; letter-spacing: .04em; }
+.sop-linhas { max-width: 760px; }
+.sop-filters { margin-top: 28px; }
+.sop-slide { display: grid; gap: 20px; padding: 36px 0; border-top: 1px solid var(--line); scroll-margin-top: 72px; }
+.sop-slide[hidden] { display: none; }
+@media (min-width: 960px) { .sop-slide { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; align-items: start; } }
+.sop-shot { display: block; width: 100%; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; background: #fff; box-shadow: var(--shadow); cursor: zoom-in; }
+.sop-shot img { width: 100%; height: auto; }
+.sop-shot:hover { border-color: var(--orange); }
+.sop-shot:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.sop-num { display: flex; align-items: center; gap: 10px; font: 600 13px/1 var(--font); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.sop-num b { font: 700 13px/1 var(--mono); background: var(--orange); color: var(--navy); padding: 6px 8px; border-radius: 6px; letter-spacing: 0; }
+.sop-text h3 { font-family: var(--display); font-size: clamp(24px, 3.4vw, 30px); margin: 12px 0 14px; }
+.sop-pontos { margin: 0; display: grid; gap: 12px; }
+.sop-pontos div { display: grid; gap: 2px; }
+@media (min-width: 560px) { .sop-pontos div { grid-template-columns: 150px minmax(0, 1fr); gap: 12px; } }
+.sop-pontos dt { font-weight: 600; font-size: 14px; }
+.sop-pontos dd { margin: 0; color: var(--muted); font-size: 15px; }
+.sop-pontos .sop-calc { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px 14px; }
+.sop-pontos .sop-calc dd { color: var(--text); }
+.sop-pontos code { font-family: var(--mono); font-size: 13px; background: var(--surface); padding: 2px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+.sop-fim { padding-top: 16px; }
+.sop-setores { display: grid; gap: 12px; margin-top: 16px; }
+@media (min-width: 640px) { .sop-setores { grid-template-columns: 1fr 1fr; } }
+.sop-setores > div { padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.sop-setores h3 { margin: 0 0 6px; font-size: 17px; }
+.sop-setores p { margin: 0; font-size: 15px; color: var(--muted); }
+.sop-glossario { margin: 16px 0 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.sop-glossario div { display: grid; gap: 2px; padding: 10px 16px; border-top: 1px solid var(--line); }
+.sop-glossario div:first-child { border-top: 0; }
+@media (min-width: 560px) { .sop-glossario div { grid-template-columns: 140px minmax(0, 1fr); gap: 12px; } }
+.sop-glossario dt { font: 600 14px/1.6 var(--mono); }
+.sop-glossario dd { margin: 0; font-size: 15px; color: var(--muted); }
+.sop-viewer { border: 0; padding: 0; width: min(1240px, calc(100% - 24px)); max-width: none; max-height: calc(100% - 24px); background: var(--navy); color: #fff; border-radius: 12px; box-shadow: 0 24px 64px rgba(0, 0, 0, .5); }
+.sop-viewer::backdrop { background: rgba(6, 12, 20, .85); }
+.sop-viewer img { width: 100%; height: auto; max-height: calc(100vh - 110px); object-fit: contain; background: #fff; }
+.sop-viewer-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; }
+.sop-cap { flex: 1 1 100%; margin: 0; font-size: 15px; color: #DCE4EC; }
+@media (min-width: 640px) { .sop-cap { flex-basis: 0; } }
+.sop-count { font: 500 13px/1 var(--mono); color: #C9D3DD; margin-right: auto; padding-right: 4px; }
+.sop-viewer button { width: 44px; height: 44px; display: inline-grid; place-items: center; padding: 0; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .25); background: transparent; color: #fff; cursor: pointer; }
+.sop-viewer button:hover { background: rgba(255, 255, 255, .1); }
+.sop-viewer button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.sop-viewer button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
