@@ -350,15 +350,16 @@
     </article>
 
     <article class="sop-slide" id="slide-18" data-etapa="financeiro">
-      <button class="sop-shot" type="button" aria-label="Ampliar o slide 18"><img src="../assets/img/sop/pt/slide-18.png" width="1600" height="900" loading="lazy" alt="Slide 18, estoque em risco: barras por faixa de vencimento e de giro lento da linha E, tabela com a ação de cada faixa e total de R$ 100.000."></button>
+      <button class="sop-shot" type="button" aria-label="Ampliar o slide 18"><img src="../assets/img/sop/pt/slide-18.png" width="1600" height="900" loading="lazy" alt="Slide 18, estoque em risco: participação de cada faixa em unidades e em valor, o cálculo lote a lote com o exemplo do lote L2410, tabela com unidades, valor a custo, provisão e estratégia de cada faixa, R$ 82.250 em risco e R$ 43.241 de provisão."></button>
       <div class="sop-text">
         <div class="sop-num"><b>18</b><span>Financeiro</span></div>
         <h3>Estoque em risco (SLOB)</h3>
         <dl class="sop-pontos">
-          <div><dt>Pergunta que responde</dt><dd>Quanto do estoque pode virar perda, e o que fazer com cada faixa?</dd></div>
-          <div><dt>O que precisa ter</dt><dd>Valor por faixa de validade ou de idade do estoque e uma ação com dono para cada faixa.</dd></div>
-          <div><dt>De onde vem o dado</dt><dd>Do estoque por lote com data de validade ou de entrada, valorizado a custo.</dd></div>
-          <div><dt>Erro comum</dt><dd>Mostrar só o valor. Sem ação e dono, a faixa de 90 dias vira baixa no mês seguinte.</dd></div>
+          <div><dt>Pergunta que responde</dt><dd>Quanto do estoque pode virar perda, quanto já vai para o resultado como provisão e o que fazer com cada faixa?</dd></div>
+          <div><dt>O que precisa ter</dt><dd>Unidades e valor a custo por faixa de vencimento, mais o giro lento, a provisão de cada faixa e uma estratégia com dono. Unidade mostra o esforço de venda, valor mostra o impacto no resultado: a faixa de 7 a 12 meses tem 26% das unidades e só 18% do valor.</dd></div>
+          <div><dt>De onde vem o dado</dt><dd>Do estoque por lote com a validade, do forecast dos próximos 6 meses e do custo padrão de cada SKU. O percentual de provisão vem da política de Finanças.</dd></div>
+          <div><dt>Erro comum</dt><dd>Calcular pelo estoque total do SKU e não pelo lote. O SKU pode ter cobertura boa e mesmo assim ter um lote que vence antes de vender. Outro erro é mostrar só o valor: sem estratégia e dono, a faixa de até 3 meses vira baixa no mês seguinte.</dd></div>
+          <div class="sop-calc"><dt>Como calcular</dt><dd><code>Unidades em risco = estoque do lote − forecast que ele atende por FEFO até a data limite</code>, sendo a data limite a validade menos a vida mínima que o cliente aceita (aqui, 3 meses). Depois <code>Valor = unidades × custo unitário</code> e <code>Provisão = valor × % da faixa</code> (100%, 50%, 25% e 10% neste exemplo). No lote L2410 do E-502, que vence em abr/27: 1.200 − 710 = 490 unidades × R$ 27,50 = R$ 13.475, com provisão de R$ 6.738. Lote com validade longa entra como giro lento quando passa de 6 meses de cobertura. As estratégias seguem o prazo: até 3 meses, desconto, doação ou baixa; 4 a 6 meses, transferência e campanha; 7 a 12 meses, segurar compra e produção; giro lento, rever o forecast e avaliar descontinuar.</dd></div>
         </dl>
       </div>
     </article>

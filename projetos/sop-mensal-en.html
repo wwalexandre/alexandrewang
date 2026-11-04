@@ -350,15 +350,16 @@
     </article>
 
     <article class="sop-slide" id="slide-18" data-etapa="financeiro">
-      <button class="sop-shot" type="button" aria-label="Enlarge slide 18"><img src="../assets/img/sop/en/slide-18.png" width="1600" height="900" loading="lazy" alt="Slide 18, inventory at risk: bars by expiry bucket and slow-moving stock from line E, a table with the action for each bucket and a total of R$ 100,000."></button>
+      <button class="sop-shot" type="button" aria-label="Enlarge slide 18"><img src="../assets/img/sop/en/slide-18.png" width="1600" height="900" loading="lazy" alt="Slide 18, inventory at risk: each bucket's share in units and in value, the lot-by-lot calculation with lot L2410 as the example, a table with units, value at cost, provision and strategy for each bucket, R$ 82,250 at risk and R$ 43,241 of provision."></button>
       <div class="sop-text">
         <div class="sop-num"><b>18</b><span>Finance</span></div>
         <h3>Inventory at risk (SLOB)</h3>
         <dl class="sop-pontos">
-          <div><dt>Question it answers</dt><dd>How much stock could turn into a loss, and what do we do with each bucket?</dd></div>
-          <div><dt>What it needs</dt><dd>Value by expiry or stock-age bucket and an action with an owner for each bucket.</dd></div>
-          <div><dt>Where the data comes from</dt><dd>Stock by batch with its expiry or receipt date, valued at cost.</dd></div>
-          <div><dt>Common mistake</dt><dd>Showing only the value. Without an action and an owner, the 90-day bucket becomes a write-off next month.</dd></div>
+          <div><dt>Question it answers</dt><dd>How much stock could turn into a loss, how much already hits the income statement as a provision, and what do we do with each bucket?</dd></div>
+          <div><dt>What it needs</dt><dd>Units and value at cost by expiry bucket, plus slow-moving stock, the provision for each bucket and a strategy with an owner. Units show the sales effort, value shows the impact on the result: the 7 to 12 month bucket has 26% of the units and only 18% of the value.</dd></div>
+          <div><dt>Where the data comes from</dt><dd>Stock by lot with its expiry date, the forecast for the next 6 months and the standard cost of each SKU. The provision percentage comes from the Finance policy.</dd></div>
+          <div><dt>Common mistake</dt><dd>Calculating from the SKU's total stock instead of by lot. A SKU can have healthy coverage and still hold a lot that expires before it sells. Another mistake is showing only the value: without a strategy and an owner, the up-to-3-month bucket becomes a write-off next month.</dd></div>
+          <div class="sop-calc"><dt>How to calculate</dt><dd><code>Units at risk = lot stock − forecast it covers by FEFO until the cut-off date</code>, where the cut-off is the expiry date minus the minimum shelf life the customer accepts (3 months here). Then <code>Value = units × unit cost</code> and <code>Provision = value × bucket %</code> (100%, 50%, 25% and 10% in this example). For lot L2410 of E-502, expiring Apr/27: 1,200 − 710 = 490 units × R$ 27.50 = R$ 13,475, with a provision of R$ 6,738. A lot with long shelf life counts as slow-moving when it exceeds 6 months of coverage. The strategies follow the time left: up to 3 months, discount, donation or write-off; 4 to 6 months, transfer and campaign; 7 to 12 months, hold purchases and production; slow-moving, review the forecast and assess discontinuation.</dd></div>
         </dl>
       </div>
     </article>
