@@ -496,6 +496,151 @@ const FILE_TXT = {
   }));
 })();
 
+// Antes de usar uma demonstração (validador, dashboard, fluxos, app): pede o e-mail uma vez e avisa o Alexandre
+const DEMO_TXT = {
+  pt: {
+    title: 'Testar o projeto',
+    lead: 'Deixe seu e-mail para usar a demonstração.',
+    label: 'Seu e-mail',
+    placeholder: 'nome@empresa.com',
+    submit: 'Liberar a demonstração',
+    cancel: 'Cancelar',
+    privacy: 'Uso seu e-mail só para saber quem testou o projeto e, se fizer sentido, entrar em contato. Não compartilho com ninguém.',
+    invalid: 'Digite um e-mail válido.',
+    doneTitle: 'Pronto, pode testar',
+    doneText: 'Obrigado! Se quiser conversar sobre o projeto, me chama no WhatsApp.',
+    whatsapp: 'Falar no WhatsApp',
+    go: 'Testar agora',
+    subject: 'Novo teste: '
+  },
+  en: {
+    title: 'Try the project',
+    lead: 'Leave your email to use the demo.',
+    label: 'Your email',
+    placeholder: 'name@company.com',
+    submit: 'Unlock the demo',
+    cancel: 'Cancel',
+    privacy: 'I only use your email to know who tried the project and, if it makes sense, to get in touch. I never share it.',
+    invalid: 'Please enter a valid email.',
+    doneTitle: 'All set, go ahead',
+    doneText: 'Thank you! If you would like to talk about the project, message me on WhatsApp.',
+    whatsapp: 'Message on WhatsApp',
+    go: 'Try it now',
+    subject: 'New demo user (EN): '
+  }
+};
+
+(function demoGate() {
+  const areas = document.querySelectorAll('[data-lead-demo]');
+  if (!areas.length) return;
+  const t = DEMO_TXT[LANG];
+  const dlg = document.createElement('dialog');
+  dlg.className = 'cv-dialog file-dialog';
+  dlg.setAttribute('aria-labelledby', 'demoTitle');
+  dlg.innerHTML =
+    '<form method="dialog" id="demoForm" novalidate>' +
+      '<h2 id="demoTitle">' + t.title + '</h2>' +
+      '<p>' + t.lead + '</p>' +
+      '<label for="demoEmail">' + t.label + '</label>' +
+      '<input type="email" id="demoEmail" name="email" autocomplete="email" placeholder="' + t.placeholder + '" required>' +
+      '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<span class="err" id="demoErr" role="alert"></span>' +
+      '<small>' + t.privacy + '</small>' +
+      '<div class="row"><button type="button" class="btn btn-outline btn-sm" id="demoCancel">' + t.cancel + '</button>' +
+      '<button type="submit" class="btn btn-primary btn-sm">' + t.submit + '</button></div>' +
+    '</form>' +
+    '<div class="done" id="demoDone" hidden>' +
+      '<h2>' + t.doneTitle + '</h2>' +
+      '<p>' + t.doneText + '</p>' +
+      '<div class="row"><a class="btn btn-wa btn-sm" href="' + (LANG === 'en' ? '/whatsapp/en' : '/whatsapp') + '" target="_blank" rel="noopener">' + t.whatsapp + '</a>' +
+      '<button type="button" class="btn btn-primary btn-sm" id="demoGo">' + t.go + '</button></div>' +
+    '</div>';
+  document.body.appendChild(dlg);
+
+  const form = dlg.querySelector('#demoForm');
+  const done = dlg.querySelector('#demoDone');
+  const email = dlg.querySelector('#demoEmail');
+  const err = dlg.querySelector('#demoErr');
+  let atual = null; // área ou link que pediu o e-mail
+  let voltar = null; // onde o foco volta ao fechar
+
+  const salvo = () => {
+    try { return localStorage.getItem('lead_email') || localStorage.getItem('cv_email') || ''; } catch (e) { return ''; }
+  };
+  const chave = nome => 'lead_demo_' + nome;
+  const avisado = nome => { try { return !!localStorage.getItem(chave(nome)); } catch (e) { return false; } };
+  // Um aviso por demonstração em cada navegador, para não repetir a cada clique
+  const avisar = (value, nome) => {
+    try { localStorage.setItem(chave(nome), '1'); } catch (e) {}
+    fetch(LEAD_ENDPOINT, {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, demonstracao: nome, _subject: t.subject + nome, _template: 'table', _captcha: 'false' })
+    }).catch(() => {});
+    track('demo-liberada', { demonstracao: nome });
+  };
+
+  const show = () => { if (!dlg.open) (dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', '')); };
+  const close = () => {
+    if (dlg.close) dlg.close(); else dlg.removeAttribute('open');
+    if (voltar && voltar.focus) voltar.focus();
+  };
+  const pedir = (area, alvo) => {
+    atual = area; voltar = alvo;
+    err.textContent = '';
+    form.hidden = false; done.hidden = true;
+    show();
+    email.focus();
+  };
+
+  // Devolve true quando a demonstração pode seguir; senão abre a janela do e-mail
+  const liberar = (area, alvo) => {
+    const nome = area.dataset.leadDemo;
+    const ja = salvo();
+    if (ja) {
+      if (!avisado(nome)) avisar(ja, nome);
+      return true;
+    }
+    pedir(area, alvo);
+    return false;
+  };
+  const barrar = e => { e.preventDefault(); e.stopImmediatePropagation(); };
+  const INTERATIVO = 'a,button,input,select,textarea,label,summary,[role="button"]';
+
+  areas.forEach(area => {
+    if (area.matches('a')) {
+      area.addEventListener('click', e => { if (!liberar(area, area)) barrar(e); });
+      return;
+    }
+    area.addEventListener('click', e => {
+      const alvo = e.target.closest(INTERATIVO);
+      if (alvo && area.contains(alvo) && !liberar(area, alvo)) barrar(e);
+    }, true);
+    area.addEventListener('focusin', e => {
+      if (e.target.matches('input,select,textarea') && !salvo()) { e.target.blur(); pedir(area, e.target); }
+    }, true);
+    area.addEventListener('drop', e => { if (!liberar(area, area)) barrar(e); }, true);
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const value = email.value.trim();
+    if (!email.checkValidity() || !value) { err.textContent = t.invalid; email.focus(); return; }
+    if (!form._honey.value) {
+      try { localStorage.setItem('lead_email', value); } catch (e) {}
+      avisar(value, atual.dataset.leadDemo);
+    }
+    if (atual.matches('a')) window.open(atual.href, '_blank', 'noopener');
+    form.hidden = true; done.hidden = false;
+    dlg.querySelector('#demoGo').focus();
+  });
+
+  dlg.querySelector('#demoCancel').addEventListener('click', close);
+  dlg.querySelector('#demoGo').addEventListener('click', close);
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+})();
+
 // Botões de compartilhar nas publicações (cada rede leva um marcador para aparecer nas estatísticas)
 (function shareBars() {
   const bars = document.querySelectorAll('[data-share]');
