@@ -18,6 +18,9 @@ Site no ar: https://alexandrewang.vercel.app
 | `publicacoes/importacao-jogo.html` | Artigo e vídeo "Importação, o jogo dos prazos": o fluxo de importação aérea como jogo de tabuleiro, com casos reais anonimizados |
 | `publicacoes/forecast-erro.html` | Artigo completo e vídeo sobre erro de forecast: erro por família, FVA e Bias, com checklist em PDF |
 | `publicacoes/incoterms.html` | Artigo completo e vídeo sobre os 11 Incoterms 2020 |
+| `admin/index.html` | Painel privado (`/admin/`) para ler mensagens de contato e leads, com login do Supabase. Fora do Google (`noindex` e `robots.txt`) |
+| `supabase/migrations/` | SQL do banco (tabelas, RLS e função `is_admin`), a fonte da verdade do Supabase |
+| `docs/SUPABASE.md` | Contexto, decisões, segurança e pendências do Supabase neste site |
 | `assets/` | CSS, JavaScript, imagens, prévias e vídeos |
 | `vercel.json` | Cabeçalhos de segurança (CSP, anti-iframe, nosniff), cache e o redirecionamento por país (quem acessa de fora do Brasil vai para a versão em inglês) |
 | `sitemap.xml`, `robots.txt`, `404.html` | Busca no Google e página de erro |
@@ -34,6 +37,10 @@ Quem abre o site de fora do Brasil cai direto na versão em inglês. Quem faz is
 - na versão em inglês, quem tem o navegador em português recebe o convite "Prefere ler em português?".
 
 Para testar, abra o site com uma VPN fora do Brasil numa janela anônima (sem o cookie `lang`).
+
+## Contato e leads (Supabase)
+
+O formulário de contato e a cópia dos e-mails de quem baixa o currículo, os modelos ou usa as demos ficam no Supabase. O visitante só consegue inserir; quem lê é o painel `/admin/`, restrito ao administrador por RLS. Tudo explicado em [`docs/SUPABASE.md`](docs/SUPABASE.md), incluindo os passos manuais para criar o usuário admin.
 
 ## Estatísticas
 
