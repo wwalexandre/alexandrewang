@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin | Alexandre Wang</title>
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+<script src="../assets/js/vendor/supabase-js.umd.js" defer></script>
+<script src="../assets/js/admin.js" defer></script>
+</head>
+<body class="adm">
+<main class="adm-wrap">
+
+  <header class="adm-head">
+    <h1>Painel</h1>
+    <div class="adm-head-actions" id="headActions" hidden>
+      <span class="adm-user" id="userEmail"></span>
+      <button type="button" class="btn btn-outline btn-sm" id="btnLogout">Sair</button>
+    </div>
+  </header>
+
+  <p class="adm-boot" id="bootMsg" role="status">Carregando...</p>
+
+  <section class="adm-card" id="loginView" hidden aria-labelledby="t-login">
+    <h2 id="t-login">Entrar</h2>
+    <form id="loginForm" novalidate>
+      <label for="loginEmail">E-mail</label>
+      <input id="loginEmail" type="email" autocomplete="username" required>
+      <label for="loginPass">Senha</label>
+      <input id="loginPass" type="password" autocomplete="current-password" required>
+      <p class="adm-err" id="loginErr" role="alert"></p>
+      <button type="submit" class="btn btn-primary" id="btnLogin">Entrar</button>
+    </form>
+  </section>
+
+  <section class="adm-card" id="deniedView" hidden>
+    <h2>Acesso negado</h2>
+    <p>Esta conta não tem permissão de administrador. A sessão foi encerrada.</p>
+    <button type="button" class="btn btn-outline btn-sm" id="btnBack">Voltar ao login</button>
+  </section>
+
+  <section id="appView" hidden>
+    <div class="adm-tabs" role="tablist" aria-label="Seções do painel">
+      <button type="button" role="tab" id="tabMsg" aria-selected="true" aria-controls="panelMsg">Mensagens <span class="adm-badge" id="badgeMsg" hidden></span></button>
+      <button type="button" role="tab" id="tabLeads" aria-selected="false" aria-controls="panelLeads">Leads <span class="adm-count" id="countLeads"></span></button>
+    </div>
+
+    <div id="panelMsg" role="tabpanel" aria-labelledby="tabMsg">
+      <div class="adm-bar">
+        <label class="adm-check"><input type="checkbox" id="onlyUnread"> Só não lidas</label>
+        <button type="button" class="btn btn-outline btn-sm" id="reloadMsg">Atualizar</button>
+      </div>
+      <p class="adm-status" id="msgStatus" role="status"></p>
+      <div id="msgList" class="adm-list"></div>
+    </div>
+
+    <div id="panelLeads" role="tabpanel" aria-labelledby="tabLeads" hidden>
+      <div class="adm-bar">
+        <button type="button" class="btn btn-outline btn-sm" id="reloadLeads">Atualizar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="exportLeads">Exportar CSV</button>
+      </div>
+      <p class="adm-status" id="leadStatus" role="status"></p>
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead><tr><th>Data</th><th>E-mail</th><th>Origem</th><th>Idioma</th><th><span class="sr-only">Ações</span></th></tr></thead>
+          <tbody id="leadBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

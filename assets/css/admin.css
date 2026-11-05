@@ -1,0 +1,46 @@
+/* Painel /admin: usa as variáveis de style.css (claro e escuro automáticos) */
+.adm { background: var(--bg); color: var(--text); font-family: var(--font); margin: 0; min-height: 100vh; }
+.adm-wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+.adm-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.adm-head h1 { font-family: var(--display); font-size: 36px; margin: 0; }
+.adm-head-actions { display: flex; gap: 12px; align-items: center; }
+.adm-head-actions[hidden], .adm [hidden] { display: none; }
+.adm-user { color: var(--muted); font-size: 14px; }
+.adm-boot { color: var(--muted); }
+
+.adm-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); max-width: 420px; display: grid; gap: 12px; }
+.adm-card h2 { font-family: var(--display); font-size: 28px; margin: 0; }
+.adm-card form { display: grid; gap: 10px; }
+.adm label { font-size: 13px; font-weight: 600; }
+.adm input[type="email"], .adm input[type="password"] { width: 100%; font: 16px var(--font); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.adm input:focus-visible, .adm button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.adm-err { color: #C0392B; font-size: 14px; min-height: 1.2em; margin: 0; }
+
+.adm-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.adm-tabs button { font: 600 15px var(--font); padding: 10px 16px; border: 0; background: none; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; }
+.adm-tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--orange); }
+.adm-badge { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--orange); color: #1b1000; font-size: 12px; line-height: 20px; text-align: center; }
+.adm-count { color: var(--muted); font-weight: 500; font-size: 13px; }
+
+.adm-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.adm-check { display: inline-flex; gap: 8px; align-items: center; font-weight: 500; }
+.adm-status { color: var(--muted); font-size: 14px; min-height: 1.2em; margin: 0 0 8px; }
+
+.adm-list { display: grid; gap: 12px; }
+.adm-msg { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: var(--radius-sm); padding: 16px; display: grid; gap: 8px; }
+.adm-msg.unread { border-left-color: var(--orange); }
+.adm-msg-top { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: baseline; }
+.adm-msg-name { font-weight: 700; }
+.adm-msg-meta { color: var(--muted); font-size: 13px; }
+.adm-msg-subject { font-weight: 600; }
+.adm-msg-text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.adm-msg a { color: var(--link); }
+.adm-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.adm-danger { color: #C0392B; border-color: #C0392B; }
+
+.adm-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.adm-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.adm-table th, .adm-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.adm-table td:nth-child(2) { white-space: normal; overflow-wrap: anywhere; }
+.adm-table tbody tr:last-child td { border-bottom: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

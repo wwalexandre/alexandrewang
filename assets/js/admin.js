@@ -1,0 +1,225 @@
+// Painel /admin: lê mensagens de contato e leads do Supabase.
+// Só funciona para quem está na tabela "admins" (RLS no banco). A chave abaixo é a PUBLICÁVEL (pública por design).
+// Mesma URL e chave de assets/js/main.js. Nunca coloque aqui a chave secreta (service_role).
+// Todo texto vindo de visitantes é inserido com textContent, nunca com innerHTML.
+
+(function () {
+  const SB_URL = 'https://apezjjrpvlglaawvhqoo.supabase.co';
+  const SB_KEY = 'sb_publishable_eHbHUKdtoOVlIg87zQZAew_DgD-GK6J';
+
+  const $ = id => document.getElementById(id);
+  const sb = window.supabase.createClient(SB_URL, SB_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true }
+  });
+
+  const views = { boot: $('bootMsg'), login: $('loginView'), denied: $('deniedView'), app: $('appView') };
+  const show = name => {
+    Object.keys(views).forEach(k => { views[k].hidden = k !== name; });
+    $('headActions').hidden = name !== 'app';
+  };
+
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = text;
+    return n;
+  };
+  const fmt = iso => new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+  // ---------- Sessão e acesso ----------
+  async function isAdmin(userId) {
+    const { data, error } = await sb.from('admins').select('user_id').eq('user_id', userId).maybeSingle();
+    return !error && !!data;
+  }
+
+  async function enter(session) {
+    if (!(await isAdmin(session.user.id))) {
+      await sb.auth.signOut();
+      show('denied');
+      return;
+    }
+    $('userEmail').textContent = session.user.email || '';
+    show('app');
+    loadMessages();
+    loadLeads();
+  }
+
+  async function boot() {
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) await enter(data.session);
+    else show('login');
+  }
+
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = $('loginErr');
+    const btn = $('btnLogin');
+    err.textContent = '';
+    const email = $('loginEmail').value.trim();
+    const password = $('loginPass').value;
+    if (!email || !password) { err.textContent = 'Informe e-mail e senha.'; return; }
+    btn.disabled = true;
+    const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+    btn.disabled = false;
+    if (error || !data.session) { err.textContent = 'E-mail ou senha incorretos.'; return; }
+    $('loginPass').value = '';
+    await enter(data.session);
+  });
+
+  $('btnLogout').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    $('msgList').replaceChildren();
+    $('leadBody').replaceChildren();
+    show('login');
+  });
+  $('btnBack').addEventListener('click', () => show('login'));
+
+  // ---------- Abas ----------
+  const tabs = [
+    { tab: $('tabMsg'), panel: $('panelMsg') },
+    { tab: $('tabLeads'), panel: $('panelLeads') }
+  ];
+  tabs.forEach(t => t.tab.addEventListener('click', () => {
+    tabs.forEach(o => {
+      const on = o === t;
+      o.tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      o.panel.hidden = !on;
+    });
+  }));
+
+  // ---------- Mensagens ----------
+  let messages = [];
+
+  function renderMessages() {
+    const list = $('msgList');
+    const onlyUnread = $('onlyUnread').checked;
+    const unread = messages.filter(m => !m.lida).length;
+    $('badgeMsg').hidden = unread === 0;
+    $('badgeMsg').textContent = String(unread);
+    list.replaceChildren();
+    const shown = onlyUnread ? messages.filter(m => !m.lida) : messages;
+    $('msgStatus').textContent = shown.length
+      ? shown.length + (shown.length === 1 ? ' mensagem' : ' mensagens')
+      : (onlyUnread ? 'Nenhuma mensagem não lida.' : 'Nenhuma mensagem ainda.');
+
+    shown.forEach(m => {
+      const card = el('article', 'adm-msg' + (m.lida ? '' : ' unread'));
+
+      const top = el('div', 'adm-msg-top');
+      top.append(el('span', 'adm-msg-name', m.nome));
+      top.append(el('span', 'adm-msg-meta', fmt(m.criado_em) + ' · ' + String(m.idioma).toUpperCase()));
+      card.append(top);
+
+      const mail = el('a', '', m.email);
+      mail.href = 'mailto:' + encodeURIComponent(m.email);
+      const meta = el('div', 'adm-msg-meta');
+      meta.append(mail);
+      card.append(meta);
+
+      if (m.assunto) card.append(el('div', 'adm-msg-subject', m.assunto));
+      card.append(el('p', 'adm-msg-text', m.mensagem));
+
+      const actions = el('div', 'adm-actions');
+      const toggle = el('button', 'btn btn-outline btn-sm', m.lida ? 'Marcar como não lida' : 'Marcar como lida');
+      toggle.type = 'button';
+      toggle.addEventListener('click', async () => {
+        toggle.disabled = true;
+        const { error } = await sb.from('mensagens_contato').update({ lida: !m.lida }).eq('id', m.id);
+        if (error) { $('msgStatus').textContent = 'Não foi possível atualizar. Tente novamente.'; toggle.disabled = false; return; }
+        m.lida = !m.lida;
+        renderMessages();
+      });
+      const del = el('button', 'btn btn-outline btn-sm adm-danger', 'Excluir');
+      del.type = 'button';
+      del.addEventListener('click', async () => {
+        if (!window.confirm('Excluir esta mensagem de ' + m.nome + '? Não dá para desfazer.')) return;
+        del.disabled = true;
+        const { error } = await sb.from('mensagens_contato').delete().eq('id', m.id);
+        if (error) { $('msgStatus').textContent = 'Não foi possível excluir. Tente novamente.'; del.disabled = false; return; }
+        messages = messages.filter(x => x.id !== m.id);
+        renderMessages();
+      });
+      actions.append(toggle, del);
+      card.append(actions);
+
+      list.append(card);
+    });
+  }
+
+  async function loadMessages() {
+    $('msgStatus').textContent = 'Carregando...';
+    const { data, error } = await sb.from('mensagens_contato').select('*').order('criado_em', { ascending: false }).limit(200);
+    if (error) { $('msgStatus').textContent = 'Não foi possível carregar as mensagens.'; return; }
+    messages = data || [];
+    renderMessages();
+  }
+
+  $('reloadMsg').addEventListener('click', loadMessages);
+  $('onlyUnread').addEventListener('change', renderMessages);
+
+  // ---------- Leads ----------
+  let leads = [];
+  const ORIGEM = { curriculo: 'Currículo', arquivo: 'Modelo', demo: 'Demonstração' };
+
+  function renderLeads() {
+    const body = $('leadBody');
+    body.replaceChildren();
+    $('countLeads').textContent = leads.length ? '(' + leads.length + ')' : '';
+    $('leadStatus').textContent = leads.length ? '' : 'Nenhum lead ainda.';
+    leads.forEach(l => {
+      const tr = el('tr');
+      tr.append(el('td', '', fmt(l.criado_em)));
+      tr.append(el('td', '', l.email));
+      tr.append(el('td', '', ORIGEM[l.origem] || l.origem));
+      tr.append(el('td', '', String(l.idioma).toUpperCase()));
+      const td = el('td');
+      const del = el('button', 'btn btn-outline btn-sm adm-danger', 'Excluir');
+      del.type = 'button';
+      del.addEventListener('click', async () => {
+        if (!window.confirm('Excluir o lead ' + l.email + '? Não dá para desfazer.')) return;
+        del.disabled = true;
+        const { error } = await sb.from('leads').delete().eq('id', l.id);
+        if (error) { $('leadStatus').textContent = 'Não foi possível excluir. Tente novamente.'; del.disabled = false; return; }
+        leads = leads.filter(x => x.id !== l.id);
+        renderLeads();
+      });
+      td.append(del);
+      tr.append(td);
+      body.append(tr);
+    });
+  }
+
+  async function loadLeads() {
+    $('leadStatus').textContent = 'Carregando...';
+    const { data, error } = await sb.from('leads').select('*').order('criado_em', { ascending: false }).limit(1000);
+    if (error) { $('leadStatus').textContent = 'Não foi possível carregar os leads.'; return; }
+    leads = data || [];
+    renderLeads();
+  }
+
+  $('reloadLeads').addEventListener('click', loadLeads);
+
+  // CSV: neutraliza células que começam com = + - @ (injeção de fórmula no Excel)
+  const csvCell = v => {
+    let s = String(v === null || v === undefined ? '' : v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  };
+  $('exportLeads').addEventListener('click', () => {
+    if (!leads.length) { $('leadStatus').textContent = 'Não há leads para exportar.'; return; }
+    const rows = [['data', 'email', 'origem', 'idioma']].concat(
+      leads.map(l => [l.criado_em, l.email, l.origem, l.idioma])
+    );
+    const csv = '﻿' + rows.map(r => r.map(csvCell).join(';')).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'leads-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  boot();
+})();
