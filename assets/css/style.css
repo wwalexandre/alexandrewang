@@ -878,3 +878,21 @@ body.hint-open .to-top { bottom: 96px; }
   .ach-count { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .ach-track { scroll-behavior: auto; } }
+
+/* Formulário de contato (grava no Supabase) */
+.msg-form { margin-top: 32px; padding: 24px; border-radius: var(--radius); background: var(--navy-2); border: 1px solid rgba(255, 255, 255, .08); display: grid; gap: 14px; color: #C9D3DD; }
+.msg-form h3 { font-family: var(--display); font-size: 28px; color: #fff; margin: 0; }
+.msg-form .msg-lead { margin: 0; font-size: 15px; }
+.msg-grid { display: grid; gap: 14px; }
+@media (min-width: 700px) { .msg-grid { grid-template-columns: 1fr 1fr; } .msg-grid .msg-full { grid-column: 1 / -1; } }
+.msg-field { display: grid; gap: 6px; }
+.msg-field label { font-size: 13px; font-weight: 600; color: #fff; }
+.msg-field input, .msg-field textarea { width: 100%; font: 16px var(--font); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .18); background: var(--navy); color: #fff; resize: vertical; }
+.msg-field input:focus, .msg-field textarea:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+.msg-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
+.msg-status { margin: 0; min-height: 1.3em; font-size: 14px; }
+.msg-status.ok { color: var(--teal); }
+.msg-status.err { color: #FFB4A8; }
+.msg-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.msg-row small { color: #9DABBA; font-size: 12px; line-height: 1.45; max-width: 52ch; }
+.msg-row .btn[disabled] { opacity: .6; cursor: progress; }

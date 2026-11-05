@@ -19,6 +19,25 @@ if (UMAMI_ID) {
 function track(name, data) {
   try { if (window.umami) window.umami.track(name, data); } catch (e) {}
 }
+
+// Supabase: grava mensagens de contato e leads (e-mails de quem baixa currículo, modelos ou usa demos).
+// A chave abaixo é a PUBLICÁVEL: ela aparece no navegador por design. Quem protege os dados é o RLS do banco
+// (visitante só consegue inserir; só o admin lê). Nunca coloque aqui a chave secreta (service_role).
+// Detalhes em docs/SUPABASE.md. A mesma URL e chave estão em assets/js/admin.js.
+const SB_URL = 'https://apezjjrpvlglaawvhqoo.supabase.co';
+const SB_KEY = 'sb_publishable_eHbHUKdtoOVlIg87zQZAew_DgD-GK6J';
+function sbInsert(table, row) {
+  return fetch(SB_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    keepalive: true,
+    headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Prefer: 'return=minimal' },
+    body: JSON.stringify(row)
+  });
+}
+// Cópia do lead no banco. Nunca segura o download nem mostra erro ao visitante.
+function saveLead(email, origem) {
+  try { sbInsert('leads', { email: email, origem: origem, idioma: LANG }).catch(() => {}); } catch (e) {}
+}
 document.querySelectorAll('video').forEach(v => v.addEventListener('play', () => {
   track('video-play', { video: (v.currentSrc || '').split('/').pop() });
 }, { once: true }));
@@ -772,6 +791,7 @@ const CV_TXT = {
     const value = email.value.trim();
     if (!email.checkValidity() || !value) { err.textContent = t.invalid; email.focus(); return; }
     if (!form._honey.value) {
+      saveLead(value, 'curriculo');
       fetch(LEAD_ENDPOINT, {
         method: 'POST',
         keepalive: true,
@@ -866,12 +886,15 @@ const FILE_TXT = {
   let atual = null; // botão que abriu a janela
 
   const show = () => (dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', ''));
-  const avisar = value => fetch(LEAD_ENDPOINT, {
-    method: 'POST',
-    keepalive: true,
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, arquivo: atual.dataset.leadFile, _subject: t.subject + atual.dataset.leadFile, _template: 'table', _captcha: 'false' })
-  }).catch(() => {});
+  const avisar = value => {
+    saveLead(value, 'arquivo');
+    return fetch(LEAD_ENDPOINT, {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, arquivo: atual.dataset.leadFile, _subject: t.subject + atual.dataset.leadFile, _template: 'table', _captcha: 'false' })
+    }).catch(() => {});
+  };
   const baixar = repetido => {
     const a = document.createElement('a');
     a.href = atual.getAttribute('href');
@@ -1003,6 +1026,7 @@ const DEMO_TXT = {
   // Um aviso por demonstração em cada navegador, para não repetir a cada clique
   const avisar = (value, nome) => {
     try { localStorage.setItem(chave(nome), '1'); } catch (e) {}
+    saveLead(value, 'demo');
     fetch(LEAD_ENDPOINT, {
       method: 'POST',
       keepalive: true,
@@ -1122,6 +1146,69 @@ const DEMO_TXT = {
         navigator.share({ title, url: url('nativo') }).then(() => track('compartilhar', { rede: 'nativo', pagina: slug })).catch(() => {});
       });
       bar.append(more);
+    }
+  });
+})();
+
+// Formulário de contato: grava a mensagem no Supabase (tabela mensagens_contato).
+// Anti-spam: campo oculto (honeypot), limites de tamanho e intervalo mínimo entre envios neste navegador.
+(function contactForm() {
+  const form = document.getElementById('msgForm');
+  if (!form) return;
+  const T = LANG === 'en'
+    ? {
+        invalid: 'Please fill in your name, a valid email and a message with at least 10 characters.',
+        wait: 'You just sent a message. Please wait a minute before sending another.',
+        sending: 'Sending...',
+        ok: 'Message sent. Thank you! I will reply by email.',
+        fail: 'Could not send right now. Please email me directly at alexandre01.w@gmail.com.'
+      }
+    : {
+        invalid: 'Preencha o nome, um e-mail válido e uma mensagem com pelo menos 10 caracteres.',
+        wait: 'Você acabou de enviar uma mensagem. Aguarde um minuto para enviar outra.',
+        sending: 'Enviando...',
+        ok: 'Mensagem enviada. Obrigado! Respondo por e-mail.',
+        fail: 'Não consegui enviar agora. Escreva direto para alexandre01.w@gmail.com.'
+      };
+  const status = form.querySelector('#msgStatus');
+  const btn = form.querySelector('button[type="submit"]');
+  const setStatus = (text, kind) => { status.textContent = text; status.className = 'msg-status' + (kind ? ' ' + kind : ''); };
+  const MIN_INTERVAL = 60000;
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (form._honey.value) return;
+    const nome = form.nome.value.trim();
+    const email = form.email.value.trim();
+    const assunto = form.assunto.value.trim();
+    const mensagem = form.mensagem.value.trim();
+    if (nome.length < 2 || !form.email.checkValidity() || !email || mensagem.length < 10) {
+      setStatus(T.invalid, 'err');
+      return;
+    }
+    let last = 0;
+    try { last = Number(localStorage.getItem('msg_last')) || 0; } catch (err) {}
+    if (Date.now() - last < MIN_INTERVAL) { setStatus(T.wait, 'err'); return; }
+
+    btn.disabled = true;
+    setStatus(T.sending);
+    try {
+      const res = await sbInsert('mensagens_contato', {
+        nome: nome,
+        email: email,
+        assunto: assunto || null,
+        mensagem: mensagem,
+        idioma: LANG
+      });
+      if (!res.ok) throw new Error('status ' + res.status);
+      try { localStorage.setItem('msg_last', String(Date.now())); } catch (err) {}
+      form.reset();
+      setStatus(T.ok, 'ok');
+      track('mensagem-enviada');
+    } catch (err) {
+      setStatus(T.fail, 'err');
+    } finally {
+      btn.disabled = false;
     }
   });
 })();
