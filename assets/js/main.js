@@ -2,6 +2,8 @@
 
 const SITE_URL = 'https://alexandrewang.vercel.app';
 const LANG = document.documentElement.lang.startsWith('en') ? 'en' : 'pt';
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)');
+const svgIcon = (d, extra) => '<svg viewBox="0 0 24 24" aria-hidden="true"' + (extra || '') + '><path d="' + d + '"/></svg>';
 
 // Estatísticas anônimas (Umami, sem cookies). Para ligar, preencha o Website ID do Umami.
 // Só conta visitas no domínio oficial: prévias e testes locais ficam de fora.
@@ -21,7 +23,50 @@ document.querySelectorAll('video').forEach(v => v.addEventListener('play', () =>
   track('video-play', { video: (v.currentSrc || '').split('/').pop() });
 }, { once: true }));
 
-// Tema claro/escuro (respeita o sistema, guarda a escolha do visitante)
+// Idioma: quem escolhe PT ou EN no menu fica com essa escolha.
+// A Vercel manda quem acessa de fora do Brasil para a versão em inglês, mas só enquanto não existe o cookie "lang".
+function setLangCookie(lang) {
+  try {
+    document.cookie = 'lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+  } catch (e) {}
+}
+(function langChoice() {
+  document.querySelectorAll('.lang a, a[hreflang]').forEach(a => a.addEventListener('click', () => {
+    const h = a.getAttribute('hreflang');
+    setLangCookie(h ? (h.startsWith('en') ? 'en' : 'pt') : LANG);
+  }));
+
+  // Na versão em inglês, quem tem o navegador em português (um brasileiro viajando, por exemplo) recebe um convite discreto
+  if (LANG !== 'en' || /(?:^|;\s*)lang=/.test(document.cookie)) return;
+  const langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+  if (!langs.some(l => /^pt\b/i.test(l))) return;
+  const pt = document.querySelector('.lang a[hreflang^="pt"]');
+  if (!pt) return;
+  const hint = document.createElement('div');
+  hint.className = 'lang-hint';
+  hint.lang = 'pt-BR';
+  hint.setAttribute('role', 'region');
+  hint.setAttribute('aria-label', 'Idioma');
+  hint.innerHTML =
+    '<span>Prefere ler em português?</span>' +
+    '<a class="btn btn-primary btn-sm" hreflang="pt-BR" href="' + pt.getAttribute('href') + '">Ver em português</a>' +
+    '<button type="button" class="lang-hint-x" aria-label="Continuar em inglês">' + svgIcon('M6 6l12 12M18 6L6 18') + '</button>';
+  const close = () => {
+    hint.classList.remove('show');
+    document.body.classList.remove('hint-open');
+    setTimeout(() => hint.remove(), 450);
+  };
+  hint.querySelector('a').addEventListener('click', () => setLangCookie('pt'));
+  hint.querySelector('button').addEventListener('click', () => { setLangCookie('en'); close(); });
+  document.body.appendChild(hint);
+  setTimeout(() => {
+    hint.classList.add('show');
+    document.body.classList.add('hint-open');
+  }, 900);
+})();
+
+// Tema claro/escuro (respeita o sistema, guarda a escolha do visitante).
+// Nos navegadores que suportam, a troca abre como um círculo a partir do botão.
 (function theme() {
   const root = document.documentElement;
   try {
@@ -30,28 +75,132 @@ document.querySelectorAll('video').forEach(v => v.addEventListener('play', () =>
   } catch (e) {}
   const btn = document.getElementById('themeBtn');
   if (!btn) return;
-  btn.addEventListener('click', () => {
-    const dark = root.dataset.theme
-      ? root.dataset.theme === 'dark'
-      : matchMedia('(prefers-color-scheme: dark)').matches;
-    root.dataset.theme = dark ? 'light' : 'dark';
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : system.matches);
+  const MOON = 'M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z';
+  const SUN = 'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4';
+  const paint = () => {
+    btn.innerHTML = svgIcon(isDark() ? SUN : MOON, ' fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"');
+  };
+  paint();
+  if (system.addEventListener) system.addEventListener('change', paint);
+
+  const apply = () => {
+    root.dataset.theme = isDark() ? 'light' : 'dark';
     try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+    paint();
+  };
+  btn.addEventListener('click', () => {
+    if (!document.startViewTransition || REDUCE.matches) { apply(); return; }
+    const r = btn.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const raio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    root.classList.add('vt-theme');
+    const vt = document.startViewTransition(apply);
+    vt.ready.then(() => {
+      root.animate(
+        { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + raio + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 560, easing: 'cubic-bezier(.4, 0, .2, 1)', pseudoElement: '::view-transition-new(root)' }
+      );
+    }).catch(() => {});
+    vt.finished.finally(() => root.classList.remove('vt-theme'));
   });
 })();
 
-// Menu no celular
+// Menu no celular: abre com animação, fecha com Esc, com toque fora ou ao escolher um link
 (function mobileMenu() {
   const btn = document.getElementById('menuBtn');
   const menu = document.getElementById('mobileMenu');
   if (!btn || !menu) return;
-  btn.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
+  const BARS = 'M4 7h16M4 12h16M4 17h16';
+  const X = 'M6 6l12 12M18 6L6 18';
+  const ATTR = ' fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"';
+  const set = open => {
+    menu.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.innerHTML = svgIcon(open ? X : BARS, ATTR);
+  };
+  btn.addEventListener('click', () => set(!menu.classList.contains('open')));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => set(false)));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && menu.classList.contains('open')) { set(false); btn.focus(); }
   });
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-  }));
+  document.addEventListener('click', e => {
+    // composedPath guarda o caminho do clique mesmo depois de o ícone do botão ser trocado
+    const path = e.composedPath ? e.composedPath() : [e.target];
+    if (menu.classList.contains('open') && !path.includes(menu) && !path.includes(btn)) set(false);
+  });
+})();
+
+// Barra de leitura no topo, sombra no menu ao rolar e botão de voltar ao topo
+(function scrollUi() {
+  const nav = document.querySelector('.nav');
+  const bar = document.createElement('div');
+  bar.className = 'progress';
+  bar.setAttribute('aria-hidden', 'true');
+  bar.innerHTML = '<i></i>';
+  if (nav) nav.appendChild(bar);
+  const fill = bar.firstChild;
+
+  const top = document.createElement('button');
+  top.type = 'button';
+  top.className = 'to-top';
+  top.setAttribute('aria-label', LANG === 'en' ? 'Back to top' : 'Voltar ao topo');
+  top.innerHTML = svgIcon('M12 19V5M5 12l7-7 7 7');
+  top.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: REDUCE.matches ? 'auto' : 'smooth' });
+    const brand = document.querySelector('.brand');
+    if (brand) brand.focus({ preventScroll: true });
+  });
+  document.body.appendChild(top);
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const y = scrollY;
+    fill.style.transform = 'scaleX(' + (max > 0 ? Math.min(y / max, 1) : 0) + ')';
+    if (nav) nav.classList.toggle('scrolled', y > 8);
+    top.classList.toggle('show', y > innerHeight * 1.2);
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+// Blocos que aparecem suavemente ao entrar na tela. Só o que começa abaixo da dobra ganha o efeito,
+// então nada pisca no carregamento; quem prefere menos movimento vê tudo direto.
+const Reveal = (function reveal() {
+  const finish = el => { el.classList.remove('reveal', 'in'); el.style.transitionDelay = ''; };
+  if (REDUCE.matches || !('IntersectionObserver' in window)) return { finish };
+  const SEL = '.sec-head, .tl, .traj-extra > div, .ach, .feat, .sub-h, .proj, .pub-item, .pubs-foot, .contact-list, .cv-card, ' +
+    '.pa-item, .sop-ciclo li, .sop-slide, .sop-setores > div, .next-links a, .cta-card';
+  const io = new IntersectionObserver(entries => {
+    const shown = entries.filter(e => e.isIntersecting).map(e => e.target);
+    shown.sort((a, b) => {
+      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      return ra.top - rb.top || ra.left - rb.left;
+    });
+    shown.forEach((el, i) => {
+      io.unobserve(el);
+      const delay = Math.min(i, 5) * 70;
+      el.style.transitionDelay = delay + 'ms';
+      el.classList.add('in');
+      setTimeout(() => finish(el), 700 + delay);
+    });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+  const limit = innerHeight * 0.92;
+  document.querySelectorAll(SEL).forEach(el => {
+    if (el.closest('[hidden]') || el.getBoundingClientRect().top < limit) return;
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+  // Ao usar um filtro, o que estava esperando para aparecer aparece na hora
+  document.addEventListener('click', e => {
+    const f = e.target.closest('.filter');
+    if (f) (f.closest('section, main') || document).querySelectorAll('.reveal').forEach(el => { io.unobserve(el); finish(el); });
+  });
+  return { finish };
 })();
 
 // Link ativo no menu conforme a seção visível
@@ -70,19 +219,301 @@ document.querySelectorAll('video').forEach(v => v.addEventListener('play', () =>
   map.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
 })();
 
-// Filtro de projetos
+// Filtro de projetos: os cartões deslizam para o novo lugar (View Transitions) e a contagem é anunciada
 (function projectFilter() {
-  const buttons = document.querySelectorAll('.filter');
-  const cards = document.querySelectorAll('.proj');
-  buttons.forEach(btn => btn.addEventListener('click', () => {
-    buttons.forEach(b => b.setAttribute('aria-pressed', 'false'));
-    btn.setAttribute('aria-pressed', 'true');
-    const f = btn.dataset.filter;
+  const buttons = document.querySelectorAll('.filters .filter[data-filter]');
+  const cards = [...document.querySelectorAll('.proj')];
+  if (!buttons.length || !cards.length) return;
+  const group = buttons[0].parentElement;
+  const count = document.createElement('span');
+  count.className = 'filter-count';
+  count.setAttribute('aria-live', 'polite');
+  group.appendChild(count);
+  const label = n => (LANG === 'en' ? n + (n === 1 ? ' project' : ' projects') : n + (n === 1 ? ' projeto' : ' projetos'));
+  count.textContent = label(cards.length);
+
+  const run = f => {
+    let n = 0;
     cards.forEach(card => {
       const cats = (card.dataset.cat || '').split(' ');
       card.hidden = !(f === 'all' || cats.includes(f));
+      if (!card.hidden) n++;
+    });
+    count.textContent = label(n);
+  };
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    if (btn.getAttribute('aria-pressed') === 'true') return;
+    buttons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    const f = btn.dataset.filter;
+    cards.forEach(Reveal.finish);
+    if (!document.startViewTransition || REDUCE.matches) { run(f); return; }
+    const root = document.documentElement;
+    cards.forEach((c, i) => { c.style.viewTransitionName = 'proj-' + i; });
+    root.classList.add('vt-local');
+    const vt = document.startViewTransition(() => run(f));
+    vt.finished.finally(() => {
+      root.classList.remove('vt-local');
+      cards.forEach(c => { c.style.viewTransitionName = ''; });
     });
   }));
+})();
+
+// Fotos dos produtos na Trajetória: abrem numa janela com setas, deslize no celular e Esc para fechar
+(function mediaViewer() {
+  const groups = [...document.querySelectorAll('.tl-media')];
+  if (!groups.length) return;
+  const T = LANG === 'en'
+    ? { title: 'Image viewer', prev: 'Previous image', next: 'Next image', close: 'Close', of: 'of' }
+    : { title: 'Visualizador de imagens', prev: 'Imagem anterior', next: 'Próxima imagem', close: 'Fechar', of: 'de' };
+  const dlg = document.createElement('dialog');
+  dlg.className = 'sop-viewer media-viewer';
+  dlg.setAttribute('aria-label', T.title);
+  dlg.innerHTML =
+    '<img alt="" width="960" height="480">' +
+    '<div class="sop-viewer-bar">' +
+      '<p class="sop-cap"></p><span class="sop-count" aria-live="polite"></span>' +
+      '<button type="button" class="mv-prev" aria-label="' + T.prev + '">' + svgIcon('M15 6l-6 6 6 6') + '</button>' +
+      '<button type="button" class="mv-next" aria-label="' + T.next + '">' + svgIcon('M9 6l6 6-6 6') + '</button>' +
+      '<button type="button" class="mv-close" aria-label="' + T.close + '">' + svgIcon('M6 6l12 12M18 6L6 18') + '</button>' +
+    '</div>';
+  document.body.appendChild(dlg);
+  const img = dlg.querySelector('img');
+  const cap = dlg.querySelector('.sop-cap');
+  const count = dlg.querySelector('.sop-count');
+  const prev = dlg.querySelector('.mv-prev');
+  const next = dlg.querySelector('.mv-next');
+  let items = [], k = 0, origin = null;
+
+  const show = (i, dir) => {
+    k = (i + items.length) % items.length;
+    const a = items[k];
+    const thumb = a.querySelector('img');
+    img.src = a.getAttribute('href');
+    img.alt = thumb ? thumb.alt : '';
+    cap.textContent = [a.querySelector('b'), a.querySelector('span')].filter(Boolean).map(e => e.textContent).join(': ');
+    count.textContent = (k + 1) + ' ' + T.of + ' ' + items.length;
+    prev.hidden = next.hidden = items.length < 2;
+    if (dir && !REDUCE.matches && img.animate) {
+      img.animate([{ opacity: 0, transform: 'translateX(' + dir * 28 + 'px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 280, easing: 'cubic-bezier(.2, .7, .2, 1)' });
+    }
+  };
+  groups.forEach(g => {
+    const links = [...g.querySelectorAll('a[href]')];
+    links.forEach((a, i) => a.addEventListener('click', e => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault();
+      origin = a; items = links;
+      show(i);
+      dlg.showModal();
+      dlg.querySelector('.mv-close').focus();
+    }));
+  });
+  prev.addEventListener('click', () => show(k - 1, -1));
+  next.addEventListener('click', () => show(k + 1, 1));
+  dlg.querySelector('.mv-close').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(k - 1, -1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(k + 1, 1); }
+  });
+  let x0 = null;
+  img.addEventListener('pointerdown', e => { x0 = e.clientX; });
+  img.addEventListener('pointerup', e => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0;
+    x0 = null;
+    if (Math.abs(dx) > 45 && items.length > 1) dx < 0 ? show(k + 1, 1) : show(k - 1, -1);
+  });
+  dlg.addEventListener('close', () => { if (origin) origin.focus(); });
+})();
+
+// Carrossel das Conquistas: setas, pontos com progresso, deslize, arrastar com o mouse, teclado e rotação automática.
+// A rotação pausa com o mouse em cima, com foco dentro, fora da tela ou no botão de pausa, e não liga para quem prefere menos movimento.
+(function carousels() {
+  const roots = document.querySelectorAll('[data-carousel]');
+  if (!roots.length) return;
+  const T = LANG === 'en'
+    ? { prev: 'Previous', next: 'Next', pause: 'Pause rotation', play: 'Resume rotation', go: 'Go to', of: 'of', slide: 'slide' }
+    : { prev: 'Anterior', next: 'Próxima', pause: 'Pausar a rotação', play: 'Retomar a rotação', go: 'Ir para', of: 'de', slide: 'slide' };
+  const ICON = { prev: 'M15 6l-6 6 6 6', next: 'M9 6l6 6-6 6', pause: 'M9 5v14M15 5v14', play: 'M8 5.5v13l10.5-6.5z' };
+  const pad = n => String(n).padStart(2, '0');
+
+  roots.forEach(root => {
+    const track = root.querySelector('.ach-track');
+    const cards = track ? [...track.querySelectorAll('.ach-card')] : [];
+    const n = cards.length;
+    if (!n) return;
+    const auto = !REDUCE.matches && n > 1;
+    root.classList.add('ready');
+    if (!auto) root.classList.add('static');
+    cards.forEach((c, i) => {
+      c.dataset.n = pad(i + 1);
+      c.setAttribute('role', 'group');
+      c.setAttribute('aria-roledescription', T.slide);
+      c.setAttribute('aria-label', (i + 1) + ' ' + T.of + ' ' + n);
+      c.querySelectorAll('img').forEach(im => { im.draggable = false; });
+    });
+
+    // Barra de controle
+    const bar = document.createElement('div');
+    bar.className = 'ach-bar';
+    const dots = document.createElement('div');
+    dots.className = 'ach-dots';
+    cards.forEach((c, i) => {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'ach-dot';
+      const h = c.querySelector('h3');
+      d.setAttribute('aria-label', T.go + ' ' + (i + 1) + (h ? ': ' + h.textContent : ''));
+      d.innerHTML = '<i></i>';
+      d.addEventListener('click', () => go(i));
+      dots.appendChild(d);
+    });
+    const ctrl = document.createElement('div');
+    ctrl.className = 'ach-ctrl';
+    const count = document.createElement('span');
+    count.className = 'ach-count';
+    count.setAttribute('aria-hidden', 'true');
+    const mk = (cls, label, icon) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ach-btn ' + cls;
+      b.setAttribute('aria-label', label);
+      b.innerHTML = svgIcon(icon);
+      return b;
+    };
+    const btnPause = mk('ach-pause', T.pause, ICON.pause);
+    const btnPrev = mk('ach-prev', T.prev, ICON.prev);
+    const btnNext = mk('ach-next', T.next, ICON.next);
+    ctrl.append(count, btnPause, btnPrev, btnNext);
+    bar.append(dots, ctrl);
+    root.appendChild(bar);
+
+    // Posição: o cartão do meio é o ativo; os vizinhos diminuem e esmaecem conforme a distância
+    let index = 0, alvo = null, alvoTimer = 0, raf = 0;
+    const gap = () => parseFloat(getComputedStyle(track).columnGap) || 16;
+    const centro = c => c.offsetLeft + c.offsetWidth / 2;
+    const posicao = i => centro(cards[i]) - track.clientWidth / 2;
+    const reiniciar = () => {
+      const fills = dots.querySelectorAll('i');
+      fills.forEach(f => { f.style.animation = 'none'; });
+      void dots.offsetWidth;
+      fills.forEach(f => { f.style.animation = ''; });
+    };
+    const marcar = () => {
+      [...dots.children].forEach((d, i) => {
+        d.classList.toggle('on', i === index);
+        if (i === index) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+      });
+      cards.forEach((c, i) => c.classList.toggle('is-active', i === index));
+      count.textContent = pad(index + 1) + ' / ' + pad(n);
+    };
+    const medir = () => {
+      raf = 0;
+      const meio = track.scrollLeft + track.clientWidth / 2;
+      const passo = (cards[0].offsetWidth + gap()) || 1;
+      let melhor = 0, menor = Infinity;
+      cards.forEach((c, i) => {
+        const d = Math.abs(centro(c) - meio) / passo;
+        c.style.setProperty('--d', Math.min(d, 1.5).toFixed(3));
+        if (d < menor) { menor = d; melhor = i; }
+      });
+      if (alvo !== null) {
+        if (melhor !== alvo) return;
+        alvo = null;
+      }
+      if (melhor !== index) { index = melhor; marcar(); reiniciar(); }
+    };
+    const go = (i, instant) => {
+      index = (i + n) % n;
+      alvo = index;
+      clearTimeout(alvoTimer);
+      alvoTimer = setTimeout(() => { alvo = null; }, 900);
+      track.scrollTo({ left: posicao(index), behavior: instant || REDUCE.matches ? 'auto' : 'smooth' });
+      marcar();
+      reiniciar();
+      if (instant) medir();
+    };
+    track.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(medir); }, { passive: true });
+
+    // Pausas da rotação automática
+    const pausa = { user: false, hover: false, foco: false, fora: true, oculta: document.hidden, arrasto: false };
+    const sync = () => {
+      const p = !auto || Object.values(pausa).some(Boolean);
+      root.classList.toggle('paused', p);
+    };
+    btnPause.addEventListener('click', () => {
+      pausa.user = !pausa.user;
+      btnPause.setAttribute('aria-label', pausa.user ? T.play : T.pause);
+      btnPause.innerHTML = svgIcon(pausa.user ? ICON.play : ICON.pause);
+      sync();
+    });
+    root.addEventListener('mouseenter', () => { pausa.hover = true; sync(); });
+    root.addEventListener('mouseleave', () => { pausa.hover = false; sync(); });
+    root.addEventListener('focusin', () => { pausa.foco = true; sync(); });
+    root.addEventListener('focusout', e => { if (!root.contains(e.relatedTarget)) { pausa.foco = false; sync(); } });
+    document.addEventListener('visibilitychange', () => { pausa.oculta = document.hidden; sync(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { pausa.fora = !e.isIntersecting; sync(); }, { threshold: 0.35 }).observe(root);
+    } else { pausa.fora = false; }
+    dots.addEventListener('animationend', e => {
+      if (e.animationName === 'ach-fill' && !root.classList.contains('paused')) go(index + 1);
+    });
+
+    btnPrev.addEventListener('click', () => go(index - 1));
+    btnNext.addEventListener('click', () => go(index + 1));
+    track.addEventListener('keydown', e => {
+      if (e.target !== track) return;
+      const k = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: n - 1 }[e.key];
+      if (k === undefined) return;
+      e.preventDefault();
+      go(k);
+    });
+
+    // Arrastar com o mouse (no toque, o próprio navegador desliza)
+    let arr = null, bloquearClique = false;
+    track.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      arr = { x: e.clientX, left: track.scrollLeft, moveu: false };
+    });
+    addEventListener('pointermove', e => {
+      if (!arr) return;
+      const dx = e.clientX - arr.x;
+      if (!arr.moveu && Math.abs(dx) > 6) {
+        arr.moveu = true;
+        track.classList.add('dragging');
+        pausa.arrasto = true; sync();
+      }
+      if (arr.moveu) track.scrollLeft = arr.left - dx;
+    });
+    addEventListener('pointerup', () => {
+      if (!arr) return;
+      const moveu = arr.moveu;
+      arr = null;
+      if (!moveu) return;
+      track.classList.remove('dragging');
+      pausa.arrasto = false; sync();
+      bloquearClique = true;
+      setTimeout(() => { bloquearClique = false; }, 0);
+      alvo = null;
+      medir();
+      go(index);
+    });
+
+    // Clique num cartão do lado: centraliza esse cartão em vez de abrir o link
+    track.addEventListener('click', e => {
+      if (bloquearClique) { e.preventDefault(); e.stopPropagation(); return; }
+      const card = e.target.closest('.ach-card');
+      const i = cards.indexOf(card);
+      if (i > -1 && i !== index) { e.preventDefault(); go(i); }
+    }, true);
+
+    if ('ResizeObserver' in window) new ResizeObserver(() => go(index, true)).observe(track);
+    go(0, true);
+    sync();
+  });
 })();
 
 const yearEl = document.getElementById('year');

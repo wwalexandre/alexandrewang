@@ -19,10 +19,21 @@ Site no ar: https://alexandrewang.vercel.app
 | `publicacoes/forecast-erro.html` | Artigo completo e vídeo sobre erro de forecast: erro por família, FVA e Bias, com checklist em PDF |
 | `publicacoes/incoterms.html` | Artigo completo e vídeo sobre os 11 Incoterms 2020 |
 | `assets/` | CSS, JavaScript, imagens, prévias e vídeos |
-| `vercel.json` | Cabeçalhos de segurança (CSP, anti-iframe, nosniff) e cache |
+| `vercel.json` | Cabeçalhos de segurança (CSP, anti-iframe, nosniff), cache e o redirecionamento por país (quem acessa de fora do Brasil vai para a versão em inglês) |
 | `sitemap.xml`, `robots.txt`, `404.html` | Busca no Google e página de erro |
 
 Os dashboards e relatórios de demonstração usam **dados fictícios**. Nenhum dado interno de empresa é publicado aqui.
+
+## Idioma automático
+
+Quem abre o site de fora do Brasil cai direto na versão em inglês. Quem faz isso é a própria Vercel, pelo cabeçalho `x-vercel-ip-country`, nas regras de `redirects` do `vercel.json`:
+
+- vale para a página inicial e para cada projeto e publicação que tem versão `-en`;
+- robôs (Google, LinkedIn, WhatsApp) não são redirecionados, então a busca e a prévia do link continuam em português;
+- quem clica em PT ou EN no menu ganha o cookie `lang` e a Vercel para de redirecionar essa pessoa;
+- na versão em inglês, quem tem o navegador em português recebe o convite "Prefere ler em português?".
+
+Para testar, abra o site com uma VPN fora do Brasil numa janela anônima (sem o cookie `lang`).
 
 ## Estatísticas
 
