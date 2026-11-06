@@ -89,9 +89,17 @@ A campanha vem de `?ref=`, `utm_campaign` ou `utm_source`, nessa ordem de priori
 
 Esse é o jeito confiável de segmentar o público, porque não depende de adivinhar nada pelo endereço de rede.
 
-### Localização aproximada: o que ela não é
+### Por que o CEP saiu do painel
 
-As colunas `cep`, `latitude` e `longitude` guardam o palpite do provedor de geolocalização da Vercel. **Não é o endereço do visitante.** Na prática o valor cai no centro da cidade ou no endereço registrado da operadora, e em celular aponta o ponto de saída da rede, que pode ficar em outra cidade. Serve para separar acesso de rede corporativa e para agrupar por região. Não serve para dizer o bairro de ninguém, e é por isso que o painel chama o bloco de "localização aproximada".
+As colunas `cep`, `latitude` e `longitude` continuam sendo gravadas, mas **saíram da tela**. O motivo é empírico: nas primeiras visitas reais, as 7 vieram com o mesmo `01000-000`, que é o centro de São Paulo, e nenhuma delas foi do centro. O provedor devolve o centro da cidade ou o endereço registrado da operadora, e em celular aponta o ponto de saída da rede. Indicador que vem sempre igual e errado é pior que indicador nenhum, porque dá confiança falsa.
+
+No lugar dele entrou **Estados**, que usa a coluna `regiao` e a geolocalização por rede acerta. Para melhorar de verdade só com serviço pago de geolocalização, que no Brasil continua ruim para rede doméstica e celular, ou pedindo permissão de localização ao visitante, o que num portfólio é tiro no pé.
+
+### Quem acessou mais, e como bloquear
+
+A função `resumo_extra()` devolve `estados` e `mais_acessos`. O segundo agrupa pelo identificador anônimo do dia, que é por IP mais navegador dentro do mesmo dia, então uma linha com número alto é na prática um acesso só pesando muito. Linha com 30 páginas ou mais em até 10 minutos aparece em vermelho, que é o padrão de robô raspando o site.
+
+**O bloqueio não acontece aqui.** Quem bloqueia é o Firewall da Vercel, em Project Settings e depois Firewall, que vê o endereço de rede na borda e corta antes de chegar ao site. Pela linha de comando é `vercel firewall ip-blocks block <ip>`. Assim o IP nunca precisa entrar neste banco, e a promessa da página de privacidade continua verdadeira.
 
 ### Fuso horário
 

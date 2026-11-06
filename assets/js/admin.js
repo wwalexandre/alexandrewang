@@ -369,7 +369,7 @@
     listas.replaceChildren();
     listas.append(ranking('De onde são', d.paises, null, c => bandeira(c) + ' ' + nomePais(c)));
     listas.append(ranking('Cidades', d.cidades));
-    listas.append(ranking('Localização aproximada', d.locais));
+    listas.append(ranking('Estados', (d.extra && d.extra.estados) || []));
     listas.append(ranking('Como chegaram', d.origens));
     listas.append(ranking('Páginas mais abertas', d.paginas));
     listas.append(ranking('Seções que mais prenderam', d.secoes,
@@ -409,6 +409,32 @@
       aviso(null);
     }
 
+    const abuso = $('visMaisAcessos');
+    abuso.replaceChildren();
+    const pesados = (d.extra && d.extra.mais_acessos) || [];
+    pesados.forEach(m => {
+      const tr = el('tr');
+      tr.append(el('td', '', m.codigo));
+      tr.append(el('td', '', String(m.n)));
+      tr.append(el('td', '', m.minutos + (m.minutos === 1 ? ' min' : ' min')));
+      tr.append(el('td', '', m.dia + ', ' + m.janela));
+      tr.append(el('td', '', m.lugar));
+      tr.append(el('td', '', m.aparelho));
+      // Muita página em pouco tempo é o padrão de robô ou de quem está raspando o site
+      if (m.n >= 30 && m.minutos <= 10) tr.className = 'adm-suspeito';
+      abuso.append(tr);
+    });
+    if (!pesados.length) {
+      const tr = el('tr');
+      const td = el('td', 'adm-vazio', 'Ninguém abriu 5 páginas ou mais no período.');
+      td.colSpan = 6;
+      tr.append(td);
+      abuso.append(tr);
+    }
+    $('visAbusoDica').textContent = pesados.some(m => m.n >= 30 && m.minutos <= 10)
+      ? 'Tem linha marcada em vermelho: muita página em pouco tempo, que é padrão de robô. Para bloquear, use o Firewall da Vercel, em Project Settings e depois Firewall, que vê o endereço de rede e corta o acesso antes de chegar ao site.'
+      : 'Para bloquear alguém, o caminho é o Firewall da Vercel, em Project Settings e depois Firewall. Ele vê o endereço de rede na borda e corta o acesso, sem precisar guardar nada aqui.';
+
     const corpo = $('visJornadas');
     corpo.replaceChildren();
     (d.jornadas || []).forEach(j => {
@@ -434,13 +460,18 @@
   async function loadVis() {
     $('visStatus').textContent = 'Carregando...';
     if (gravacaoLigada === null) gravacaoLigada = await checarGravacao();
-    const { data, error } = await sb.rpc('resumo_visitas', { p_dias: visDias });
-    if (error) {
+    const [principal, extra] = await Promise.all([
+      sb.rpc('resumo_visitas', { p_dias: visDias }),
+      sb.rpc('resumo_extra', { p_dias: visDias })
+    ]);
+    if (principal.error) {
       $('visStatus').textContent = 'Não foi possível carregar o relatório de visitas.';
       return;
     }
     $('visStatus').textContent = '';
-    renderVis(data || {});
+    const dados = principal.data || {};
+    dados.extra = extra.error ? {} : (extra.data || {});
+    renderVis(dados);
   }
 
   Array.prototype.forEach.call(document.querySelectorAll('.adm-seg button'), b => {

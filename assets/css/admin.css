@@ -97,3 +97,7 @@
 .adm-aviso strong { font-family: var(--display); font-size: 18px; }
 .adm-aviso p { margin: 0; font-size: 14px; color: var(--muted); max-width: 75ch; }
 .adm-aviso ol { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+
+/* Linha de acesso suspeito: muita pagina em pouco tempo */
+.adm-table tr.adm-suspeito td { color: #E06C5B; }
+.adm-table tr.adm-suspeito td:first-child { font-weight: 700; }
