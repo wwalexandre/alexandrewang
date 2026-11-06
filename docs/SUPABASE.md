@@ -68,7 +68,7 @@ O site registra as visitas pela função `api/visita.js`, que roda **no servidor
 |---|---|
 | Função que grava | `api/visita.js` |
 | Coleta no navegador | bloco `visitas()` no fim de `assets/js/main.js` |
-| Tabelas e resumo | `supabase/migrations/20261106140000_visitas_e_jornada.sql` e `20261106150000_visitas_secoes_e_imagens.sql` |
+| Tabelas e resumo | `supabase/migrations/20261106140000_visitas_e_jornada.sql`, `20261106150000_visitas_secoes_e_imagens.sql` e `20261106170000_local_aproximado.sql` |
 | Aba do painel | `admin/index.html` (`panelVis`), `assets/js/admin.js`, `assets/css/admin.css` |
 | Página pública de privacidade | `privacidade.html` e `privacy.html` |
 
@@ -78,10 +78,24 @@ O servidor monta `sha256(IP + navegador + VISITAS_SALT + data do dia)` e guarda 
 
 ### O que é registrado
 
-- `visitas`: caminho, idioma, país, região, cidade, fuso, aparelho, sistema, navegador, site de origem e campanha (`utm_source`, `utm_campaign` ou `ref`).
+- `visitas`: caminho, idioma, país, região, cidade, fuso, aparelho, sistema, navegador, site de origem, campanha e localização aproximada (CEP, latitude e longitude).
 - `eventos_visita`: `secao` (segundos por seção), `imagem` (clique, pelo texto alternativo), `tempo` e `rolagem` por página, mais `projeto`, `publicacao`, `curriculo`, `demo`, `video` e `link`.
 
 Nada de sensor, toque, canvas ou impressão digital de aparelho, e nenhum cookie. Quem tem Do Not Track ou Global Privacy Control ligado não é registrado, e isso é checado nos dois lados, navegador e servidor.
+
+### Etiqueta de link (campanha)
+
+A campanha vem de `?ref=`, `utm_campaign` ou `utm_source`, nessa ordem de prioridade, e fica guardada em `sessionStorage` enquanto a aba estiver aberta. Por isso **a visita inteira é creditada ao lugar onde o link foi divulgado**, e não só a primeira página. O painel tem um gerador que monta o link e transforma o texto em etiqueta limpa, por exemplo `Grupo Supply WhatsApp` vira `grupo-supply-wpp`.
+
+Esse é o jeito confiável de segmentar o público, porque não depende de adivinhar nada pelo endereço de rede.
+
+### Localização aproximada: o que ela não é
+
+As colunas `cep`, `latitude` e `longitude` guardam o palpite do provedor de geolocalização da Vercel. **Não é o endereço do visitante.** Na prática o valor cai no centro da cidade ou no endereço registrado da operadora, e em celular aponta o ponto de saída da rede, que pode ficar em outra cidade. Serve para separar acesso de rede corporativa e para agrupar por região. Não serve para dizer o bairro de ninguém, e é por isso que o painel chama o bloco de "localização aproximada".
+
+### Fuso horário
+
+Tudo é gravado em UTC e convertido para `America/Sao_Paulo` na função `resumo_visitas`. As jornadas e a virada do dia no gráfico seguem o horário de Brasília, e o painel diz isso na tela.
 
 ### Variáveis de ambiente na Vercel
 

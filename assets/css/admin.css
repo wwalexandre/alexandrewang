@@ -78,3 +78,15 @@
 .adm-vazio { color: var(--muted); font-size: 13px; margin: 0; }
 
 .adm-table td.adm-rota { white-space: normal; overflow-wrap: anywhere; max-width: 420px; font-size: 13px; color: var(--muted); }
+
+/* Gerador de links com etiqueta */
+.adm-ferramenta { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: 20px; }
+.adm-ferramenta summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: 14px; }
+.adm-ferramenta summary:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; }
+.adm-gerador { padding: 0 16px 16px; display: grid; gap: 12px; }
+.adm-gerador .adm-nota { margin: 0; max-width: 70ch; }
+.adm-gerador-campos { display: grid; grid-template-columns: auto minmax(180px, 1fr); gap: 10px 12px; align-items: center; }
+.adm-gerador select, .adm-gerador input { font: 15px var(--font); padding: 9px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--text); width: 100%; }
+.adm-gerado { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.adm-gerado code { flex: 1 1 260px; font-size: 13px; padding: 10px 12px; border-radius: 9px; background: var(--bg); border: 1px dashed var(--line); overflow-wrap: anywhere; }
+@media (max-width: 560px) { .adm-gerador-campos { grid-template-columns: 1fr; } }

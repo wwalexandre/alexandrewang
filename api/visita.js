@@ -147,7 +147,12 @@ module.exports = async function handler(req, res) {
       p_sistema: sistema(ua),
       p_navegador: navegador(ua),
       p_origem: origemDe(texto(corpo.veio_de, 300), String(h['host'] || '').replace(/^www\./, '').toLowerCase()),
-      p_campanha: texto(corpo.campanha, 120)
+      p_campanha: texto(corpo.campanha, 120),
+      // Localização aproximada: é o palpite do provedor pelo endereço de rede, costuma cair
+      // no centro da cidade ou na operadora. Não serve para dizer o bairro de ninguém.
+      p_cep: texto(String(h['x-vercel-ip-postal-code'] || ''), 12),
+      p_latitude: texto(String(h['x-vercel-ip-latitude'] || ''), 16),
+      p_longitude: texto(String(h['x-vercel-ip-longitude'] || ''), 16)
     });
   } catch (e) {
     // Falha de rede ou do banco não pode virar erro para o visitante.

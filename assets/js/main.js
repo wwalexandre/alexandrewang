@@ -1262,7 +1262,14 @@ const DEMO_TXT = {
 
   // 1) A visita em si. A geolocalização vem dos cabeçalhos da Vercel, não daqui.
   const busca = new URLSearchParams(location.search);
-  const campanha = busca.get('utm_source') || busca.get('utm_campaign') || busca.get('ref') || null;
+  // A etiqueta do link (?ref=, utm_campaign ou utm_source) vale para a visita inteira, não só
+  // para a primeira página: fica guardada enquanto a aba estiver aberta, então toda a jornada
+  // é creditada ao lugar onde o link foi divulgado.
+  let campanha = busca.get('ref') || busca.get('utm_campaign') || busca.get('utm_source') || null;
+  try {
+    if (campanha) sessionStorage.setItem('campanha', campanha);
+    else campanha = sessionStorage.getItem('campanha');
+  } catch (e) {}
   enviar({ caminho: ROTA, idioma: LANG, veio_de: document.referrer || null, campanha: campanha });
 
   // 2) Fila de eventos, enviada de uma vez só quando a pessoa sai da página

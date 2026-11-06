@@ -337,6 +337,7 @@
     listas.replaceChildren();
     listas.append(ranking('De onde são', d.paises, null, c => bandeira(c) + ' ' + nomePais(c)));
     listas.append(ranking('Cidades', d.cidades));
+    listas.append(ranking('Localização aproximada', d.locais));
     listas.append(ranking('Como chegaram', d.origens));
     listas.append(ranking('Páginas mais abertas', d.paginas));
     listas.append(ranking('Seções que mais prenderam', d.secoes,
@@ -350,7 +351,10 @@
     listas.append(ranking('Navegador e sistema', d.navegadores));
     listas.append(ranking('Idioma da página', d.idiomas, null,
       c => (c === 'en' ? 'Inglês' : 'Português')));
-    if (d.campanhas && d.campanhas.length) listas.append(ranking('Campanhas', d.campanhas));
+    if (d.campanhas && d.campanhas.length) {
+      listas.append(ranking('Campanhas', d.campanhas,
+        (n, extra) => n + (extra ? ' · ' + extra + (extra === 1 ? ' pessoa' : ' pessoas') : '')));
+    }
 
     const corpo = $('visJornadas');
     corpo.replaceChildren();
@@ -396,6 +400,53 @@
     });
   });
   $('reloadVis').addEventListener('click', loadVis);
+
+  // ---------- Gerador de links com etiqueta ----------
+  const PAGINAS = [
+    ['/', 'Início (PT)'],
+    ['/en.html', 'Home (EN)'],
+    ['/projetos/sop-mensal.html', 'Projeto: S&OP mensal'],
+    ['/projetos/validador-documentos.html', 'Projeto: validador de documentos'],
+    ['/projetos/boletim-ruptura.html', 'Projeto: boletim de ruptura'],
+    ['/projetos/cacador-vencimentos.html', 'Projeto: caçador de vencimentos'],
+    ['/projetos/automacoes.html', 'Projeto: automações'],
+    ['/publicacoes/incoterms.html', 'Publicação: Incoterms'],
+    ['/publicacoes/forecast-erro.html', 'Publicação: erro de forecast'],
+    ['/publicacoes/importacao-jogo.html', 'Publicação: importação']
+  ];
+  const SITE = 'https://alexandrewang.vercel.app';
+  const etiqueta = v => String(v || '').toLowerCase().normalize('NFD')
+    .replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '').slice(0, 40);
+
+  (function gerador() {
+    const sel = $('geraPagina');
+    const nome = $('geraNome');
+    const saida = $('geraLink');
+    if (!sel || !nome || !saida) return;
+    PAGINAS.forEach(([valor, rotulo]) => {
+      const o = document.createElement('option');
+      o.value = valor;
+      o.textContent = rotulo;
+      sel.append(o);
+    });
+    const montar = () => {
+      const marca = etiqueta(nome.value);
+      saida.textContent = SITE + sel.value + (marca ? '?ref=' + marca : '');
+    };
+    sel.addEventListener('change', montar);
+    nome.addEventListener('input', montar);
+    $('geraCopiar').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(saida.textContent);
+        $('geraCopiar').textContent = 'Copiado';
+        setTimeout(() => { $('geraCopiar').textContent = 'Copiar'; }, 1500);
+      } catch (e) {
+        $('geraCopiar').textContent = 'Copie à mão';
+      }
+    });
+    montar();
+  })();
 
   boot();
 })();
