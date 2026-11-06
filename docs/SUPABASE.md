@@ -66,6 +66,6 @@ Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca 
 
 ## Pendências
 
-- Criar o usuário admin e liberar em `admins` (passos manuais acima). Em 06/11/2026 ainda não havia nenhum usuário no Auth.
+- ~~Criar o usuário admin e liberar em `admins`~~ feito em 06/11/2026 (alexandre01.w@gmail.com). Conferido: `is_admin()` dá true para ele e false para outro usuário logado.
 - Testar no preview da Vercel: enviar uma mensagem real pelo formulário e conferir no `/admin/`.
 - Decidir sobre ligar o Umami.
