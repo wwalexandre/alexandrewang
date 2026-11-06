@@ -1372,3 +1372,46 @@ const DEMO_TXT = {
   window.addEventListener('pagehide', despachar);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') despachar(); });
 })();
+
+// Trajetória: a linha verde acompanha a leitura e os pontos das empresas já lidas acendem.
+// O movimento responde à rolagem da pessoa e serve para orientar, não para enfeitar.
+// Quem pediu menos movimento vê a linha inteira preenchida, sem nada acompanhando a rolagem.
+(function trajetoriaLida() {
+  const linha = document.querySelector('.timeline');
+  if (!linha) return;
+  const marcos = Array.prototype.slice.call(linha.querySelectorAll('.tl'));
+  if (!marcos.length) return;
+
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    linha.classList.add('tudo-percorrido');
+    marcos.forEach(m => m.classList.add('percorrido'));
+    return;
+  }
+
+  const TOPO = 8;        // onde a linha começa dentro do container
+  const CENTRO_PONTO = 31; // centro do ponto dentro de cada item (top 24 + metade de 14)
+  let agendado = false;
+
+  const medir = () => {
+    agendado = false;
+    const caixa = linha.getBoundingClientRect();
+    const comprimento = Math.max(0, caixa.height - TOPO * 2);
+    // a "linha de leitura" fica um pouco abaixo do meio da tela, onde o olho costuma estar
+    const leitura = window.innerHeight * 0.55;
+    const avanco = Math.min(comprimento, Math.max(0, leitura - caixa.top - TOPO));
+    linha.style.setProperty('--percorrido', avanco + 'px');
+    marcos.forEach(m => {
+      const centro = m.getBoundingClientRect().top - caixa.top + CENTRO_PONTO - TOPO;
+      m.classList.toggle('percorrido', centro <= avanco);
+    });
+  };
+
+  const agendar = () => {
+    if (agendado) return;
+    agendado = true;
+    requestAnimationFrame(medir);
+  };
+  window.addEventListener('scroll', agendar, { passive: true });
+  window.addEventListener('resize', agendar, { passive: true });
+  medir();
+})();

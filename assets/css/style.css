@@ -285,8 +285,16 @@ p { margin: 0 0 1em; }
 /* ---------- TIMELINE ---------- */
 .timeline { position: relative; display: grid; gap: 16px; padding-left: 26px; }
 .timeline::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+/* A linha verde acompanha a leitura: mostra onde você está na carreira dele.
+   Não é enfeite, é orientação, e só se move porque a pessoa está rolando a página. */
+.timeline::after {
+  content: ""; position: absolute; left: 7px; top: 8px; width: 2px;
+  height: var(--percorrido, 0px); max-height: calc(100% - 16px); background: var(--green);
+}
+.timeline.tudo-percorrido::after { height: calc(100% - 16px); }
 .tl { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
-.tl::before { content: ""; position: absolute; left: -25px; top: 24px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 3px solid var(--green); }
+.tl::before { content: ""; position: absolute; left: -25px; top: 24px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 3px solid var(--green); transition: background-color .25s ease; }
+.tl.percorrido::before { background: var(--green); }
 .tl-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; flex-wrap: wrap; }
 .tl-logo { width: 64px; height: 40px; border-radius: 6px; background: #fff; display: grid; place-items: center; padding: 4px; border: 1px solid var(--line); flex: none; }
 .tl-logo img { max-height: 30px; width: auto; object-fit: contain; }
@@ -404,6 +412,7 @@ pre .s { color: var(--teal); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   .status .dot { animation: none; }
+  .timeline::after { height: calc(100% - 16px); }
   .feat:hover, .feat:hover .feat-img img, .jump a:hover, .contact-item:hover, .next-links a:hover, .tl-media a:hover img, .pub-item:hover .pub-thumb img { transform: none; }
 }
 @media print {
