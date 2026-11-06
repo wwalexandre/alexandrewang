@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy | Alexandre Wang</title>
+<meta name="description" content="What this site records about your visit, what it does not record, how long it keeps it and how to opt out. In plain language.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/privacy.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/privacidade.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/privacy.html">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="en.html#experience">Experience</a>
+      <a href="en.html#projects">Projects</a>
+      <a href="en.html#writing">Writing</a>
+      <a href="en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="privacidade.html" hreflang="pt-BR">PT</a><a href="privacy.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="en.html">← Back to portfolio</a></div>
+    <div class="kicker">Privacy</div>
+    <h1>What this site knows about your visit</h1>
+    <p class="lead">I wrote this page the way I would like to read it on any site: no fine print and no hedging. If anything here is unclear, write to me and I will explain.</p>
+  </div>
+</header>
+
+<main id="conteudo" class="article">
+
+  <h2>The short version</h2>
+  <p>I record which <strong>region</strong> a visit came from, on what <strong>kind of device</strong>, <strong>where the link came from</strong> and <strong>which pages</strong> were opened. I do not record who you are, and I cannot reach you from any of it.</p>
+  <p>Your <strong>email is stored only if you type it yourself</strong>, to download the resume, open a template, try a demo or send a message.</p>
+  <p>None of this is sold, shared or used for advertising. It only tells me whether the site is useful.</p>
+
+  <h2>What I record on each visit</h2>
+  <ul>
+    <li>Country, region, approximate city and time zone, which Vercel's server infers from the network address.</li>
+    <li>Device type (phone, tablet or computer), operating system and browser.</li>
+    <li>The site or network you came from, for example LinkedIn or a Google search.</li>
+    <li>Which pages you opened, in what order, how long you stayed and how far you scrolled.</li>
+    <li>Which section of the page held your attention longest, which images and projects you clicked, and whether you downloaded a file.</li>
+  </ul>
+
+  <h2>What I do not record</h2>
+  <ul>
+    <li><strong>Your network address (IP).</strong> It is used for an instant to build a scrambled code and then discarded. It is never stored anywhere.</li>
+    <li><strong>Anything that identifies you.</strong> No name, no account, no profile.</li>
+    <li><strong>No sensors and no device fingerprint.</strong> No camera, microphone, precise location, accelerometer, touch pressure or any trick to recognize the same device later.</li>
+    <li><strong>No tracking cookies</strong> and no third-party trackers. The site has no ads and no social network pixels.</li>
+  </ul>
+
+  <h2>Why you are not recognized from one day to the next</h2>
+  <p>To count how many different people came in, the server builds a scrambled code from the network address, the browser, a secret key of mine and <strong>the date of the day</strong>. Because the date is part of the calculation, the code changes at midnight. In practice, today's visit and tomorrow's visit from the same device are two unconnected visits, and the code cannot be reversed back into the original address.</p>
+
+  <h2>How to opt out</h2>
+  <p>If your browser has <strong>Do Not Track</strong> or <strong>Global Privacy Control</strong> turned on, the visit is not recorded. The site checks this on both sides, in the browser and on the server, and simply stores nothing. Content blockers work too, and nothing on the site stops working because of it.</p>
+
+  <h2>When you type your email</h2>
+  <p>Four places ask for an email: downloading the resume, opening a spreadsheet or deck template, trying a demo, and the contact form. In those cases I store the email, what was requested, the language and the date. I use it only to reply to you and to learn what draws the most interest. I never send bulk mail.</p>
+
+  <h2>How long</h2>
+  <ul>
+    <li>Visit data: <strong>12 months</strong>, then deleted automatically.</li>
+    <li>Emails and messages: kept while they still matter for the conversation. Ask for removal and I delete them.</li>
+  </ul>
+
+  <h2>Where the data lives</h2>
+  <p>The site is published on Vercel. The data sits in a Postgres database on Supabase, on a server in the United States, behind rules that let only me read it. Writing happens on the server, not in your browser.</p>
+
+  <h2>Your rights</h2>
+  <p>Under Brazil's data protection law (LGPD), and in the same spirit as the GDPR, you can ask for access, correction or deletion of your data, and ask who it was shared with, which in this case is nobody. Write to <a href="mailto:alexandre01.w@gmail.com">alexandre01.w@gmail.com</a> and I will answer. To ask for a visit to be deleted, tell me the day and the approximate city, because that is the most I can look up: there is nothing in the database tied to you.</p>
+
+  <h2>Changes</h2>
+  <p>If I change what is collected, I change this page with it. Last updated on 6 November 2026.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="en.html">Back to portfolio</a>
+  </div>
+</footer>
+</body>
+</html>

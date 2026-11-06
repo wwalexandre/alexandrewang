@@ -42,6 +42,7 @@
     show('app');
     loadMessages();
     loadLeads();
+    loadVis();
   }
 
   async function boot() {
@@ -77,7 +78,8 @@
   // ---------- Abas ----------
   const tabs = [
     { tab: $('tabMsg'), panel: $('panelMsg') },
-    { tab: $('tabLeads'), panel: $('panelLeads') }
+    { tab: $('tabLeads'), panel: $('panelLeads') },
+    { tab: $('tabVis'), panel: $('panelVis') }
   ];
   tabs.forEach(t => t.tab.addEventListener('click', () => {
     tabs.forEach(o => {
@@ -236,6 +238,166 @@
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
+
+  // ---------- Visitantes ----------
+  // Tudo vem pronto da função resumo_visitas do banco, que só responde para admin.
+  // Todo texto é inserido com textContent, porque parte dele (site de origem) vem de fora.
+  let visDias = 30;
+
+  const PAISES = {
+    BR: 'Brasil', US: 'Estados Unidos', PT: 'Portugal', GB: 'Reino Unido', IE: 'Irlanda',
+    DE: 'Alemanha', FR: 'França', ES: 'Espanha', IT: 'Itália', NL: 'Holanda', BE: 'Bélgica',
+    CH: 'Suíça', AT: 'Áustria', SE: 'Suécia', NO: 'Noruega', DK: 'Dinamarca', FI: 'Finlândia',
+    PL: 'Polônia', CA: 'Canadá', MX: 'México', AR: 'Argentina', CL: 'Chile', CO: 'Colômbia',
+    PE: 'Peru', UY: 'Uruguai', PY: 'Paraguai', IN: 'Índia', JP: 'Japão', CN: 'China',
+    SG: 'Singapura', AU: 'Austrália', NZ: 'Nova Zelândia', ZA: 'África do Sul', AE: 'Emirados Árabes',
+    IL: 'Israel', TR: 'Turquia', RU: 'Rússia', KR: 'Coreia do Sul', AO: 'Angola', MZ: 'Moçambique'
+  };
+  const bandeira = cc => (/^[A-Za-z]{2}$/.test(cc || '')
+    ? String.fromCodePoint.apply(String, cc.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0)))
+    : '🌐');
+  const nomePais = cc => (PAISES[String(cc).toUpperCase()] || cc || 'desconhecido');
+  const fmtSeg = s => {
+    s = Math.round(s || 0);
+    return s >= 60 ? Math.floor(s / 60) + 'm ' + (s % 60) + 's' : s + 's';
+  };
+
+  function cartao(rotulo, valor, nota) {
+    const c = el('div', 'adm-card-num');
+    c.append(el('strong', '', valor));
+    c.append(el('span', '', rotulo));
+    if (nota) c.append(el('small', '', nota));
+    return c;
+  }
+
+  // Lista com barra proporcional. "formato" muda como o número aparece.
+  function ranking(nome, itens, formato, enfeite) {
+    const sec = el('section', 'adm-rank');
+    sec.append(el('h3', '', nome));
+    if (!itens || !itens.length) {
+      sec.append(el('p', 'adm-vazio', 'Sem dados ainda.'));
+      return sec;
+    }
+    let max = 1;
+    itens.forEach(i => { if (i.n > max) max = i.n; });
+    const ul = el('ul');
+    itens.forEach(i => {
+      const li = el('li');
+      const topo = el('div', 'adm-rank-topo');
+      topo.append(el('span', 'adm-rank-nome', enfeite ? enfeite(i.chave) : String(i.chave)));
+      topo.append(el('span', 'adm-rank-n', formato ? formato(i.n, i.extra) : String(i.n)));
+      const barra = el('div', 'adm-rank-barra');
+      const dentro = el('i');
+      dentro.style.width = Math.max(3, Math.round((i.n / max) * 100)) + '%';
+      barra.append(dentro);
+      li.append(topo, barra);
+      ul.append(li);
+    });
+    sec.append(ul);
+    return sec;
+  }
+
+  function grafico(porDia) {
+    const caixa = $('visGrafico');
+    caixa.replaceChildren();
+    if (!porDia || !porDia.length) {
+      caixa.append(el('p', 'adm-vazio', 'Sem visitas no período.'));
+      return;
+    }
+    let max = 1;
+    porDia.forEach(d => { if (d.n > max) max = d.n; });
+    porDia.slice(-90).forEach(d => {
+      const col = el('div', 'adm-col');
+      const barra = el('i');
+      barra.style.height = Math.max(2, Math.round((d.n / max) * 100)) + '%';
+      const partes = String(d.chave).split('-');
+      col.title = partes[2] + '/' + partes[1] + ': ' + d.n + (d.n === 1 ? ' visita' : ' visitas')
+        + ', ' + d.s + (d.s === 1 ? ' pessoa' : ' pessoas');
+      col.append(barra);
+      caixa.append(col);
+    });
+  }
+
+  function renderVis(d) {
+    const tot = d.totais || {};
+    const eng = d.engajamento || {};
+    const cards = $('visCards');
+    cards.replaceChildren();
+    cards.append(cartao('visitas de página', String(tot.visitas || 0)));
+    cards.append(cartao('pessoas diferentes', String(tot.sessoes || 0), 'contagem por dia'));
+    cards.append(cartao('países', String(tot.paises || 0)));
+    cards.append(cartao('cidades', String(tot.cidades || 0)));
+    cards.append(cartao('tempo médio na página', fmtSeg(eng.tempo_medio)));
+    cards.append(cartao('rolagem média', (eng.rolagem_media || 0) + '%',
+      (eng.leram_ate_o_fim || 0) + ' chegaram ao fim'));
+
+    grafico(d.por_dia);
+
+    const listas = $('visListas');
+    listas.replaceChildren();
+    listas.append(ranking('De onde são', d.paises, null, c => bandeira(c) + ' ' + nomePais(c)));
+    listas.append(ranking('Cidades', d.cidades));
+    listas.append(ranking('Como chegaram', d.origens));
+    listas.append(ranking('Páginas mais abertas', d.paginas));
+    listas.append(ranking('Seções que mais prenderam', d.secoes,
+      (n, extra) => fmtSeg(n) + (extra ? ' · ' + extra + 'x' : '')));
+    listas.append(ranking('Tempo médio por página', d.tempo_por_pagina, n => fmtSeg(n)));
+    listas.append(ranking('Publicações mais lidas', d.publicacoes));
+    listas.append(ranking('Projetos mais vistos', d.projetos));
+    listas.append(ranking('Imagens mais clicadas', d.imagens));
+    listas.append(ranking('Cliques e downloads', d.acoes));
+    listas.append(ranking('Aparelhos', d.dispositivos));
+    listas.append(ranking('Navegador e sistema', d.navegadores));
+    listas.append(ranking('Idioma da página', d.idiomas, null,
+      c => (c === 'en' ? 'Inglês' : 'Português')));
+    if (d.campanhas && d.campanhas.length) listas.append(ranking('Campanhas', d.campanhas));
+
+    const corpo = $('visJornadas');
+    corpo.replaceChildren();
+    (d.jornadas || []).forEach(j => {
+      const tr = el('tr');
+      tr.append(el('td', '', j.inicio));
+      tr.append(el('td', '', j.lugar));
+      tr.append(el('td', '', j.dispositivo));
+      tr.append(el('td', '', j.origem));
+      const td = el('td', 'adm-rota');
+      td.append(el('span', '', j.rota));
+      tr.append(td);
+      corpo.append(tr);
+    });
+    if (!(d.jornadas || []).length) {
+      const tr = el('tr');
+      const td = el('td', 'adm-vazio', 'Nenhuma visita registrada ainda.');
+      td.colSpan = 5;
+      tr.append(td);
+      corpo.append(tr);
+    }
+  }
+
+  window.__previa = function (d) { show('app'); renderVis(d); };
+
+  async function loadVis() {
+    $('visStatus').textContent = 'Carregando...';
+    const { data, error } = await sb.rpc('resumo_visitas', { p_dias: visDias });
+    if (error) {
+      $('visStatus').textContent = 'Não foi possível carregar o relatório de visitas.';
+      return;
+    }
+    $('visStatus').textContent = '';
+    renderVis(data || {});
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.adm-seg button'), b => {
+    b.addEventListener('click', () => {
+      visDias = Number(b.dataset.dias) || 30;
+      Array.prototype.forEach.call(document.querySelectorAll('.adm-seg button'), o => {
+        o.classList.toggle('on', o === b);
+        o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+      });
+      loadVis();
+    });
+  });
+  $('reloadVis').addEventListener('click', loadVis);
 
   boot();
 })();

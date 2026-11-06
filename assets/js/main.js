@@ -1237,3 +1237,126 @@ const DEMO_TXT = {
     }
   });
 })();
+
+// Painel de visitantes: manda para /api/visita, que é uma função da Vercel rodando no servidor.
+// O navegador não envia IP, nome nem identificador: quem monta a sessão anônima é o servidor,
+// com um hash que troca todo dia. Quem usa "Do Not Track" não é registrado.
+// Detalhes e o que é guardado: docs/SUPABASE.md e a página de privacidade.
+(function visitas() {
+  if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
+
+  const ROTA = location.pathname;
+  const enviar = dados => {
+    try {
+      const corpo = JSON.stringify(dados);
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/visita', new Blob([corpo], { type: 'application/json' }));
+        return;
+      }
+      fetch('/api/visita', {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json' }, body: corpo
+      }).catch(() => {});
+    } catch (e) {}
+  };
+
+  // 1) A visita em si. A geolocalização vem dos cabeçalhos da Vercel, não daqui.
+  const busca = new URLSearchParams(location.search);
+  const campanha = busca.get('utm_source') || busca.get('utm_campaign') || busca.get('ref') || null;
+  enviar({ caminho: ROTA, idioma: LANG, veio_de: document.referrer || null, campanha: campanha });
+
+  // 2) Fila de eventos, enviada de uma vez só quando a pessoa sai da página
+  const fila = [];
+  const juntar = (evento, valor, numero) => {
+    if (fila.length < 12) fila.push({ evento: evento, valor: valor || null, numero: numero });
+  };
+  // Clique vai na hora, porque a pessoa pode sair da página logo depois
+  const jaVai = (evento, valor) => enviar({ evento: evento, valor: valor || null });
+
+  // 3) Cliques: imagem, projeto, publicação, currículo e link de fora
+  const nomeDaImagem = img => {
+    const alt = (img.getAttribute('alt') || '').trim();
+    if (alt) return alt.slice(0, 120);
+    return (img.getAttribute('src') || '').split('/').pop().split('?')[0];
+  };
+  document.addEventListener('click', e => {
+    const img = e.target.closest('img');
+    if (img) jaVai('imagem', nomeDaImagem(img));
+
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+    let url;
+    try { url = new URL(a.href, location.href); } catch (err) { return; }
+
+    if (url.origin !== location.origin) {
+      jaVai('link', url.hostname.replace(/^www\./, ''));
+      return;
+    }
+    if (/\/projetos\//.test(url.pathname)) jaVai('projeto', url.pathname);
+    else if (/\/publicacoes\//.test(url.pathname)) jaVai('publicacao', url.pathname);
+    else if (/\.(pdf|xlsx|docx|pptx|csv|zip)$/i.test(url.pathname)) {
+      jaVai(/curriculo|resume|cv/i.test(url.pathname) ? 'curriculo' : 'link', url.pathname.split('/').pop());
+    }
+  }, true);
+
+  // 4) Quanto tempo a pessoa passa em cada seção, para saber qual parte prende mais
+  const tempos = new Map();
+  const entrou = new Map();
+  const titulo = sec => {
+    const h = sec.querySelector('h1, h2, h3');
+    const t = h ? h.textContent.trim() : '';
+    return (t || sec.id || 'sem nome').replace(/\s+/g, ' ').slice(0, 100);
+  };
+  const secoes = Array.from(document.querySelectorAll('main section[id], main > section, article[id]')).slice(0, 20);
+  if (secoes.length && 'IntersectionObserver' in window) {
+    const olho = new IntersectionObserver(entradas => {
+      entradas.forEach(en => {
+        const nome = titulo(en.target);
+        if (en.isIntersecting) {
+          if (!entrou.has(nome)) entrou.set(nome, Date.now());
+        } else if (entrou.has(nome)) {
+          tempos.set(nome, (tempos.get(nome) || 0) + (Date.now() - entrou.get(nome)));
+          entrou.delete(nome);
+        }
+      });
+    }, { threshold: 0.4 });
+    secoes.forEach(s => olho.observe(s));
+  }
+
+  // 5) Até onde rolou
+  let rolagemMax = 0;
+  const medirRolagem = () => {
+    const alturaUtil = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = alturaUtil > 0 ? Math.round(((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight) * 100) : 100;
+    if (pct > rolagemMax) rolagemMax = Math.min(100, pct);
+  };
+  window.addEventListener('scroll', medirRolagem, { passive: true });
+  medirRolagem();
+
+  // 6) Na saída: tempo na página, rolagem e tempo das seções que ela realmente olhou
+  const comeco = Date.now();
+  let despachado = false;
+  const despachar = () => {
+    if (despachado) return;
+    despachado = true;
+    entrou.forEach((inicio, nome) => tempos.set(nome, (tempos.get(nome) || 0) + (Date.now() - inicio)));
+
+    const segundos = Math.round((Date.now() - comeco) / 1000);
+    if (segundos >= 2) juntar('tempo', ROTA, Math.min(segundos, 3600));
+    if (rolagemMax > 0) juntar('rolagem', ROTA, rolagemMax);
+
+    Array.from(tempos.entries())
+      .map(([nome, ms]) => [nome, Math.round(ms / 1000)])
+      .filter(([, s]) => s >= 3)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .forEach(([nome, s]) => juntar('secao', nome, Math.min(s, 3600)));
+
+    if (fila.length) enviar({ lote: fila });
+  };
+  window.addEventListener('pagehide', despachar);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') despachar(); });
+})();
