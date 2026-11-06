@@ -79,16 +79,32 @@ module.exports = async function handler(req, res) {
   // A resposta é sempre vazia e sempre 204: o site nunca quebra nem espera por isto.
   const fim = () => res.status(204).end();
 
-  const token = process.env.VISITAS_TOKEN;
-  const sal = process.env.VISITAS_SALT;
+  // O token é opcional: o banco só o exige se a coluna `token` de ingestao_config estiver
+  // preenchida. Assim o registro funciona sem nenhuma variável de ambiente, e dá para
+  // fechar depois preenchendo o token no banco e criando VISITAS_TOKEN aqui.
+  const token = process.env.VISITAS_TOKEN || null;
 
-  // GET serve só para o painel saber se a gravação está ligada. Nunca devolve os valores.
+  // GET é o teste de saúde do painel. Chama a própria função de gravação com a impressão
+  // vazia, que o banco descarta sem inserir nada: prova que a rede, a função e o token
+  // estão de pé, sem criar linha nem devolver segredo.
   if (req.method === 'GET') {
-    res.status(200).json({ configurado: Boolean(token && sal) });
+    let ok = false;
+    try {
+      // Todos os argumentos precisam ir, senão o PostgREST não acha a função.
+      // A impressão vazia faz o banco sair sem inserir nada.
+      ok = await chamar('registrar_visita', {
+        p_token: token, p_impressao: '', p_caminho: '/', p_idioma: 'pt',
+        p_pais: null, p_regiao: null, p_cidade: null, p_fuso: null,
+        p_dispositivo: null, p_sistema: null, p_navegador: null,
+        p_origem: null, p_campanha: null
+      });
+    } catch (e) {
+      ok = false;
+    }
+    res.status(200).json({ configurado: ok });
     return;
   }
   if (req.method !== 'POST') { res.status(405).end(); return; }
-  if (!token || !sal) { fim(); return; }
 
   const h = req.headers || {};
   const ua = String(h['user-agent'] || '');
@@ -100,9 +116,11 @@ module.exports = async function handler(req, res) {
   if (typeof corpo === 'string') { try { corpo = JSON.parse(corpo); } catch (e) { corpo = null; } }
   if (!corpo || typeof corpo !== 'object') { fim(); return; }
 
+  // Impressão do visitante: só IP e navegador, embaralhados aqui mesmo. O IP não sai deste
+  // ponto, nem vai para o banco. Quem junta o sal secreto e a data do dia, e transforma isso
+  // no identificador de sessão que muda à meia-noite, é a função sessao_do_dia no Postgres.
   const ip = String(h['x-forwarded-for'] || h['x-real-ip'] || '').split(',')[0].trim();
-  const dia = new Date().toISOString().slice(0, 10);
-  const sessao = createHash('sha256').update(ip + '|' + ua + '|' + sal + '|' + dia).digest('hex').slice(0, 32);
+  const impressao = createHash('sha256').update(ip + '|' + ua).digest('hex');
 
   try {
     // Lote: vários eventos num envio só, para gastar menos invocação da Vercel
@@ -112,7 +130,7 @@ module.exports = async function handler(req, res) {
       });
       await Promise.all(itens.map(function (it) {
         return chamar('registrar_evento_visita', {
-          p_token: token, p_sessao: sessao, p_tipo: it.evento,
+          p_token: token, p_impressao: impressao, p_tipo: it.evento,
           p_valor: texto(it.valor, 160),
           p_numero: Number.isFinite(it.numero) ? Math.round(it.numero) : null
         });
@@ -126,7 +144,7 @@ module.exports = async function handler(req, res) {
       if (TIPOS.indexOf(evento) === -1) { fim(); return; }
       const numero = Number.isFinite(corpo.numero) ? Math.round(corpo.numero) : null;
       await chamar('registrar_evento_visita', {
-        p_token: token, p_sessao: sessao, p_tipo: evento,
+        p_token: token, p_impressao: impressao, p_tipo: evento,
         p_valor: texto(corpo.valor, 160), p_numero: numero
       });
       fim();
@@ -141,7 +159,7 @@ module.exports = async function handler(req, res) {
 
     await chamar('registrar_visita', {
       p_token: token,
-      p_sessao: sessao,
+      p_impressao: impressao,
       p_caminho: caminho,
       p_idioma: corpo.idioma === 'en' ? 'en' : 'pt',
       p_pais: texto(String(h['x-vercel-ip-country'] || ''), 2),

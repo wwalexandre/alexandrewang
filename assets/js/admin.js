@@ -391,18 +391,18 @@
     const semDados = !(d.totais && d.totais.visitas);
     mostrarDetalhe(!semDados);
     if (semDados && gravacaoLigada === false) {
-      aviso('O registro de visitas ainda não foi ligado', [
-        'Faltam duas variáveis de ambiente no projeto da Vercel. Enquanto elas não existirem, nenhuma visita é gravada e este painel fica zerado.'
+      aviso('O registro de visitas não está respondendo', [
+        'O teste de saúde falhou: a função /api/visita não conseguiu falar com o banco. Enquanto isso, nenhuma visita é gravada.'
       ], [
-        'Abra o projeto alexandrewang na Vercel, em Settings e depois Environment Variables.',
-        'Crie VISITAS_TOKEN e VISITAS_SALT, marcando Production e Preview.',
-        'Clique em Redeploy no último deploy e abra o site uma vez.'
+        'Confira se o projeto do Supabase não está pausado por inatividade.',
+        'Se a coluna token de ingestao_config estiver preenchida, a variável VISITAS_TOKEN precisa existir na Vercel com o mesmo valor.',
+        'Veja os logs da função em Vercel, Deployments, Functions.'
       ]);
     } else if (semDados) {
       aviso('Nenhuma visita neste período', [
         gravacaoLigada === true
           ? 'A gravação está ligada, só não chegou ninguém ainda no intervalo escolhido.'
-          : 'Não consegui confirmar se a gravação está ligada. Se o painel continuar zerado, confira as variáveis VISITAS_TOKEN e VISITAS_SALT na Vercel.',
+          : 'Não consegui rodar o teste de saúde da gravação. Se o painel continuar zerado, me avise.',
         'Para testar, abra o site numa janela anônima. Se o seu navegador estiver com Do Not Track ligado, a sua própria visita não é registrada, que é o combinado da página de privacidade.'
       ]);
     } else {

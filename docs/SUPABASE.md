@@ -68,13 +68,13 @@ O site registra as visitas pela função `api/visita.js`, que roda **no servidor
 |---|---|
 | Função que grava | `api/visita.js` |
 | Coleta no navegador | bloco `visitas()` no fim de `assets/js/main.js` |
-| Tabelas e resumo | `supabase/migrations/20261106140000_visitas_e_jornada.sql`, `20261106150000_visitas_secoes_e_imagens.sql` e `20261106170000_local_aproximado.sql` |
+| Tabelas e resumo | as migrações `20261106140000_visitas_e_jornada.sql`, `20261106150000_visitas_secoes_e_imagens.sql`, `20261106170000_local_aproximado.sql` e `20261106190000_visitas_sem_configuracao.sql` |
 | Aba do painel | `admin/index.html` (`panelVis`), `assets/js/admin.js`, `assets/css/admin.css` |
 | Página pública de privacidade | `privacidade.html` e `privacy.html` |
 
 ### Como a sessão anônima funciona
 
-O servidor monta `sha256(IP + navegador + VISITAS_SALT + data do dia)` e guarda os 32 primeiros caracteres. O IP **não** é gravado em lugar nenhum. Como a data entra na conta, o código muda à meia-noite, então não dá para ligar a visita de hoje com a de amanhã nem voltar do hash para o IP. É por isso que o painel conta "pessoas diferentes" por dia, e não ao longo do mês.
+A função da Vercel monta `sha256(IP + navegador)` e manda só isso. O banco junta o sal secreto e a data do dia e guarda 32 caracteres. O IP **não** é gravado em lugar nenhum e nem sai da função. Como a data entra na conta, o código muda à meia-noite, então não dá para ligar a visita de hoje com a de amanhã nem voltar do hash para o IP. É por isso que o painel conta "pessoas diferentes" por dia, e não ao longo do mês.
 
 ### O que é registrado
 
@@ -97,16 +97,28 @@ As colunas `cep`, `latitude` e `longitude` guardam o palpite do provedor de geol
 
 Tudo é gravado em UTC e convertido para `America/Sao_Paulo` na função `resumo_visitas`. As jornadas e a virada do dia no gráfico seguem o horário de Brasília, e o painel diz isso na tela.
 
-### Variáveis de ambiente na Vercel
+### Não precisa de configuração
 
-Duas, em Production e Preview. **Sem elas a função não grava nada** e o site continua funcionando normalmente.
+O registro funciona sem nenhuma variável de ambiente, de propósito: depender de um passo manual para a coisa funcionar já deixou o painel zerado por um dia inteiro.
 
-| Variável | Para que serve |
-|---|---|
-| `VISITAS_TOKEN` | Mesma string da coluna `token` em `public.ingestao_config`. É o que autoriza a gravação. |
-| `VISITAS_SALT` | Sal do hash diário de sessão. Trocar o sal só reinicia a contagem de pessoas do dia. |
+- O **sal secreto** mora na coluna `sal` de `public.ingestao_config`, tabela sem nenhuma permissão para `anon` e `authenticated`. Só funções `security definer` leem.
+- A função `api/visita.js` manda uma **impressão** (sha256 de IP mais navegador, sem segredo). O **IP não chega ao banco**, o que é melhor do que a versão anterior, em que o hash era montado na Vercel.
+- `public.sessao_do_dia()` junta impressão, sal e a data em São Paulo, e devolve os 32 caracteres que viram a sessão. Muda à meia-noite, não é reversível.
 
-Para trocar o token depois: gere uma string aleatória, rode `update public.ingestao_config set token = 'nova' where id = 1;` e atualize a variável na Vercel.
+### Token, se um dia quiser fechar
+
+A coluna `token` de `ingestao_config` começa `NULL`, e com ela nula **qualquer chamada válida grava**. O risco disso é alguém descobrir o endereço e injetar visita falsa, o que num portfólio pessoal é um risco de papel, contido pelos tetos diários (20 mil visitas, 60 mil eventos) e pela validação do caminho.
+
+Para fechar, dois passos que andam juntos:
+
+1. `update public.ingestao_config set token = 'uma-string-aleatoria' where id = 1;`
+2. Criar `VISITAS_TOKEN` na Vercel com a mesma string, em Production e Preview, e dar Redeploy.
+
+Se preencher um sem o outro, a gravação para e o painel avisa, porque o teste de saúde passa a falhar.
+
+### Teste de saúde
+
+`GET /api/visita` chama a própria função de gravação com a impressão vazia, que o banco descarta sem inserir nada, e responde `{"configurado":true}` quando rede, função e token estão de pé. O painel usa isso para avisar quando algo está errado, em vez de mostrar caixas vazias.
 
 ### Limites e custo
 
