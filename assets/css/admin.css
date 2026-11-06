@@ -45,38 +45,80 @@
 .adm-table tbody tr:last-child td { border-bottom: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---------- Aba Visitantes ---------- */
-.adm-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
-.adm-seg button { font: 600 13px var(--font); padding: 8px 14px; border: 0; background: none; color: var(--muted); cursor: pointer; }
-.adm-seg button + button { border-left: 1px solid var(--line); }
-.adm-seg button.on { background: var(--orange); color: #1b1000; }
+/* ---------- Aba Visitantes ----------
+   Paleta conferida no validador de daltonismo nos dois temas.
+   Clara: #F08A24 #5B8DEF #2FB8A0 | Escura: #D4781A #6189E3 #2A9986
+   Todo valor aparece escrito ao lado da marca, nunca só pela cor. */
+.adm { --c1: #F08A24; --c2: #5B8DEF; --c3: #2FB8A0; --trilho: #E6EAE7; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .adm { --c1: #D4781A; --c2: #6189E3; --c3: #2A9986; --trilho: #1C3250; }
+}
+:root[data-theme="dark"] .adm { --c1: #D4781A; --c2: #6189E3; --c3: #2A9986; --trilho: #1C3250; }
 
-.adm-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.adm-card-num { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px; display: grid; gap: 2px; align-content: start; }
-.adm-card-num strong { font-family: var(--display); font-size: 32px; line-height: 1.05; font-weight: 700; }
-.adm-card-num span { font-size: 13px; color: var(--muted); }
-.adm-card-num small { font-size: 12px; color: var(--muted); opacity: .8; }
+.adm-seg-1 { background: var(--c1); }
+.adm-seg-2 { background: var(--c2); }
+.adm-seg-3 { background: var(--c3); }
+
+.adm-seg-periodo { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.adm-seg-periodo button { font: 600 13px var(--font); padding: 8px 14px; border: 0; background: none; color: var(--muted); cursor: pointer; }
+.adm-seg-periodo button + button { border-left: 1px solid var(--line); }
+.adm-seg-periodo button.on { background: var(--c1); color: #1b1000; }
+
+.adm-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(146px, 1fr)); gap: 10px; margin-bottom: 26px; }
+.adm-card-num { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; display: grid; gap: 1px; align-content: start; }
+.adm-card-num strong { font: 600 30px/1.05 var(--font); letter-spacing: -.01em; }
+.adm-card-num span { font-size: 12px; color: var(--muted); }
+.adm-card-num small { font-size: 11px; color: var(--muted); opacity: .75; }
+
+/* Título de grupo, para a página ter hierarquia em vez de 13 caixas iguais */
+.adm-grupo { font-family: var(--display); font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; font-weight: 600; }
+.adm-grupo:first-child { margin-top: 0; }
 
 .adm-bloco { margin: 0 0 24px; }
 .adm-bloco h3 { font-family: var(--display); font-size: 20px; margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; }
 .adm-nota { font: 400 13px/1.4 var(--font); color: var(--muted); }
 
-.adm-grafico { display: flex; align-items: flex-end; gap: 2px; height: 140px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); }
-.adm-col { flex: 1 1 0; min-width: 3px; height: 100%; display: flex; align-items: flex-end; }
-.adm-col i { display: block; width: 100%; background: var(--orange); border-radius: 2px 2px 0 0; transition: filter .15s; }
-.adm-col:hover i { filter: brightness(1.2); }
+/* Série no tempo: barra estreita com largura máxima, eixo e trilho discretos */
+.adm-grafico { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px 10px; }
+.adm-plot-topo { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted); min-height: 18px; }
+.adm-dica { color: var(--text); font-weight: 600; }
+.adm-dica[hidden] { display: none; }
+.adm-plot { display: flex; align-items: flex-end; justify-content: flex-start; gap: 2px; height: 120px; margin: 8px 0 0; border-bottom: 1px solid var(--line); }
+.adm-col { flex: 0 1 28px; min-width: 4px; height: 100%; display: flex; align-items: flex-end; cursor: default; }
+.adm-col i { display: block; width: 100%; background: var(--c1); border-radius: 4px 4px 0 0; transition: opacity .12s; }
+.adm-plot:hover .adm-col i { opacity: .45; }
+.adm-plot .adm-col:hover i { opacity: 1; }
+.adm-eixo { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding-top: 6px; }
 
-.adm-colunas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; align-items: start; }
-.adm-rank { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px; }
-.adm-rank h3 { font-family: var(--display); font-size: 17px; margin: 0 0 12px; }
-.adm-rank ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.adm-colunas { display: grid; grid-template-columns: repeat(auto-fit, minmax(264px, 1fr)); gap: 12px; align-items: start; }
+.adm-rank { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 15px 16px; }
+.adm-rank h3 { font-family: var(--display); font-size: 17px; margin: 0 0 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.adm-rank ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .adm-rank-topo { display: flex; gap: 10px; justify-content: space-between; align-items: baseline; font-size: 13px; }
 .adm-rank-nome { overflow-wrap: anywhere; }
-.adm-rank-n { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.adm-rank-barra { height: 5px; margin-top: 4px; border-radius: 999px; background: var(--line); overflow: hidden; }
-.adm-rank-barra i { display: block; height: 100%; background: var(--orange); border-radius: 999px; }
-.adm-vazio { color: var(--muted); font-size: 13px; margin: 0; }
+.adm-rank-n { white-space: nowrap; display: inline-flex; gap: 6px; align-items: baseline; }
+.adm-rank-n b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.adm-rank-n i { font-style: normal; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.adm-rank-barra { height: 4px; margin-top: 5px; border-radius: 999px; background: var(--trilho); overflow: hidden; }
+.adm-rank-barra i { display: block; height: 100%; background: var(--c1); border-radius: 999px; }
 
+/* Lista de um item só vira número: barra sozinha sempre cheia não informa nada */
+.adm-unico { display: grid; gap: 1px; }
+.adm-unico strong { font: 600 26px/1.05 var(--font); }
+.adm-unico span { font-size: 13px; color: var(--muted); }
+
+/* Parte de um todo: uma barra fatiada, com 2px de respiro entre as fatias */
+.adm-seg { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--trilho); gap: 2px; }
+.adm-seg i { display: block; height: 100%; }
+.adm-seg i:first-child { border-radius: 999px 0 0 999px; }
+.adm-seg i:last-child { border-radius: 0 999px 999px 0; }
+.adm-legenda { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 7px; }
+.adm-legenda li { display: flex; gap: 8px; align-items: baseline; font-size: 13px; }
+.adm-legenda-nome { flex: 1; overflow-wrap: anywhere; }
+.adm-legenda b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.adm-ponto { width: 9px; height: 9px; border-radius: 3px; flex: 0 0 auto; }
+
+.adm-vazio { color: var(--muted); font-size: 13px; margin: 0; }
 .adm-table td.adm-rota { white-space: normal; overflow-wrap: anywhere; max-width: 420px; font-size: 13px; color: var(--muted); }
 
 /* Gerador de links com etiqueta */

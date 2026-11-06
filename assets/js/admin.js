@@ -262,6 +262,13 @@
     return s >= 60 ? Math.floor(s / 60) + 'm ' + (s % 60) + 's' : s + 's';
   };
 
+  // ---------- Desenho do relatório ----------
+  // Regras seguidas aqui: marca fina, sem bloco saturado gigante; eixo e trilho discretos;
+  // número sempre escrito junto da barra (não depende de passar o mouse); lista de um item
+  // vira número, porque barra sozinha sempre cheia não informa nada; parte de um todo vira
+  // barra segmentada com legenda. Paleta conferida no validador, clara e escura.
+  const PCT = (n, total) => (total > 0 ? Math.round((n / total) * 100) : 0);
+
   function cartao(rotulo, valor, nota) {
     const c = el('div', 'adm-card-num');
     c.append(el('strong', '', valor));
@@ -270,52 +277,127 @@
     return c;
   }
 
-  // Lista com barra proporcional. "formato" muda como o número aparece.
-  function ranking(nome, itens, formato, enfeite) {
+  // Uma caixa de conteúdo do relatório
+  function caixa(nome, dica) {
     const sec = el('section', 'adm-rank');
-    sec.append(el('h3', '', nome));
+    const h = el('h3', '', nome);
+    if (dica) h.append(el('span', 'adm-nota', dica));
+    sec.append(h);
+    return sec;
+  }
+
+  // Lista ordenada com barra proporcional. Um item só vira número, não barra.
+  function ranking(nome, itens, formato, enfeite, dica) {
+    const sec = caixa(nome, dica);
     if (!itens || !itens.length) {
       sec.append(el('p', 'adm-vazio', 'Sem dados ainda.'));
       return sec;
     }
-    let max = 1;
-    itens.forEach(i => { if (i.n > max) max = i.n; });
+    let max = 0;
+    let total = 0;
+    itens.forEach(i => { if (i.n > max) max = i.n; total += i.n; });
+    if (!max) max = 1;
+
+    if (itens.length === 1) {
+      const u = el('div', 'adm-unico');
+      u.append(el('strong', '', formato ? formato(itens[0].n, itens[0].extra) : String(itens[0].n)));
+      u.append(el('span', '', enfeite ? enfeite(itens[0].chave) : String(itens[0].chave)));
+      sec.append(u);
+      return sec;
+    }
+
     const ul = el('ul');
     itens.forEach(i => {
       const li = el('li');
       const topo = el('div', 'adm-rank-topo');
       topo.append(el('span', 'adm-rank-nome', enfeite ? enfeite(i.chave) : String(i.chave)));
-      topo.append(el('span', 'adm-rank-n', formato ? formato(i.n, i.extra) : String(i.n)));
-      const barra = el('div', 'adm-rank-barra');
+      const dir = el('span', 'adm-rank-n');
+      dir.append(el('b', '', formato ? formato(i.n, i.extra) : String(i.n)));
+      if (!formato) dir.append(el('i', '', PCT(i.n, total) + '%'));
+      topo.append(dir);
+      const trilho = el('div', 'adm-rank-barra');
       const dentro = el('i');
-      dentro.style.width = Math.max(3, Math.round((i.n / max) * 100)) + '%';
-      barra.append(dentro);
-      li.append(topo, barra);
+      dentro.style.width = Math.max(2, Math.round((i.n / max) * 100)) + '%';
+      trilho.append(dentro);
+      li.append(topo, trilho);
       ul.append(li);
     });
     sec.append(ul);
     return sec;
   }
 
+  // Parte de um todo: uma barra só, fatiada, com legenda e rótulo direto
+  function segmentada(nome, itens, enfeite) {
+    const sec = caixa(nome);
+    if (!itens || !itens.length) {
+      sec.append(el('p', 'adm-vazio', 'Sem dados ainda.'));
+      return sec;
+    }
+    let total = 0;
+    itens.forEach(i => { total += i.n; });
+    const mostra = itens.slice(0, 3);
+    const barra = el('div', 'adm-seg');
+    mostra.forEach((i, k) => {
+      const parte = el('i', 'adm-seg-' + (k + 1));
+      parte.style.width = PCT(i.n, total) + '%';
+      parte.title = (enfeite ? enfeite(i.chave) : i.chave) + ': ' + i.n;
+      barra.append(parte);
+    });
+    sec.append(barra);
+    const leg = el('ul', 'adm-legenda');
+    mostra.forEach((i, k) => {
+      const li = el('li');
+      li.append(el('span', 'adm-ponto adm-seg-' + (k + 1)));
+      li.append(el('span', 'adm-legenda-nome', enfeite ? enfeite(i.chave) : String(i.chave)));
+      li.append(el('b', '', PCT(i.n, total) + '%'));
+      leg.append(li);
+    });
+    sec.append(leg);
+    return sec;
+  }
+
+  // Série no tempo. Barra estreita com largura máxima, para um dia só não virar um bloco.
   function grafico(porDia) {
-    const caixa = $('visGrafico');
-    caixa.replaceChildren();
+    const caixaG = $('visGrafico');
+    caixaG.replaceChildren();
     if (!porDia || !porDia.length) {
-      caixa.append(el('p', 'adm-vazio', 'Sem visitas no período.'));
+      caixaG.append(el('p', 'adm-vazio', 'Sem visitas no período.'));
       return;
     }
-    let max = 1;
-    porDia.forEach(d => { if (d.n > max) max = d.n; });
-    porDia.slice(-90).forEach(d => {
+    const dados = porDia.slice(-90);
+    let max = 0;
+    dados.forEach(d => { if (d.n > max) max = d.n; });
+    if (!max) max = 1;
+    const pico = dados.reduce((a, b) => (b.n > a.n ? b : a), dados[0]);
+
+    const plot = el('div', 'adm-plot');
+    const dica = el('div', 'adm-dica');
+    dica.hidden = true;
+    const dia = chave => chave.slice(8, 10) + '/' + chave.slice(5, 7);
+
+    dados.forEach(d => {
       const col = el('div', 'adm-col');
       const barra = el('i');
-      barra.style.height = Math.max(2, Math.round((d.n / max) * 100)) + '%';
-      const partes = String(d.chave).split('-');
-      col.title = partes[2] + '/' + partes[1] + ': ' + d.n + (d.n === 1 ? ' visita' : ' visitas')
-        + ', ' + d.s + (d.s === 1 ? ' pessoa' : ' pessoas');
+      barra.style.height = (d.n > 0 ? Math.max(3, Math.round((d.n / max) * 100)) : 0) + '%';
       col.append(barra);
-      caixa.append(col);
+      col.addEventListener('mouseenter', () => {
+        dica.textContent = dia(d.chave) + ': ' + d.n + (d.n === 1 ? ' visita' : ' visitas')
+          + ', ' + d.s + (d.s === 1 ? ' pessoa' : ' pessoas');
+        dica.hidden = false;
+      });
+      col.addEventListener('mouseleave', () => { dica.hidden = true; });
+      plot.append(col);
     });
+
+    const topo = el('div', 'adm-plot-topo');
+    topo.append(el('span', '', max + (max === 1 ? ' visita' : ' visitas') + ' no pico, em ' + dia(pico.chave)));
+    topo.append(dica);
+
+    const eixo = el('div', 'adm-eixo');
+    eixo.append(el('span', '', dia(dados[0].chave)));
+    if (dados.length > 1) eixo.append(el('span', '', dia(dados[dados.length - 1].chave)));
+
+    caixaG.append(topo, plot, eixo);
   }
 
   // A gravação só funciona com as duas variáveis na Vercel. O painel pergunta para a
@@ -367,26 +449,44 @@
 
     const listas = $('visListas');
     listas.replaceChildren();
-    listas.append(ranking('De onde são', d.paises, null, c => bandeira(c) + ' ' + nomePais(c)));
-    listas.append(ranking('Cidades', d.cidades));
-    listas.append(ranking('Estados', (d.extra && d.extra.estados) || []));
-    listas.append(ranking('Como chegaram', d.origens));
-    listas.append(ranking('Páginas mais abertas', d.paginas));
-    listas.append(ranking('Seções que mais prenderam', d.secoes,
-      (n, extra) => fmtSeg(n) + (extra ? ' · ' + extra + 'x' : '')));
-    listas.append(ranking('Tempo médio por página', d.tempo_por_pagina, n => fmtSeg(n)));
-    listas.append(ranking('Publicações mais lidas', d.publicacoes));
-    listas.append(ranking('Projetos mais vistos', d.projetos));
-    listas.append(ranking('Imagens mais clicadas', d.imagens));
-    listas.append(ranking('Cliques e downloads', d.acoes));
-    listas.append(ranking('Aparelhos', d.dispositivos));
-    listas.append(ranking('Navegador e sistema', d.navegadores));
-    listas.append(ranking('Idioma da página', d.idiomas, null,
-      c => (c === 'en' ? 'Inglês' : 'Português')));
+    const ex = d.extra || {};
+    const grupo = (titulo, caixas) => {
+      listas.append(el('h3', 'adm-grupo', titulo));
+      const grade = el('div', 'adm-colunas');
+      caixas.forEach(c => grade.append(c));
+      listas.append(grade);
+    };
+
+    grupo('De onde vêm', [
+      ranking('Países', d.paises, null, c => bandeira(c) + ' ' + nomePais(c)),
+      ranking('Estados e regiões', ex.estados || []),
+      ranking('Cidades', d.cidades)
+    ]);
+
+    const comCampanha = [ranking('Como chegaram', d.origens, null, null, 'site de onde veio o clique')];
     if (d.campanhas && d.campanhas.length) {
-      listas.append(ranking('Campanhas', d.campanhas,
+      comCampanha.push(ranking('Etiquetas de link', d.campanhas,
         (n, extra) => n + (extra ? ' · ' + extra + (extra === 1 ? ' pessoa' : ' pessoas') : '')));
     }
+    comCampanha.push(segmentada('Aparelho', d.dispositivos));
+    comCampanha.push(segmentada('Idioma da página', d.idiomas,
+      c => (c === 'en' ? 'Inglês' : 'Português')));
+    comCampanha.push(ranking('Navegador e sistema', d.navegadores));
+    grupo('Como chegaram', comCampanha);
+
+    grupo('O que olharam', [
+      ranking('Páginas mais abertas', d.paginas),
+      ranking('Publicações mais lidas', d.publicacoes),
+      ranking('Projetos mais vistos', d.projetos),
+      ranking('Imagens mais clicadas', d.imagens),
+      ranking('Cliques e downloads', d.acoes)
+    ]);
+
+    grupo('Quanto prendeu', [
+      ranking('Seções que mais prenderam', d.secoes,
+        (n, extra) => fmtSeg(n) + (extra ? ' · ' + extra + 'x' : ''), null, 'tempo somado'),
+      ranking('Tempo médio por página', d.tempo_por_pagina, n => fmtSeg(n))
+    ]);
 
     const semDados = !(d.totais && d.totais.visitas);
     mostrarDetalhe(!semDados);
@@ -474,10 +574,10 @@
     renderVis(dados);
   }
 
-  Array.prototype.forEach.call(document.querySelectorAll('.adm-seg button'), b => {
+  Array.prototype.forEach.call(document.querySelectorAll('.adm-seg-periodo button'), b => {
     b.addEventListener('click', () => {
       visDias = Number(b.dataset.dias) || 30;
-      Array.prototype.forEach.call(document.querySelectorAll('.adm-seg button'), o => {
+      Array.prototype.forEach.call(document.querySelectorAll('.adm-seg-periodo button'), o => {
         o.classList.toggle('on', o === b);
         o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
       });
