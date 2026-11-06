@@ -336,6 +336,12 @@
   };
   const nomeSite = c => SITES[String(c)] || String(c);
 
+  const REDE_TIPO = {
+    empresa: 'rede de empresa', provedor: 'provedor de internet',
+    datacenter: 'datacenter ou VPN', desconhecido: 'não identificada'
+  };
+  const nomeRedeTipo = c => REDE_TIPO[String(c)] || String(c);
+
   const nomeRota = r => String(r == null ? '' : r).split(' > ').map(nomePagina).join(' → ');
 
   // Frase em português do que aconteceu no período, para não depender de ler gráfico
@@ -584,6 +590,10 @@
     comCampanha.push(segmentada('Aparelho', d.dispositivos));
     comCampanha.push(segmentada('Idioma da página', d.idiomas,
       c => (c === 'en' ? 'Inglês' : 'Português')));
+    comCampanha.push(ranking('Rede de onde vieram', ex.redes || [],
+      (n, extra) => n + (extra ? ' · ' + nomeRedeTipo(extra) : ''), null,
+      'operadora ou empresa dona da conexão'));
+    comCampanha.push(segmentada('Tipo de rede', ex.tipos_rede || [], nomeRedeTipo));
     comCampanha.push(ranking('Navegador e sistema', d.navegadores));
     grupo('Como chegaram', comCampanha);
 
@@ -632,20 +642,21 @@
       tr.append(el('td', '', m.minutos + (m.minutos === 1 ? ' min' : ' min')));
       tr.append(el('td', '', m.dia + ', ' + m.janela));
       tr.append(el('td', '', m.lugar));
+      tr.append(el('td', '', m.rede || ''));
       tr.append(el('td', '', m.aparelho));
-      // Muita página em pouco tempo é o padrão de robô ou de quem está raspando o site
-      if (m.n >= 30 && m.minutos <= 10) tr.className = 'adm-suspeito';
+      // Robô por dois caminhos: veio de datacenter, ou abriu muita página em pouco tempo
+      if (m.robo || (m.n >= 30 && m.minutos <= 10)) tr.className = 'adm-suspeito';
       abuso.append(tr);
     });
     if (!pesados.length) {
       const tr = el('tr');
       const td = el('td', 'adm-vazio', 'Ninguém abriu 5 páginas ou mais no período.');
-      td.colSpan = 6;
+      td.colSpan = 7;
       tr.append(td);
       abuso.append(tr);
     }
-    $('visAbusoDica').textContent = pesados.some(m => m.n >= 30 && m.minutos <= 10)
-      ? 'Tem linha marcada em vermelho: muita página em pouco tempo, que é padrão de robô. Para bloquear, use o Firewall da Vercel, em Project Settings e depois Firewall, que vê o endereço de rede e corta o acesso antes de chegar ao site.'
+    $('visAbusoDica').textContent = pesados.some(m => m.robo || (m.n >= 30 && m.minutos <= 10))
+      ? 'Linha em vermelho é provável robô: ou veio de datacenter e VPN, ou abriu muita página em pouco tempo. Para bloquear, use o Firewall da Vercel, em Project Settings e depois Firewall, que vê o endereço de rede e corta o acesso antes de chegar ao site.'
       : 'Para bloquear alguém, o caminho é o Firewall da Vercel, em Project Settings e depois Firewall. Ele vê o endereço de rede na borda e corta o acesso, sem precisar guardar nada aqui.';
 
     const corpo = $('visJornadas');

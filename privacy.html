@@ -56,13 +56,14 @@
     <li>Country, region, approximate city and time zone, which Vercel's server infers from the network address.</li>
     <li>Device type (phone, tablet or computer), operating system and browser.</li>
     <li>The site or network you came from, for example LinkedIn or a Google search.</li>
+    <li>The name of the carrier or company that owns the network you are on, for example Vivo, Claro or a company name. That says what kind of connection the visit came from, not who you are.</li>
     <li>Which pages you opened, in what order, how long you stayed and how far you scrolled.</li>
     <li>Which section of the page held your attention longest, which images and projects you clicked, and whether you downloaded a file.</li>
   </ul>
 
   <h2>What I do not record</h2>
   <ul>
-    <li><strong>Your network address (IP).</strong> It is used for an instant to build a scrambled code and then discarded. It is never stored anywhere.</li>
+    <li><strong>Your network address (IP).</strong> It is used for an instant, to build a scrambled code and to look up who owns the network, and then discarded. It is never stored anywhere.</li>
     <li><strong>Anything that identifies you.</strong> No name, no account, no profile.</li>
     <li><strong>No sensors and no device fingerprint.</strong> No camera, microphone, precise location, accelerometer, touch pressure or any trick to recognize the same device later.</li>
     <li><strong>No tracking cookies</strong> and no third-party trackers. The site has no ads and no social network pixels.</li>
@@ -83,14 +84,15 @@
     <li>Emails and messages: kept while they still matter for the conversation. Ask for removal and I delete them.</li>
   </ul>
 
-  <h2>Where the data lives</h2>
+  <h2>Where the data lives, and who else sees anything</h2>
   <p>The site is published on Vercel. The data sits in a Postgres database on Supabase, on a server in the United States, behind rules that let only me read it. Writing happens on the server, not in your browser.</p>
+  <p>There is one third party involved, and I would rather say it plainly: to find out who owns the network, my server queries the geolocation service <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a>, sending it the network address. That request goes server to server, never from your browser, and the address is still not stored by me. If the lookup fails, the visit is recorded anyway, just without the network name.</p>
 
   <h2>Your rights</h2>
   <p>Under Brazil's data protection law (LGPD), and in the same spirit as the GDPR, you can ask for access, correction or deletion of your data, and ask who it was shared with, which in this case is nobody. Write to <a href="mailto:alexandre01.w@gmail.com">alexandre01.w@gmail.com</a> and I will answer. To ask for a visit to be deleted, tell me the day and the approximate city, because that is the most I can look up: there is nothing in the database tied to you.</p>
 
   <h2>Changes</h2>
-  <p>If I change what is collected, I change this page with it. Last updated on 6 November 2026.</p>
+  <p>If I change what is collected, I change this page with it. Last updated on 6 November 2026, when I started recording the network name and using the geolocation service named above.</p>
 
 </main>
 

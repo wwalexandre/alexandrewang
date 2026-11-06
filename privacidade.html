@@ -56,13 +56,14 @@
     <li>País, região, cidade aproximada e fuso horário, que o servidor da Vercel deduz do endereço de rede.</li>
     <li>Tipo de aparelho (celular, tablet ou computador), sistema e navegador.</li>
     <li>O site ou a rede de onde você veio, por exemplo LinkedIn ou uma busca no Google.</li>
+    <li>O nome da operadora ou da empresa dona da rede que você está usando, por exemplo Vivo, Claro ou o nome de uma empresa. Isso diz de que tipo de conexão veio a visita, não quem você é.</li>
     <li>Quais páginas você abriu, em que ordem, quanto tempo ficou e até onde rolou.</li>
     <li>Em que seção da página você passou mais tempo, que imagens e projetos você clicou e se baixou algum arquivo.</li>
   </ul>
 
   <h2>O que eu não registro</h2>
   <ul>
-    <li><strong>Seu endereço de rede (IP).</strong> Ele é usado por um instante para montar um código embaralhado e depois é descartado. Em lugar nenhum fica gravado.</li>
+    <li><strong>Seu endereço de rede (IP).</strong> Ele é usado por um instante, para montar um código embaralhado e para consultar de quem é a rede, e depois é descartado. Em lugar nenhum fica gravado.</li>
     <li><strong>Nada que identifique você.</strong> Sem nome, sem conta, sem perfil.</li>
     <li><strong>Nenhum sensor nem impressão digital do aparelho.</strong> Sem câmera, microfone, localização precisa, acelerômetro, toque ou qualquer truque para reconhecer o mesmo aparelho depois.</li>
     <li><strong>Nenhum cookie de rastreamento</strong> e nenhum rastreador de terceiros. O site não tem anúncio nem pixel de rede social.</li>
@@ -83,14 +84,15 @@
     <li>E-mails e mensagens: ficam enquanto fizerem sentido para a conversa. Peça a remoção e eu apago.</li>
   </ul>
 
-  <h2>Onde ficam os dados</h2>
+  <h2>Onde ficam os dados, e quem mais vê alguma coisa</h2>
   <p>O site é publicado na Vercel. Os dados ficam em um banco Postgres no Supabase, em servidor nos Estados Unidos, protegido por regras que só deixam eu mesmo ler. A gravação acontece no servidor, não no seu navegador.</p>
+  <p>Há um terceiro envolvido, e prefiro dizer isso de forma direta: para descobrir de quem é a rede, o meu servidor consulta o serviço de geolocalização <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a>, enviando o endereço de rede. Esse envio acontece entre servidores, nunca a partir do seu navegador, e o endereço continua não sendo gravado nem por mim. Se essa consulta falhar, a visita é registrada do mesmo jeito, só sem o nome da rede.</p>
 
   <h2>Seus direitos</h2>
   <p>Pela Lei Geral de Proteção de Dados você pode pedir acesso, correção ou exclusão dos seus dados, e também saber com quem foram compartilhados, o que neste caso é ninguém. Escreva para <a href="mailto:alexandre01.w@gmail.com">alexandre01.w@gmail.com</a> e eu respondo. Para pedir a exclusão de uma visita, me diga o dia e a cidade aproximada, porque é o máximo que eu consigo localizar: não existe nada ligado a você no banco.</p>
 
   <h2>Mudanças</h2>
-  <p>Se eu mudar o que é coletado, mudo esta página junto. Última atualização em 6 de novembro de 2026.</p>
+  <p>Se eu mudar o que é coletado, mudo esta página junto. Última atualização em 6 de novembro de 2026, quando passei a registrar o nome da rede e a usar o serviço de geolocalização citado acima.</p>
 
 </main>
 

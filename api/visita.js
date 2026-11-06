@@ -65,6 +65,48 @@ function texto(v, max) {
   return s ? s.slice(0, max) : null;
 }
 
+// Dono da rede do visitante. A Vercel não entrega esse dado, então vem de uma consulta ao
+// serviço ipwho.is. O endereço de rede é enviado na consulta e descartado: não é gravado
+// aqui nem no banco, e o envio é de servidor para servidor, nunca do navegador.
+// Isso está declarado nas páginas privacidade.html e privacy.html, e foi autorizado pelo
+// Alexandre em 06/11/2026. Se a consulta falhar ou demorar, a visita é gravada do mesmo
+// jeito, só sem o nome da rede.
+const DATACENTER = /amazon|aws|google|microsoft|azure|digitalocean|ovh|hetzner|linode|akamai|cloudflare|oracle|vultr|contabo|scaleway|leaseweb|m247|choopa|hostinger|godaddy|locaweb|hostgator|hosting|data ?cent|servi[cç]os de dados|data services|colocation|vpn|proxy/i;
+const PROVEDOR = /vivo|claro|telefonica|telefônica|net servi|algar|sercomtel|universo online|terra net|embratel|telecom|telecomunica|banda larga|internet|provedor|fibra|virtua|gvt|copel|ligga|unifique|sumicity|brisanet|sigmanet/i;
+
+async function redeDoIp(ip) {
+  if (!ip) return null;
+  const parar = new AbortController();
+  const relogio = setTimeout(() => parar.abort(), 1200);
+  try {
+    const r = await fetch(
+      'https://ipwho.is/' + encodeURIComponent(ip) + '?fields=success,postal,latitude,longitude,connection',
+      { signal: parar.signal }
+    );
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || j.success === false) return null;
+    const c = j.connection || {};
+    const nome = String(c.org || c.isp || '').trim();
+    if (!nome) return null;
+    // Classifica olhando os dois campos: a Amazon, por exemplo, aparece como
+    // "A100 ROW SERVICOS DE DADOS BRASIL" na organização e só como "Amazon" no provedor.
+    const paraClassificar = (String(c.org || '') + ' ' + String(c.isp || '') + ' ' + String(c.domain || '')).trim();
+    return {
+      operadora: nome.slice(0, 80),
+      tipo: DATACENTER.test(paraClassificar) ? 'datacenter'
+        : (PROVEDOR.test(paraClassificar) ? 'provedor' : 'empresa'),
+      cep: j.postal == null ? null : String(j.postal),
+      lat: j.latitude == null ? null : String(j.latitude),
+      lon: j.longitude == null ? null : String(j.longitude)
+    };
+  } catch (e) {
+    return null;
+  } finally {
+    clearTimeout(relogio);
+  }
+}
+
 async function chamar(funcao, corpo) {
   const r = await fetch(SB_URL + '/rest/v1/rpc/' + funcao, {
     method: 'POST',
@@ -167,6 +209,8 @@ module.exports = async function handler(req, res) {
     const caminho = texto(corpo.caminho, 200);
     if (!caminho || caminho[0] !== '/') { fim(); return; }
 
+    const rede = await redeDoIp(ip);
+
     let cidade = null;
     try { cidade = decodeURIComponent(String(h['x-vercel-ip-city'] || '')) || null; } catch (e) { cidade = null; }
 
@@ -186,9 +230,11 @@ module.exports = async function handler(req, res) {
       p_campanha: texto(corpo.campanha, 120),
       // Localização aproximada: é o palpite do provedor pelo endereço de rede, costuma cair
       // no centro da cidade ou na operadora. Não serve para dizer o bairro de ninguém.
-      p_cep: texto(String(h['x-vercel-ip-postal-code'] || ''), 12),
-      p_latitude: texto(String(h['x-vercel-ip-latitude'] || ''), 16),
-      p_longitude: texto(String(h['x-vercel-ip-longitude'] || ''), 16)
+      p_cep: texto(String(h['x-vercel-ip-postal-code'] || ''), 12) || (rede && texto(rede.cep, 12)) || null,
+      p_latitude: texto(String(h['x-vercel-ip-latitude'] || ''), 16) || (rede && texto(rede.lat, 16)) || null,
+      p_longitude: texto(String(h['x-vercel-ip-longitude'] || ''), 16) || (rede && texto(rede.lon, 16)) || null,
+      p_operadora: (rede && rede.operadora) || null,
+      p_rede_tipo: (rede && rede.tipo) || null
     });
   } catch (e) {
     // Falha de rede ou do banco não pode virar erro para o visitante.
