@@ -22,21 +22,24 @@ function track(name, data) {
 
 // Supabase: grava mensagens de contato e leads (e-mails de quem baixa currículo, modelos ou usa demos).
 // A chave abaixo é a PUBLICÁVEL: ela aparece no navegador por design. Quem protege os dados é o RLS do banco
-// (visitante só consegue inserir; só o admin lê). Nunca coloque aqui a chave secreta (service_role).
+// (visitante não lê nada e só grava pelas funções enviar_mensagem e registrar_lead, que limitam envios
+// no servidor). Nunca coloque aqui a chave secreta (service_role).
 // Detalhes em docs/SUPABASE.md. A mesma URL e chave estão em assets/js/admin.js.
 const SB_URL = 'https://apezjjrpvlglaawvhqoo.supabase.co';
 const SB_KEY = 'sb_publishable_eHbHUKdtoOVlIg87zQZAew_DgD-GK6J';
-function sbInsert(table, row) {
-  return fetch(SB_URL + '/rest/v1/' + table, {
+function sbRpc(fn, args) {
+  return fetch(SB_URL + '/rest/v1/rpc/' + fn, {
     method: 'POST',
     keepalive: true,
-    headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Prefer: 'return=minimal' },
-    body: JSON.stringify(row)
+    headers: { 'Content-Type': 'application/json', apikey: SB_KEY },
+    body: JSON.stringify(args)
   });
 }
-// Cópia do lead no banco. Nunca segura o download nem mostra erro ao visitante.
-function saveLead(email, origem) {
-  try { sbInsert('leads', { email: email, origem: origem, idioma: LANG }).catch(() => {}); } catch (e) {}
+// Cópia do lead no banco, com o detalhe (qual demonstração ou arquivo). Nunca segura o download nem mostra erro.
+function saveLead(email, origem, detalhe) {
+  try {
+    sbRpc('registrar_lead', { p_email: email, p_origem: origem, p_idioma: LANG, p_detalhe: detalhe || null }).catch(() => {});
+  } catch (e) {}
 }
 document.querySelectorAll('video').forEach(v => v.addEventListener('play', () => {
   track('video-play', { video: (v.currentSrc || '').split('/').pop() });
@@ -887,7 +890,7 @@ const FILE_TXT = {
 
   const show = () => (dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', ''));
   const avisar = value => {
-    saveLead(value, 'arquivo');
+    saveLead(value, 'arquivo', atual.dataset.leadFile);
     return fetch(LEAD_ENDPOINT, {
       method: 'POST',
       keepalive: true,
@@ -1026,7 +1029,7 @@ const DEMO_TXT = {
   // Um aviso por demonstração em cada navegador, para não repetir a cada clique
   const avisar = (value, nome) => {
     try { localStorage.setItem(chave(nome), '1'); } catch (e) {}
-    saveLead(value, 'demo');
+    saveLead(value, 'demo', nome);
     fetch(LEAD_ENDPOINT, {
       method: 'POST',
       keepalive: true,
@@ -1150,8 +1153,9 @@ const DEMO_TXT = {
   });
 })();
 
-// Formulário de contato: grava a mensagem no Supabase (tabela mensagens_contato).
-// Anti-spam: campo oculto (honeypot), limites de tamanho e intervalo mínimo entre envios neste navegador.
+// Formulário de contato: grava a mensagem no Supabase (função enviar_mensagem) e avisa por e-mail (FormSubmit).
+// Basta um dos dois funcionar para a mensagem não se perder. Se o banco recusar por limite, nada é enviado.
+// Anti-spam: campo oculto (honeypot), limites de tamanho, intervalo neste navegador e limite no servidor.
 (function contactForm() {
   const form = document.getElementById('msgForm');
   if (!form) return;
@@ -1161,14 +1165,18 @@ const DEMO_TXT = {
         wait: 'You just sent a message. Please wait a minute before sending another.',
         sending: 'Sending...',
         ok: 'Message sent. Thank you! I will reply by email.',
-        fail: 'Could not send right now. Please email me directly at alexandre01.w@gmail.com.'
+        fail: 'Could not send right now. Please email me directly at alexandre01.w@gmail.com.',
+        limit: 'You have already sent several messages. Please try again later or email me at alexandre01.w@gmail.com.',
+        subject: 'Website contact: '
       }
     : {
         invalid: 'Preencha o nome, um e-mail válido e uma mensagem com pelo menos 10 caracteres.',
         wait: 'Você acabou de enviar uma mensagem. Aguarde um minuto para enviar outra.',
         sending: 'Enviando...',
         ok: 'Mensagem enviada. Obrigado! Respondo por e-mail.',
-        fail: 'Não consegui enviar agora. Escreva direto para alexandre01.w@gmail.com.'
+        fail: 'Não consegui enviar agora. Escreva direto para alexandre01.w@gmail.com.',
+        limit: 'Você já enviou várias mensagens. Tente mais tarde ou escreva para alexandre01.w@gmail.com.',
+        subject: 'Contato pelo site: '
       };
   const status = form.querySelector('#msgStatus');
   const btn = form.querySelector('button[type="submit"]');
@@ -1193,14 +1201,31 @@ const DEMO_TXT = {
     btn.disabled = true;
     setStatus(T.sending);
     try {
-      const res = await sbInsert('mensagens_contato', {
-        nome: nome,
-        email: email,
-        assunto: assunto || null,
-        mensagem: mensagem,
-        idioma: LANG
-      });
-      if (!res.ok) throw new Error('status ' + res.status);
+      // 1) Banco. "limite" = muitos envios recentes: avisa e para aqui, sem mandar e-mail.
+      let noBanco = false;
+      try {
+        const res = await sbRpc('enviar_mensagem', {
+          p_nome: nome, p_email: email, p_assunto: assunto, p_mensagem: mensagem, p_idioma: LANG
+        });
+        if (res.ok) noBanco = true;
+        else {
+          const corpo = await res.json().catch(() => ({}));
+          if (corpo && corpo.message === 'limite') { setStatus(T.limit, 'err'); return; }
+        }
+      } catch (err) {}
+
+      // 2) Aviso por e-mail. Também é o plano B se o banco estiver fora do ar.
+      const noEmail = await fetch(LEAD_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          nome: nome, email: email, assunto: assunto, mensagem: mensagem, idioma: LANG,
+          gravada_no_banco: noBanco ? 'sim' : 'não',
+          _replyto: email, _subject: T.subject + (assunto || nome), _template: 'table', _captcha: 'false'
+        })
+      }).then(r => r.ok).catch(() => false);
+
+      if (!noBanco && !noEmail) throw new Error('falhou');
       try { localStorage.setItem('msg_last', String(Date.now())); } catch (err) {}
       form.reset();
       setStatus(T.ok, 'ok');

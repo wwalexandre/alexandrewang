@@ -59,13 +59,14 @@
 
     <div id="panelLeads" role="tabpanel" aria-labelledby="tabLeads" hidden>
       <div class="adm-bar">
+        <label class="adm-check"><input type="checkbox" id="onePerEmail"> Um por e-mail</label>
         <button type="button" class="btn btn-outline btn-sm" id="reloadLeads">Atualizar</button>
         <button type="button" class="btn btn-primary btn-sm" id="exportLeads">Exportar CSV</button>
       </div>
       <p class="adm-status" id="leadStatus" role="status"></p>
       <div class="adm-table-wrap">
         <table class="adm-table">
-          <thead><tr><th>Data</th><th>E-mail</th><th>Origem</th><th>Idioma</th><th><span class="sr-only">Ações</span></th></tr></thead>
+          <thead><tr><th>Data</th><th>E-mail</th><th>Origem</th><th>Detalhe</th><th>Idioma</th><th><span class="sr-only">Ações</span></th></tr></thead>
           <tbody id="leadBody"></tbody>
         </table>
       </div>

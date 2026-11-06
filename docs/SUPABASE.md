@@ -11,8 +11,8 @@ O site continua sendo HTML estático na Vercel. O Supabase entra só para **guar
 | O quê | Onde |
 |---|---|
 | Banco | Projeto Supabase `antgravity` (ref `apezjjrpvlglaawvhqoo`, região us-east-1) |
-| Migração SQL (fonte da verdade do banco) | `supabase/migrations/20261105194119_portfolio_contato_leads_admin.sql` |
-| Gravação de leads e formulário de contato | `assets/js/main.js` (`sbInsert`, `saveLead`, bloco `contactForm`) |
+| Migrações SQL (fonte da verdade do banco) | `supabase/migrations/20261105194119_portfolio_contato_leads_admin.sql` e `supabase/migrations/20261106120000_limites_e_detalhe_dos_leads.sql` |
+| Gravação de leads e formulário de contato | `assets/js/main.js` (`sbRpc`, `saveLead`, bloco `contactForm`) |
 | Formulário de contato (HTML) | seção de contato de `index.html` (PT) e `en.html` (EN) |
 | Painel admin | `admin/index.html`, `assets/js/admin.js`, `assets/css/admin.css` |
 | SDK do Supabase (só usado no admin) | `assets/js/vendor/supabase-js.umd.js` (versão 2.119.0, hospedado aqui para manter `script-src 'self'`) |
@@ -21,23 +21,27 @@ O site continua sendo HTML estático na Vercel. O Supabase entra só para **guar
 ## Modelo de dados
 
 - `mensagens_contato`: nome, e-mail, assunto (opcional), mensagem, idioma (`pt` ou `en`), `lida`, data.
-- `leads`: e-mail, origem (`curriculo`, `arquivo` ou `demo`), idioma, data. Sem IP e sem user agent.
+- `leads`: e-mail, origem (`curriculo`, `arquivo` ou `demo`), detalhe (nome da demonstração ou do arquivo), idioma, data. Sem IP e sem user agent.
 - `admins`: `user_id` de quem pode usar o painel. A função `is_admin()` consulta essa tabela.
 
 ## Segurança (o que protege os dados)
 
 - A chave que aparece em `main.js` e `admin.js` é a **publicável**. Ela é pública por design. A proteção real é o **RLS** de todas as tabelas.
-- Visitante anônimo **só consegue inserir** (mensagem sempre entra como não lida; lead só com origem válida). Não lê, não altera e não apaga nada.
+- Visitante anônimo **não insere direto nas tabelas**. Ele só chama duas funções, que validam e limitam no servidor:
+  - `enviar_mensagem`: até 3 mensagens por e-mail por hora e 30 no total por hora. Acima disso devolve o erro `limite`.
+  - `registrar_lead`: ignora repetição (mesmo e-mail, origem e detalhe em 24 h) e para de gravar acima de 500 leads por dia. Nunca devolve erro.
+- Visitante não lê, não altera e não apaga nada.
 - Só quem está em `admins` lê, atualiza e apaga. Usuário logado que não é admin vê zero linhas.
 - **Nunca** coloque a chave secreta (`service_role`) no repositório. O repositório é público.
 - O painel insere textos de visitantes com `textContent` (nunca `innerHTML`) e neutraliza fórmulas no CSV exportado.
-- Anti-spam do formulário: campo oculto (honeypot), limites de tamanho no banco e intervalo mínimo de 60 s entre envios no navegador. Isso reduz spam, mas não elimina. Evolução possível: Cloudflare Turnstile.
+- Anti-spam do formulário: campo oculto (honeypot), limites de tamanho no banco, intervalo de 60 s no navegador e os limites das funções acima. Isso reduz spam, mas não elimina. Evolução possível: Cloudflare Turnstile.
+- Em 06/11/2026 foram testados com a chave publicável: insert direto em `leads` e `mensagens_contato` (401), leitura das duas tabelas (401), lead repetido (gravado uma vez só), e-mail inválido (ignorado), quarta mensagem do mesmo e-mail na hora (erro `limite`) e mensagem curta (recusada).
 - Em 05/11/2026 foram testados 18 cenários de acesso direto no banco (anônimo, logado sem ser admin e admin) e todos se comportaram como esperado.
 
 ## Como o formulário e os leads funcionam
 
 - Os formulários de currículo, modelos e demos continuam avisando por e-mail via formsubmit.co e agora **também** gravam uma cópia em `leads`. Se o Supabase falhar, o visitante não percebe e o download não é bloqueado.
-- O formulário de contato grava em `mensagens_contato` e mostra mensagem de sucesso ou de erro (com o e-mail direto como alternativa).
+- O formulário de contato grava pela função `enviar_mensagem` **e** manda um aviso por e-mail via formsubmit.co (com resposta direta para o visitante). Basta um dos dois funcionar para a mensagem não se perder. Se o banco devolver `limite`, nada é enviado e o visitante vê o aviso para esperar. Se os dois falharem, aparece o e-mail direto como alternativa.
 
 ## Passos manuais que não dão para automatizar
 
@@ -62,6 +66,6 @@ Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca 
 
 ## Pendências
 
-- Criar o usuário admin e liberar em `admins` (passos manuais acima).
+- Criar o usuário admin e liberar em `admins` (passos manuais acima). Em 06/11/2026 ainda não havia nenhum usuário no Auth.
 - Testar no preview da Vercel: enviar uma mensagem real pelo formulário e conferir no `/admin/`.
 - Decidir sobre ligar o Umami.

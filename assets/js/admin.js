@@ -161,16 +161,31 @@
   let leads = [];
   const ORIGEM = { curriculo: 'Currículo', arquivo: 'Modelo', demo: 'Demonstração' };
 
+  // "Um por e-mail": mantém só o registro mais recente de cada e-mail (a lista já vem do mais novo para o mais antigo)
+  function visibleLeads() {
+    if (!$('onePerEmail').checked) return leads;
+    const seen = new Set();
+    return leads.filter(l => {
+      const k = String(l.email).toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
+
   function renderLeads() {
     const body = $('leadBody');
     body.replaceChildren();
+    const shown = visibleLeads();
     $('countLeads').textContent = leads.length ? '(' + leads.length + ')' : '';
-    $('leadStatus').textContent = leads.length ? '' : 'Nenhum lead ainda.';
-    leads.forEach(l => {
+    $('leadStatus').textContent = !leads.length ? 'Nenhum lead ainda.'
+      : (shown.length !== leads.length ? shown.length + ' e-mails diferentes em ' + leads.length + ' registros' : '');
+    shown.forEach(l => {
       const tr = el('tr');
       tr.append(el('td', '', fmt(l.criado_em)));
       tr.append(el('td', '', l.email));
       tr.append(el('td', '', ORIGEM[l.origem] || l.origem));
+      tr.append(el('td', '', l.detalhe || ''));
       tr.append(el('td', '', String(l.idioma).toUpperCase()));
       const td = el('td');
       const del = el('button', 'btn btn-outline btn-sm adm-danger', 'Excluir');
@@ -198,6 +213,7 @@
   }
 
   $('reloadLeads').addEventListener('click', loadLeads);
+  $('onePerEmail').addEventListener('change', renderLeads);
 
   // CSV: neutraliza células que começam com = + - @ (injeção de fórmula no Excel)
   const csvCell = v => {
@@ -207,8 +223,8 @@
   };
   $('exportLeads').addEventListener('click', () => {
     if (!leads.length) { $('leadStatus').textContent = 'Não há leads para exportar.'; return; }
-    const rows = [['data', 'email', 'origem', 'idioma']].concat(
-      leads.map(l => [l.criado_em, l.email, l.origem, l.idioma])
+    const rows = [['data', 'email', 'origem', 'detalhe', 'idioma']].concat(
+      visibleLeads().map(l => [l.criado_em, l.email, l.origem, l.detalhe || '', l.idioma])
     );
     const csv = '﻿' + rows.map(r => r.map(csvCell).join(';')).join('\r\n');
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
