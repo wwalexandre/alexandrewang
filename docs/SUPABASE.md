@@ -60,6 +60,44 @@ O site continua sendo HTML estático na Vercel. O Supabase entra só para **guar
 - **Aviso conhecido do verificador do Supabase:** `is_admin()` é `SECURITY DEFINER` e pode ser chamada por RPC. Ela só devolve true ou false sobre quem chama. Se quiser zerar o aviso, mover a função para um schema interno e recriar as políticas.
 - **Plano gratuito do Supabase** pode pausar projetos sem atividade por um período. Se pausar, o formulário de contato e os leads deixam de gravar até reativar no painel.
 
+## Painel de visitantes
+
+O site registra as visitas pela função `api/visita.js`, que roda **no servidor da Vercel**. Isso é o que o GitHub Pages sozinho não faria: a Vercel entrega país, região, cidade e fuso nos cabeçalhos da requisição, e o código do servidor guarda o segredo que libera a gravação. O navegador não manda IP, não manda identificador e não consegue forjar visita.
+
+| Peça | Onde |
+|---|---|
+| Função que grava | `api/visita.js` |
+| Coleta no navegador | bloco `visitas()` no fim de `assets/js/main.js` |
+| Tabelas e resumo | `supabase/migrations/20261106140000_visitas_e_jornada.sql` e `20261106150000_visitas_secoes_e_imagens.sql` |
+| Aba do painel | `admin/index.html` (`panelVis`), `assets/js/admin.js`, `assets/css/admin.css` |
+| Página pública de privacidade | `privacidade.html` e `privacy.html` |
+
+### Como a sessão anônima funciona
+
+O servidor monta `sha256(IP + navegador + VISITAS_SALT + data do dia)` e guarda os 32 primeiros caracteres. O IP **não** é gravado em lugar nenhum. Como a data entra na conta, o código muda à meia-noite, então não dá para ligar a visita de hoje com a de amanhã nem voltar do hash para o IP. É por isso que o painel conta "pessoas diferentes" por dia, e não ao longo do mês.
+
+### O que é registrado
+
+- `visitas`: caminho, idioma, país, região, cidade, fuso, aparelho, sistema, navegador, site de origem e campanha (`utm_source`, `utm_campaign` ou `ref`).
+- `eventos_visita`: `secao` (segundos por seção), `imagem` (clique, pelo texto alternativo), `tempo` e `rolagem` por página, mais `projeto`, `publicacao`, `curriculo`, `demo`, `video` e `link`.
+
+Nada de sensor, toque, canvas ou impressão digital de aparelho, e nenhum cookie. Quem tem Do Not Track ou Global Privacy Control ligado não é registrado, e isso é checado nos dois lados, navegador e servidor.
+
+### Variáveis de ambiente na Vercel
+
+Duas, em Production e Preview. **Sem elas a função não grava nada** e o site continua funcionando normalmente.
+
+| Variável | Para que serve |
+|---|---|
+| `VISITAS_TOKEN` | Mesma string da coluna `token` em `public.ingestao_config`. É o que autoriza a gravação. |
+| `VISITAS_SALT` | Sal do hash diário de sessão. Trocar o sal só reinicia a contagem de pessoas do dia. |
+
+Para trocar o token depois: gere uma string aleatória, rode `update public.ingestao_config set token = 'nova' where id = 1;` e atualize a variável na Vercel.
+
+### Limites e custo
+
+A função é chamada uma vez quando a página abre e, no máximo, mais uma vez quando a pessoa sai (os eventos vão num lote só). O banco recusa acima de 20 mil visitas e 60 mil eventos por dia. Visitas com mais de 12 meses são apagadas pela função `limpar_visitas_antigas()`.
+
 ## Como mexer no banco daqui para frente
 
 Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca editar a antiga), aplicada no Supabase e commitada junto com o código que a usa. Mudança de código vai por branch, Pull Request e preview da Vercel, e só depois merge na `main`.

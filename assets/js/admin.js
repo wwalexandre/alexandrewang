@@ -374,8 +374,6 @@
     }
   }
 
-  window.__previa = function (d) { show('app'); renderVis(d); };
-
   async function loadVis() {
     $('visStatus').textContent = 'Carregando...';
     const { data, error } = await sb.rpc('resumo_visitas', { p_dias: visDias });
