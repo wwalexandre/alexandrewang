@@ -318,6 +318,38 @@
     });
   }
 
+  // A gravação só funciona com as duas variáveis na Vercel. O painel pergunta para a
+  // própria função se elas existem, para não ficar parecendo quebrado quando faltam.
+  let gravacaoLigada = null;
+  async function checarGravacao() {
+    try {
+      const r = await fetch('/api/visita', { headers: { Accept: 'application/json' } });
+      if (!r.ok) return null;
+      const j = await r.json();
+      return Boolean(j && j.configurado);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function aviso(titulo, linhas, lista) {
+    const cx = $('visAviso');
+    cx.replaceChildren();
+    if (!titulo) { cx.hidden = true; return; }
+    cx.hidden = false;
+    cx.append(el('strong', '', titulo));
+    linhas.forEach(l => cx.append(el('p', '', l)));
+    if (lista && lista.length) {
+      const ol = el('ol');
+      lista.forEach(i => ol.append(el('li', '', i)));
+      cx.append(ol);
+    }
+  }
+
+  const mostrarDetalhe = ligado => {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-vis-detalhe]'), n => { n.hidden = !ligado; });
+  };
+
   function renderVis(d) {
     const tot = d.totais || {};
     const eng = d.engajamento || {};
@@ -356,6 +388,27 @@
         (n, extra) => n + (extra ? ' · ' + extra + (extra === 1 ? ' pessoa' : ' pessoas') : '')));
     }
 
+    const semDados = !(d.totais && d.totais.visitas);
+    mostrarDetalhe(!semDados);
+    if (semDados && gravacaoLigada === false) {
+      aviso('O registro de visitas ainda não foi ligado', [
+        'Faltam duas variáveis de ambiente no projeto da Vercel. Enquanto elas não existirem, nenhuma visita é gravada e este painel fica zerado.'
+      ], [
+        'Abra o projeto alexandrewang na Vercel, em Settings e depois Environment Variables.',
+        'Crie VISITAS_TOKEN e VISITAS_SALT, marcando Production e Preview.',
+        'Clique em Redeploy no último deploy e abra o site uma vez.'
+      ]);
+    } else if (semDados) {
+      aviso('Nenhuma visita neste período', [
+        gravacaoLigada === true
+          ? 'A gravação está ligada, só não chegou ninguém ainda no intervalo escolhido.'
+          : 'Não consegui confirmar se a gravação está ligada. Se o painel continuar zerado, confira as variáveis VISITAS_TOKEN e VISITAS_SALT na Vercel.',
+        'Para testar, abra o site numa janela anônima. Se o seu navegador estiver com Do Not Track ligado, a sua própria visita não é registrada, que é o combinado da página de privacidade.'
+      ]);
+    } else {
+      aviso(null);
+    }
+
     const corpo = $('visJornadas');
     corpo.replaceChildren();
     (d.jornadas || []).forEach(j => {
@@ -380,6 +433,7 @@
 
   async function loadVis() {
     $('visStatus').textContent = 'Carregando...';
+    if (gravacaoLigada === null) gravacaoLigada = await checarGravacao();
     const { data, error } = await sb.rpc('resumo_visitas', { p_dias: visDias });
     if (error) {
       $('visStatus').textContent = 'Não foi possível carregar o relatório de visitas.';

@@ -90,3 +90,10 @@
 .adm-gerado { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .adm-gerado code { flex: 1 1 260px; font-size: 13px; padding: 10px 12px; border-radius: 9px; background: var(--bg); border: 1px dashed var(--line); overflow-wrap: anywhere; }
 @media (max-width: 560px) { .adm-gerador-campos { grid-template-columns: 1fr; } }
+
+/* Aviso de painel vazio ou gravação desligada */
+.adm-aviso { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 20px; display: grid; gap: 8px; }
+.adm-aviso[hidden] { display: none; }
+.adm-aviso strong { font-family: var(--display); font-size: 18px; }
+.adm-aviso p { margin: 0; font-size: 14px; color: var(--muted); max-width: 75ch; }
+.adm-aviso ol { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }

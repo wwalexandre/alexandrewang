@@ -83,6 +83,7 @@
         <button type="button" class="btn btn-outline btn-sm" id="reloadVis">Atualizar</button>
       </div>
       <p class="adm-status" id="visStatus" role="status"></p>
+      <div class="adm-aviso" id="visAviso" hidden></div>
 
       <details class="adm-ferramenta">
         <summary>Gerar link com etiqueta</summary>
@@ -103,14 +104,14 @@
 
       <div class="adm-cards" id="visCards"></div>
 
-      <section class="adm-bloco">
+      <section class="adm-bloco" data-vis-detalhe>
         <h3>Visitas por dia <span class="adm-nota">o dia vira à meia-noite de Brasília</span></h3>
         <div class="adm-grafico" id="visGrafico"></div>
       </section>
 
-      <div class="adm-colunas" id="visListas"></div>
+      <div class="adm-colunas" id="visListas" data-vis-detalhe></div>
 
-      <section class="adm-bloco">
+      <section class="adm-bloco" data-vis-detalhe>
         <h3>Últimas jornadas <span class="adm-nota">cada linha é uma pessoa, na ordem em que abriu as páginas. Horário de Brasília.</span></h3>
         <div class="adm-table-wrap">
           <table class="adm-table">

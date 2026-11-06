@@ -79,10 +79,15 @@ module.exports = async function handler(req, res) {
   // A resposta é sempre vazia e sempre 204: o site nunca quebra nem espera por isto.
   const fim = () => res.status(204).end();
 
-  if (req.method !== 'POST') { res.status(405).end(); return; }
-
   const token = process.env.VISITAS_TOKEN;
   const sal = process.env.VISITAS_SALT;
+
+  // GET serve só para o painel saber se a gravação está ligada. Nunca devolve os valores.
+  if (req.method === 'GET') {
+    res.status(200).json({ configurado: Boolean(token && sal) });
+    return;
+  }
+  if (req.method !== 'POST') { res.status(405).end(); return; }
   if (!token || !sal) { fim(); return; }
 
   const h = req.headers || {};
