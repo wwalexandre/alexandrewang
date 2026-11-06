@@ -101,12 +101,25 @@ module.exports = async function handler(req, res) {
     } catch (e) {
       ok = false;
     }
-    res.status(200).json({ configurado: ok });
+    // `token` diz apenas SE a variável existe aqui, nunca o valor. Serve para conferir a
+    // ordem certa ao ligar a validação: primeiro a Vercel, depois o banco.
+    res.status(200).json({ configurado: ok, token: Boolean(token) });
     return;
   }
   if (req.method !== 'POST') { res.status(405).end(); return; }
 
   const h = req.headers || {};
+
+  // Chamada feita de outro site é descartada. Não substitui o token, porque fora do
+  // navegador dá para forjar o cabeçalho, mas é de graça e não exige configuração.
+  const meuHost = String(h['host'] || '').replace(/^www\./, '').toLowerCase();
+  const deOutroSite = String(h['origin'] || '');
+  if (deOutroSite) {
+    let hostDaOrigem = '';
+    try { hostDaOrigem = new URL(deOutroSite).hostname.replace(/^www\./, '').toLowerCase(); } catch (e) {}
+    if (hostDaOrigem && hostDaOrigem !== meuHost) { fim(); return; }
+  }
+
   const ua = String(h['user-agent'] || '');
   if (!ua || ua.length > 500 || ROBO.test(ua)) { fim(); return; }
   // Quem pediu para não ser rastreado não é rastreado.
@@ -169,7 +182,7 @@ module.exports = async function handler(req, res) {
       p_dispositivo: aparelho(ua),
       p_sistema: sistema(ua),
       p_navegador: navegador(ua),
-      p_origem: origemDe(texto(corpo.veio_de, 300), String(h['host'] || '').replace(/^www\./, '').toLowerCase()),
+      p_origem: origemDe(texto(corpo.veio_de, 300), meuHost),
       p_campanha: texto(corpo.campanha, 120),
       // Localização aproximada: é o palpite do provedor pelo endereço de rede, costuma cair
       // no centro da cidade ou na operadora. Não serve para dizer o bairro de ninguém.
