@@ -1329,7 +1329,12 @@ const DEMO_TXT = {
           entrou.delete(nome);
         }
       });
-    }, { threshold: 0.4 });
+    }, {
+      // Conta a seção que está na faixa central da tela. Usar porcentagem da seção não
+      // funcionava: seção mais alta que a tela nunca chega a 40% visível e nunca contava.
+      rootMargin: '-35% 0px -35% 0px',
+      threshold: 0
+    });
     secoes.forEach(s => olho.observe(s));
   }
 
