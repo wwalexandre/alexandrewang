@@ -105,20 +105,26 @@ O registro funciona sem nenhuma variável de ambiente, de propósito: depender d
 - A função `api/visita.js` manda uma **impressão** (sha256 de IP mais navegador, sem segredo). O **IP não chega ao banco**, o que é melhor do que a versão anterior, em que o hash era montado na Vercel.
 - `public.sessao_do_dia()` junta impressão, sal e a data em São Paulo, e devolve os 32 caracteres que viram a sessão. Muda à meia-noite, não é reversível.
 
-### Token, se um dia quiser fechar
+### Token: ligado em 06/11/2026
 
-A coluna `token` de `ingestao_config` começa `NULL`, e com ela nula **qualquer chamada válida grava**. O risco disso é alguém descobrir o endereço e injetar visita falsa, o que num portfólio pessoal é um risco de papel, contido pelos tetos diários (20 mil visitas, 60 mil eventos) e pela validação do caminho.
+A validação por token **está ativa**. A coluna `token` de `public.ingestao_config` tem o mesmo valor da variável `VISITAS_TOKEN` na Vercel (Production e Preview). Sem esse par batendo, a gravação não acontece.
 
-Para fechar, dois passos que andam juntos:
+Conferido no dia em que foi ligado: chamada direta ao `registrar_visita` sem token e com token errado voltaram `400` com a mensagem `token`, e a visita pelo site continuou gravando normalmente, com seção, tempo e rolagem.
 
-1. `update public.ingestao_config set token = 'uma-string-aleatoria' where id = 1;`
-2. Criar `VISITAS_TOKEN` na Vercel com a mesma string, em Production e Preview, e dar Redeploy.
+**Os dois lados andam juntos.** Mudar um sem o outro para a gravação:
 
-Se preencher um sem o outro, a gravação para e o painel avisa, porque o teste de saúde passa a falhar.
+1. Banco: `update public.ingestao_config set token = 'novo-valor' where id = 1;`
+2. Vercel: `VISITAS_TOKEN` com o mesmo valor, em Production e Preview, e Redeploy.
+
+Para desligar a validação, basta `set token = null` no banco. Aí a variável na Vercel passa a ser ignorada e tudo volta a funcionar sem configuração.
+
+### Barreira de origem
+
+Independente do token, a função descarta chamada cujo cabeçalho `Origin` aponte para outro domínio. Não substitui o token, porque fora do navegador dá para forjar o cabeçalho, mas não custa nada e não precisa de configuração.
 
 ### Teste de saúde
 
-`GET /api/visita` chama a própria função de gravação com a impressão vazia, que o banco descarta sem inserir nada, e responde `{"configurado":true}` quando rede, função e token estão de pé. O painel usa isso para avisar quando algo está errado, em vez de mostrar caixas vazias.
+`GET /api/visita` chama a própria função de gravação com a impressão vazia, que o banco descarta sem inserir nada, e responde `{"configurado":true,"token":true}` quando rede, função e token estão de pé. O campo `token` diz apenas SE a variável existe na Vercel, nunca o valor, e serve para ligar a validação na ordem certa. O painel usa isso para avisar quando algo está errado, em vez de mostrar caixas vazias.
 
 ### Limites e custo
 
