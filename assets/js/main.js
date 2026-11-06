@@ -1372,3 +1372,30 @@ const DEMO_TXT = {
   window.addEventListener('pagehide', despachar);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') despachar(); });
 })();
+
+// Cartão de indicadores do hero: os números sobem uma vez, no carregamento.
+// Quem pediu menos movimento no sistema vê o valor final direto, sem contagem.
+(function kpiHero() {
+  const alvos = document.querySelectorAll('[data-kpi]');
+  if (!alvos.length) return;
+  const parado = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const escreve = (el, v, casas) => {
+    el.textContent = v.toLocaleString(LANG === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas })
+      + (el.dataset.kpiFim || '');
+  };
+  alvos.forEach(el => {
+    const fim = Number(el.dataset.kpi);
+    if (!Number.isFinite(fim)) return;
+    const casas = el.dataset.kpi.indexOf('.') >= 0 ? 1 : 0;
+    if (parado) { escreve(el, fim, casas); return; }
+    const dura = 1100;
+    let inicio = null;
+    const passo = agora => {
+      if (inicio === null) inicio = agora;
+      const t = Math.min(1, (agora - inicio) / dura);
+      escreve(el, fim * (1 - Math.pow(1 - t, 3)), casas);
+      if (t < 1) requestAnimationFrame(passo);
+    };
+    setTimeout(() => requestAnimationFrame(passo), 500);
+  });
+})();
