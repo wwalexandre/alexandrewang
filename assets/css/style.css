@@ -95,6 +95,10 @@ p { margin: 0 0 1em; }
   background: var(--orange); color: var(--navy); font-family: var(--display); font-size: 20px; font-weight: 700;
 }
 .nav-links { display: none; gap: 4px; margin-left: auto; }
+/* Progresso de leitura: um traço no pé da barra mostra quanto falta do texto.
+   Só aparece nas páginas longas, e só reflete a posição da rolagem, como uma régua. */
+.leitura { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }
+.leitura i { display: block; height: 100%; width: 0; background: var(--orange); }
 .nav { transition: box-shadow .3s; }
 .nav.scrolled { box-shadow: 0 8px 24px rgba(6, 12, 20, .22); }
 .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }

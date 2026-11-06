@@ -1415,3 +1415,37 @@ const DEMO_TXT = {
   window.addEventListener('resize', agendar, { passive: true });
   medir();
 })();
+
+// Progresso de leitura: um traço fino no pé da barra de navegação, só nas páginas longas
+// de texto (publicações, projetos). Não aparece na home, que não é leitura linear, nem em
+// página curta. Não é animação: é uma régua que reflete onde a rolagem está, como a barra
+// de rolagem do navegador, então continua valendo com movimento reduzido.
+(function progressoLeitura() {
+  if (document.querySelector('.hero')) return;
+  const nav = document.querySelector('.nav');
+  const doc = document.documentElement;
+  if (!nav || doc.scrollHeight < window.innerHeight * 2) return;
+
+  const trilho = document.createElement('div');
+  trilho.className = 'leitura';
+  trilho.setAttribute('aria-hidden', 'true');
+  const feito = document.createElement('i');
+  trilho.appendChild(feito);
+  nav.appendChild(trilho);
+
+  let agendado = false;
+  const medir = () => {
+    agendado = false;
+    const percorrivel = doc.scrollHeight - window.innerHeight;
+    const pct = percorrivel > 0 ? (window.scrollY / percorrivel) * 100 : 0;
+    feito.style.width = Math.min(100, Math.max(0, pct)) + '%';
+  };
+  const agendar = () => {
+    if (agendado) return;
+    agendado = true;
+    requestAnimationFrame(medir);
+  };
+  window.addEventListener('scroll', agendar, { passive: true });
+  window.addEventListener('resize', agendar, { passive: true });
+  medir();
+})();
