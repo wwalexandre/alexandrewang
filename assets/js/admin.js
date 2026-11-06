@@ -262,6 +262,115 @@
     return s >= 60 ? Math.floor(s / 60) + 'm ' + (s % 60) + 's' : s + 's';
   };
 
+  // ---------- Tradução: caminho de arquivo vira nome de gente ----------
+  // O painel mostrava "/publicacoes/importacao-jogo-en.html", que não diz nada.
+  // Os nomes abaixo são os títulos reais das páginas do site.
+  const PAGINAS_NOME = {
+    '/': 'Início',
+    '/en.html': 'Início (inglês)',
+    '/privacidade.html': 'Privacidade',
+    '/privacy.html': 'Privacidade (inglês)',
+    '/404.html': 'Página não encontrada',
+    '/projetos/sop-mensal.html': 'Projeto: S&OP mensal',
+    '/projetos/sop-mensal-en.html': 'Projeto: S&OP mensal (inglês)',
+    '/projetos/validador-documentos.html': 'Projeto: Validador de Documentos',
+    '/projetos/validador-documentos-en.html': 'Projeto: Validador de Documentos (inglês)',
+    '/projetos/boletim-ruptura.html': 'Projeto: Boletim de Ruptura',
+    '/projetos/boletim-ruptura-en.html': 'Projeto: Boletim de Ruptura (inglês)',
+    '/projetos/cacador-vencimentos.html': 'Projeto: Caçador de Vencimentos',
+    '/projetos/cacador-vencimentos-en.html': 'Projeto: Caçador de Vencimentos (inglês)',
+    '/projetos/automacoes.html': 'Projeto: Automações com Power Automate',
+    '/projetos/automacoes-en.html': 'Projeto: Automações (inglês)',
+    '/publicacoes/incoterms.html': 'Artigo: Incoterms na prática',
+    '/publicacoes/incoterms-en.html': 'Artigo: Incoterms (inglês)',
+    '/publicacoes/forecast-erro.html': 'Artigo: Seu forecast erra?',
+    '/publicacoes/forecast-erro-en.html': 'Artigo: Seu forecast erra? (inglês)',
+    '/publicacoes/importacao-jogo.html': 'Artigo: Importação, o jogo dos prazos',
+    '/publicacoes/importacao-jogo-en.html': 'Artigo: Importação, o jogo dos prazos (inglês)'
+  };
+  const nomePagina = c => {
+    const s = String(c == null ? '' : c);
+    if (PAGINAS_NOME[s]) return PAGINAS_NOME[s];
+    if (!s.startsWith('/')) return s;
+    // Página que eu não conheço: pelo menos tira a barra, a extensão e os hifens
+    return s.replace(/^\//, '').replace(/\.html?$/, '').replace(/[-/]/g, ' ').trim() || s;
+  };
+
+  const nomeCurto = c => nomePagina(c).replace(/^(Projeto|Artigo):\s*/, '');
+
+  const ACOES_NOME = {
+    projeto: 'Abriu o projeto', publicacao: 'Abriu o artigo', curriculo: 'Baixou o currículo',
+    demo: 'Testou a demonstração', contato: 'Clicou em contato', video: 'Assistiu ao vídeo',
+    link: 'Saiu para'
+  };
+  const nomeAcao = c => {
+    const s = String(c == null ? '' : c);
+    const corte = s.indexOf(': ');
+    if (corte < 0) return s;
+    const tipo = s.slice(0, corte);
+    const valor = s.slice(corte + 2);
+    const base = ACOES_NOME[tipo] || tipo;
+    return base + ': ' + (valor.startsWith('/') ? nomeCurto(valor) : valor);
+  };
+
+  // Verbo no infinitivo, para a frase de resumo correr natural
+  const ACOES_FRASE = {
+    projeto: 'abrir o projeto', publicacao: 'abrir o artigo', curriculo: 'baixar o currículo',
+    demo: 'testar a demonstração', contato: 'clicar em contato', video: 'assistir ao vídeo',
+    link: 'sair do site para'
+  };
+  const acaoEmFrase = c => {
+    const s = String(c == null ? '' : c);
+    const corte = s.indexOf(': ');
+    if (corte < 0) return s;
+    const tipo = s.slice(0, corte);
+    const valor = s.slice(corte + 2);
+    return (ACOES_FRASE[tipo] || tipo) + ' ' + (valor.startsWith('/') ? nomeCurto(valor) : valor);
+  };
+
+  // Nome do site de origem como as pessoas escrevem
+  const SITES = {
+    'linkedin.com': 'LinkedIn', 'google.com': 'Google', 'instagram.com': 'Instagram',
+    'gupy.io': 'Gupy', 'facebook.com': 'Facebook', 'youtube.com': 'YouTube',
+    'bing.com': 'Bing', 'github.com': 'GitHub', 'direto': 'entrada direta'
+  };
+  const nomeSite = c => SITES[String(c)] || String(c);
+
+  const nomeRota = r => String(r == null ? '' : r).split(' > ').map(nomePagina).join(' → ');
+
+  // Frase em português do que aconteceu no período, para não depender de ler gráfico
+  function frase(d) {
+    const t = d.totais || {};
+    if (!t.visitas) return '';
+    const primeiro = lista => (lista && lista.length ? lista[0] : null);
+    const pessoas = t.sessoes === 1 ? '1 pessoa' : t.sessoes + ' pessoas';
+    const paginas = t.visitas === 1 ? '1 página' : t.visitas + ' páginas';
+    const partes = ['Nos últimos ' + (d.dias || 30) + ' dias, ' + pessoas + ' abriram ' + paginas + '.'];
+
+    const cidade = primeiro(d.cidades);
+    const origem = primeiro(d.origens);
+    const aparelho = primeiro(d.dispositivos);
+    if (cidade || origem || aparelho) {
+      const onde = [];
+      if (cidade) onde.push('a maior parte de ' + String(cidade.chave).replace(/, [A-Z]{2}$/, ''));
+      if (origem) onde.push(origem.chave === 'direto' ? 'entrando direto pelo endereço' : 'vindo do ' + nomeSite(origem.chave));
+      if (aparelho) onde.push('pelo ' + aparelho.chave);
+      const texto = onde.join(', ');
+      partes.push(texto.charAt(0).toUpperCase() + texto.slice(1) + '.');
+    }
+
+    const pag = primeiro(d.paginas);
+    if (pag) partes.push('A página mais aberta foi ' + nomePagina(pag.chave) + '.');
+
+    const sec = primeiro(d.secoes);
+    if (sec) partes.push('O que mais prendeu foi a seção ' + sec.chave + ', com ' + fmtSeg(sec.n) + ' somados.');
+
+    const acao = primeiro(d.acoes);
+    if (acao) partes.push('A ação mais comum foi ' + acaoEmFrase(acao.chave) + '.');
+
+    return partes.join(' ');
+  }
+
   // ---------- Desenho do relatório ----------
   // Regras seguidas aqui: marca fina, sem bloco saturado gigante; eixo e trilho discretos;
   // número sempre escrito junto da barra (não depende de passar o mouse); lista de um item
@@ -445,6 +554,10 @@
     cards.append(cartao('rolagem média', (eng.rolagem_media || 0) + '%',
       (eng.leram_ate_o_fim || 0) + ' chegaram ao fim'));
 
+    const linha = frase(d);
+    $('visFrase').textContent = linha;
+    $('visFrase').hidden = !linha;
+
     grafico(d.por_dia);
 
     const listas = $('visListas');
@@ -463,7 +576,7 @@
       ranking('Cidades', d.cidades)
     ]);
 
-    const comCampanha = [ranking('Como chegaram', d.origens, null, null, 'site de onde veio o clique')];
+    const comCampanha = [ranking('Como chegaram', d.origens, null, nomeSite, 'site de onde veio o clique')];
     if (d.campanhas && d.campanhas.length) {
       comCampanha.push(ranking('Etiquetas de link', d.campanhas,
         (n, extra) => n + (extra ? ' · ' + extra + (extra === 1 ? ' pessoa' : ' pessoas') : '')));
@@ -475,17 +588,17 @@
     grupo('Como chegaram', comCampanha);
 
     grupo('O que olharam', [
-      ranking('Páginas mais abertas', d.paginas),
-      ranking('Publicações mais lidas', d.publicacoes),
-      ranking('Projetos mais vistos', d.projetos),
+      ranking('Páginas mais abertas', d.paginas, null, nomePagina),
+      ranking('Publicações mais lidas', d.publicacoes, null, nomePagina),
+      ranking('Projetos mais vistos', d.projetos, null, nomePagina),
       ranking('Imagens mais clicadas', d.imagens),
-      ranking('Cliques e downloads', d.acoes)
+      ranking('Cliques e downloads', d.acoes, null, nomeAcao)
     ]);
 
     grupo('Quanto prendeu', [
       ranking('Seções que mais prenderam', d.secoes,
         (n, extra) => fmtSeg(n) + (extra ? ' · ' + extra + 'x' : ''), null, 'tempo somado'),
-      ranking('Tempo médio por página', d.tempo_por_pagina, n => fmtSeg(n))
+      ranking('Tempo médio por página', d.tempo_por_pagina, n => fmtSeg(n), nomePagina)
     ]);
 
     const semDados = !(d.totais && d.totais.visitas);
@@ -544,7 +657,7 @@
       tr.append(el('td', '', j.dispositivo));
       tr.append(el('td', '', j.origem));
       const td = el('td', 'adm-rota');
-      td.append(el('span', '', j.rota));
+      td.append(el('span', '', nomeRota(j.rota)));
       tr.append(td);
       corpo.append(tr);
     });

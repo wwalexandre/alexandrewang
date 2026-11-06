@@ -95,6 +95,14 @@ As colunas `cep`, `latitude` e `longitude` continuam sendo gravadas, mas **saír
 
 No lugar dele entrou **Estados**, que usa a coluna `regiao` e a geolocalização por rede acerta. Para melhorar de verdade só com serviço pago de geolocalização, que no Brasil continua ruim para rede doméstica e celular, ou pedindo permissão de localização ao visitante, o que num portfólio é tiro no pé.
 
+### Tradução dos caminhos no painel
+
+O painel mostrava `/publicacoes/importacao-jogo-en.html`, que não diz nada para quem lê. O dicionário `PAGINAS_NOME` em `assets/js/admin.js` traduz cada caminho para o título real da página, e `ACOES_NOME` traduz os eventos ("Abriu o artigo", "Baixou o currículo"). **Ao criar uma página nova, acrescente a linha nesse dicionário**, senão ela aparece com o nome do arquivo.
+
+No topo da aba há uma frase em português montada pela função `frase()`, do tipo "Nos últimos 30 dias, 2 pessoas abriram 7 páginas. A maior parte de São Paulo, vindo do LinkedIn, pelo computador." Ela existe para o painel ser entendido sem precisar ler gráfico.
+
+`/` e `/index.html` eram contados como páginas diferentes e dividiam a home ao meio. A função `caminho_canonico()` normaliza isso na gravação, e a migração corrigiu o histórico.
+
 ### Quem acessou mais, e como bloquear
 
 A função `resumo_extra()` devolve `estados` e `mais_acessos`. O segundo agrupa pelo identificador anônimo do dia, que é por IP mais navegador dentro do mesmo dia, então uma linha com número alto é na prática um acesso só pesando muito. Linha com 30 páginas ou mais em até 10 minutos aparece em vermelho, que é o padrão de robô raspando o site.
