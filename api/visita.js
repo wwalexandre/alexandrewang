@@ -116,6 +116,70 @@ async function chamar(funcao, corpo) {
   return r.ok;
 }
 
+// Aviso na hora. Dispara só quando a visita vem de REDE DE EMPRESA e a pessoa faz algo que
+// mostra interesse de verdade. Provedor doméstico e datacenter não geram aviso, senão viraria
+// ruído. Quem decide e evita e-mail repetido é a função preparar_aviso no banco: ela reserva
+// a vaga da sessão, então dois eventos ao mesmo tempo mandam um e-mail só.
+const AVISO_PARA = 'https://formsubmit.co/ajax/alexandre01.w@gmail.com';
+const GATILHOS = ['curriculo', 'demo', 'contato', 'projeto'];
+
+async function pedirContexto(token, impressao, motivo) {
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/preparar_aviso', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SB_KEY },
+      body: JSON.stringify({ p_token: token, p_impressao: impressao, p_motivo: motivo })
+    });
+    if (!r.ok) return null;
+    const ctx = await r.json();
+    return ctx && typeof ctx === 'object' ? ctx : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function mandarAviso(ctx, motivo) {
+  const parar = new AbortController();
+  const relogio = setTimeout(() => parar.abort(), 2500);
+  try {
+    await fetch(AVISO_PARA, {
+      method: 'POST', signal: parar.signal,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Visita de empresa no site: ' + (ctx.rede || 'rede não identificada'),
+        _template: 'table',
+        _captcha: 'false',
+        rede: ctx.rede || 'não identificada',
+        de_onde: ctx.lugar || '',
+        comecou_em: ctx.inicio || '',
+        paginas_abertas: String(ctx.quantas_paginas || 0),
+        caminhos: ctx.paginas || '',
+        tempo_somado: Math.round((ctx.segundos || 0) / 60) + ' min',
+        o_que_fez: ctx.acoes || 'nenhuma ação',
+        veio_de: ctx.veio_de || '',
+        aparelho: ctx.aparelho || '',
+        disparado_por: motivo
+      })
+    });
+  } catch (e) {
+    // aviso que falha não pode derrubar o registro da visita
+  } finally {
+    clearTimeout(relogio);
+  }
+}
+
+// Avisa, no máximo uma vez por chamada, se algum dos eventos recebidos for sinal de interesse
+async function talvezAvisar(token, impressao, tipos, numeros) {
+  for (let i = 0; i < tipos.length; i++) {
+    const t = tipos[i];
+    const forte = GATILHOS.indexOf(t) !== -1 || (t === 'tempo' && Number(numeros[i]) >= 90);
+    if (!forte) continue;
+    const ctx = await pedirContexto(token, impressao, t);
+    if (ctx) await mandarAviso(ctx, t);
+    return;
+  }
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   // A resposta é sempre vazia e sempre 204: o site nunca quebra nem espera por isto.
@@ -190,6 +254,8 @@ module.exports = async function handler(req, res) {
           p_numero: Number.isFinite(it.numero) ? Math.round(it.numero) : null
         });
       }));
+      await talvezAvisar(token, impressao,
+        itens.map(it => it.evento), itens.map(it => it.numero));
       fim();
       return;
     }
@@ -202,6 +268,7 @@ module.exports = async function handler(req, res) {
         p_token: token, p_impressao: impressao, p_tipo: evento,
         p_valor: texto(corpo.valor, 160), p_numero: numero
       });
+      await talvezAvisar(token, impressao, [evento], [numero]);
       fim();
       return;
     }

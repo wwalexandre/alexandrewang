@@ -138,6 +138,22 @@ Para desligar a validação, basta `set token = null` no banco. Aí a variável 
 
 Independente do token, a função descarta chamada cujo cabeçalho `Origin` aponte para outro domínio. Não substitui o token, porque fora do navegador dá para forjar o cabeçalho, mas não custa nada e não precisa de configuração.
 
+### Aviso na hora
+
+Quando alguém de **rede de empresa** faz algo que mostra interesse, o Alexandre recebe um e-mail no mesmo minuto. É o caso que antes não gerava aviso nenhum: a pessoa lê, abre um projeto e vai embora sem deixar contato.
+
+| Peça | Papel |
+|---|---|
+| `GATILHOS` em `api/visita.js` | currículo, demonstração, contato e projeto; mais tempo de 90 segundos ou mais |
+| `public.preparar_aviso()` | decide se vale, e no mesmo passo reserva a vaga da sessão |
+| `public.avisos` | uma linha por sessão avisada, com a sessão como chave primária |
+
+**Não dispara** para provedor doméstico nem para datacenter, senão viraria ruído diário. Teto de 10 avisos por dia e um por sessão: como a sessão é chave primária, dois eventos simultâneos disputam a mesma linha e só um ganha.
+
+O e-mail sai pelo mesmo FormSubmit já usado no resto do site, com rede, cidade, páginas abertas, tempo somado, o que a pessoa fez e de onde veio. Se o envio falhar, a visita é gravada do mesmo jeito.
+
+Testado em 06/11/2026 com o envio interceptado: evento fraco não avisou, evento forte avisou com o contexto completo, e o segundo evento forte da mesma sessão não repetiu.
+
 ### Teste de saúde
 
 `GET /api/visita` chama a própria função de gravação com a impressão vazia, que o banco descarta sem inserir nada, e responde `{"configurado":true,"token":true}` quando rede, função e token estão de pé. O campo `token` diz apenas SE a variável existe na Vercel, nunca o valor, e serve para ligar a validação na ordem certa. O painel usa isso para avisar quando algo está errado, em vez de mostrar caixas vazias.
