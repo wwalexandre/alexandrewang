@@ -180,6 +180,43 @@ async function talvezAvisar(token, impressao, tipos, numeros) {
   }
 }
 
+// Cópia do site detectada. O código copiado continua chamando esta função, e o navegador
+// manda o cabeçalho Origin com o domínio de quem copiou. Registra, e avisa por e-mail só
+// na primeira vez que aquele domínio aparece.
+async function registrarCopia(token, dominio, caminho) {
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/registrar_clone', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SB_KEY },
+      body: JSON.stringify({ p_token: token, p_dominio: dominio, p_caminho: caminho })
+    });
+    if (!r.ok) return;
+    if ((await r.json()) !== true) return;
+  } catch (e) {
+    return;
+  }
+  const parar = new AbortController();
+  const relogio = setTimeout(() => parar.abort(), 2500);
+  try {
+    await fetch(AVISO_PARA, {
+      method: 'POST', signal: parar.signal,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Copia do seu site detectada: ' + dominio,
+        _template: 'table',
+        _captcha: 'false',
+        dominio_que_copiou: dominio,
+        pagina: caminho || 'não informada',
+        o_que_fazer: 'Abra o domínio para confirmar. Se for cópia mesmo, o painel tem a data da primeira vez e quantas vezes aconteceu.'
+      })
+    });
+  } catch (e) {
+    // aviso que falha não pode derrubar nada
+  } finally {
+    clearTimeout(relogio);
+  }
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   // A resposta é sempre vazia e sempre 204: o site nunca quebra nem espera por isto.
@@ -216,24 +253,32 @@ module.exports = async function handler(req, res) {
 
   const h = req.headers || {};
 
-  // Chamada feita de outro site é descartada. Não substitui o token, porque fora do
-  // navegador dá para forjar o cabeçalho, mas é de graça e não exige configuração.
   const meuHost = String(h['host'] || '').replace(/^www\./, '').toLowerCase();
+
+  let corpo = req.body;
+  // O aviso de cópia chega como text/plain, para o navegador não exigir preflight de CORS.
+  if (Buffer.isBuffer(corpo)) { corpo = corpo.toString('utf8'); }
+  if (typeof corpo === 'string') { try { corpo = JSON.parse(corpo); } catch (e) { corpo = null; } }
+  if (!corpo || typeof corpo !== 'object') { fim(); return; }
+
+  // Chamada vinda de outro domínio não entra como visita. Antes era descartada em silêncio;
+  // agora ela é o sinal de que alguém copiou o site, porque o código copiado continua
+  // apontando para cá. Registra a cópia e para por aqui.
   const deOutroSite = String(h['origin'] || '');
   if (deOutroSite) {
     let hostDaOrigem = '';
     try { hostDaOrigem = new URL(deOutroSite).hostname.replace(/^www\./, '').toLowerCase(); } catch (e) {}
-    if (hostDaOrigem && hostDaOrigem !== meuHost) { fim(); return; }
+    if (hostDaOrigem && hostDaOrigem !== meuHost) {
+      await registrarCopia(process.env.VISITAS_TOKEN || null, hostDaOrigem, texto(corpo.caminho, 200));
+      fim();
+      return;
+    }
   }
 
   const ua = String(h['user-agent'] || '');
   if (!ua || ua.length > 500 || ROBO.test(ua)) { fim(); return; }
   // Quem pediu para não ser rastreado não é rastreado.
   if (h['dnt'] === '1' || h['sec-gpc'] === '1') { fim(); return; }
-
-  let corpo = req.body;
-  if (typeof corpo === 'string') { try { corpo = JSON.parse(corpo); } catch (e) { corpo = null; } }
-  if (!corpo || typeof corpo !== 'object') { fim(); return; }
 
   // Impressão do visitante: só IP e navegador, embaralhados aqui mesmo. O IP não sai deste
   // ponto, nem vai para o banco. Quem junta o sal secreto e a data do dia, e transforma isso

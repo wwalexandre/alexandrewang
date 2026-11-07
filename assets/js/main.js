@@ -1449,3 +1449,21 @@ const DEMO_TXT = {
   window.addEventListener('resize', agendar, { passive: true });
   medir();
 })();
+
+// Marca de cópia. Se esta página estiver rodando fora do domínio do Alexandre, alguém
+// copiou o site: o próprio código copiado avisa o servidor dele, de onde veio.
+// Usa text/plain de propósito, para o navegador tratar como pedido simples e não exigir
+// a negociação de CORS, que o servidor do copiador não teria como responder.
+(function marcaDeCopia() {
+  const MEU = 'alexandrewang.vercel.app';
+  const aqui = String(location.hostname || '').replace(/^www\./, '').toLowerCase();
+  if (!aqui || aqui === MEU || aqui.endsWith('.vercel.app')
+      || aqui === 'localhost' || aqui === '127.0.0.1' || aqui === '[::1]') return;
+  try {
+    fetch('https://' + MEU + '/api/visita', {
+      method: 'POST', mode: 'no-cors', keepalive: true,
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ caminho: location.pathname })
+    }).catch(() => {});
+  } catch (e) {}
+})();

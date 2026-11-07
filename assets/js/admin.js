@@ -681,9 +681,29 @@
     }
   }
 
+  // Cópias do site: o bloco só aparece se alguma tiver sido detectada.
+  async function loadCopias() {
+    const { data, error } = await sb.from('clones').select('*').order('ultima', { ascending: false }).limit(50);
+    const bloco = $('blocoCopias');
+    const corpo = $('copiasLista');
+    if (error || !data || !data.length) { bloco.hidden = true; return; }
+    bloco.hidden = false;
+    corpo.replaceChildren();
+    data.forEach(c => {
+      const tr = el('tr', 'adm-suspeito');
+      tr.append(el('td', '', c.dominio));
+      tr.append(el('td', '', c.caminho || ''));
+      tr.append(el('td', '', String(c.vezes)));
+      tr.append(el('td', '', fmt(c.primeira)));
+      tr.append(el('td', '', fmt(c.ultima)));
+      corpo.append(tr);
+    });
+  }
+
   async function loadVis() {
     $('visStatus').textContent = 'Carregando...';
     if (gravacaoLigada === null) gravacaoLigada = await checarGravacao();
+    loadCopias();
     const [principal, extra] = await Promise.all([
       sb.rpc('resumo_visitas', { p_dias: visDias }),
       sb.rpc('resumo_extra', { p_dias: visDias })

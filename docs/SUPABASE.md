@@ -154,6 +154,23 @@ O e-mail sai pelo mesmo FormSubmit já usado no resto do site, com rede, cidade,
 
 Testado em 06/11/2026 com o envio interceptado: evento fraco não avisou, evento forte avisou com o contexto completo, e o segundo evento forte da mesma sessão não repetiu.
 
+### Detecção de cópia
+
+Não dá para impedir que copiem um site: todo HTML que chega ao navegador pode ser salvo. O que dá é **saber quando aconteceu e ter prova**.
+
+O código copiado continua chamando `/api/visita` deste domínio. Quando a chamada vem de outro endereço, o navegador manda o cabeçalho `Origin` com o domínio de quem copiou. Antes essa chamada era descartada em silêncio; agora ela é o sinal.
+
+| Caminho de detecção | Pega o quê |
+|---|---|
+| `Origin` diferente em `/api/visita` | cópia que manteve o JavaScript e o endereço relativo |
+| Bloco `marcaDeCopia` em `assets/js/main.js` | compara `location.hostname` e avisa pelo endereço absoluto |
+
+O e-mail sai **só na primeira vez** que cada domínio aparece. Depois o contador sobe e a data da última vez é atualizada. Domínios `*.vercel.app` e `localhost` nunca contam como cópia.
+
+O painel mostra o bloco **Cópias do site** só quando existe alguma, com domínio, página, quantas vezes, primeira e última.
+
+**O que isso não faz:** não bloqueia. Para tirar do ar é preciso notificar o provedor do clone, e aí a licença e a data da primeira detecção são a prova.
+
 ### Teste de saúde
 
 `GET /api/visita` chama a própria função de gravação com a impressão vazia, que o banco descarta sem inserir nada, e responde `{"configurado":true,"token":true}` quando rede, função e token estão de pé. O campo `token` diz apenas SE a variável existe na Vercel, nunca o valor, e serve para ligar a validação na ordem certa. O painel usa isso para avisar quando algo está errado, em vez de mostrar caixas vazias.
