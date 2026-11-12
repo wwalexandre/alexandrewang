@@ -1,18 +1,28 @@
-// Painel /admin: lê mensagens de contato e leads do Supabase.
-// Só funciona para quem está na tabela "admins" (RLS no banco). A chave abaixo é a PUBLICÁVEL (pública por design).
-// Mesma URL e chave de assets/js/main.js. Nunca coloque aqui a chave secreta (service_role).
+// Painel /admin: lê mensagens de contato, leads e visitas do Cloudflare D1, pelas rotas /api/admin/*.
+// O login é do Cloudflare Access (fica na frente de /admin/ e de /api/admin/*), e o Worker confere
+// o token do Access em cada chamada. Aqui não existe senha nem chave de banco.
 // Todo texto vindo de visitantes é inserido com textContent, nunca com innerHTML.
 
 (function () {
-  const SB_URL = 'https://apezjjrpvlglaawvhqoo.supabase.co';
-  const SB_KEY = 'sb_publishable_eHbHUKdtoOVlIg87zQZAew_DgD-GK6J';
-
   const $ = id => document.getElementById(id);
-  const sb = window.supabase.createClient(SB_URL, SB_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true }
-  });
 
-  const views = { boot: $('bootMsg'), login: $('loginView'), denied: $('deniedView'), app: $('appView') };
+  // Cliente mínimo das rotas do painel. Devolve { data, error } como o código abaixo já esperava.
+  async function api(caminho, opcoes) {
+    try {
+      const r = await fetch('/api/admin/' + caminho, Object.assign({
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' }
+      }, opcoes || {}));
+      let corpo = null;
+      try { corpo = await r.json(); } catch (e) {}
+      if (!r.ok) return { data: null, error: { status: r.status, motivo: corpo && corpo.erro } };
+      return { data: corpo, error: null };
+    } catch (e) {
+      return { data: null, error: { status: 0, motivo: 'rede' } };
+    }
+  }
+
+  const views = { boot: $('bootMsg'), denied: $('deniedView'), app: $('appView') };
   const show = name => {
     Object.keys(views).forEach(k => { views[k].hidden = k !== name; });
     $('headActions').hidden = name !== 'app';
@@ -26,54 +36,27 @@
   };
   const fmt = iso => new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-  // ---------- Sessão e acesso ----------
-  async function isAdmin(userId) {
-    const { data, error } = await sb.from('admins').select('user_id').eq('user_id', userId).maybeSingle();
-    return !error && !!data;
-  }
+  // ---------- Acesso ----------
+  const MOTIVOS = {
+    'acesso-nao-configurado': 'O Cloudflare Access ainda não foi configurado no Worker (ACCESS_TEAM_DOMAIN e ACCESS_AUD). Veja docs/CLOUDFLARE.md.',
+    'sem-token': 'A requisição chegou sem passar pelo Cloudflare Access. Confira se o aplicativo do Access cobre /admin/* e /api/admin/*.',
+    'email': 'Este e-mail não está na lista de administradores.'
+  };
 
-  async function enter(session) {
-    if (!(await isAdmin(session.user.id))) {
-      await sb.auth.signOut();
+  async function boot() {
+    const eu = await api('eu');
+    if (eu.error) {
+      $('deniedMsg').textContent = MOTIVOS[eu.error.motivo]
+        || 'Não foi possível confirmar o seu acesso ao painel (erro ' + (eu.error.status || 'de rede') + ').';
       show('denied');
       return;
     }
-    $('userEmail').textContent = session.user.email || '';
+    $('userEmail').textContent = eu.data.email || '';
     show('app');
     loadMessages();
     loadLeads();
     loadVis();
   }
-
-  async function boot() {
-    const { data } = await sb.auth.getSession();
-    if (data && data.session) await enter(data.session);
-    else show('login');
-  }
-
-  $('loginForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    const err = $('loginErr');
-    const btn = $('btnLogin');
-    err.textContent = '';
-    const email = $('loginEmail').value.trim();
-    const password = $('loginPass').value;
-    if (!email || !password) { err.textContent = 'Informe e-mail e senha.'; return; }
-    btn.disabled = true;
-    const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
-    btn.disabled = false;
-    if (error || !data.session) { err.textContent = 'E-mail ou senha incorretos.'; return; }
-    $('loginPass').value = '';
-    await enter(data.session);
-  });
-
-  $('btnLogout').addEventListener('click', async () => {
-    await sb.auth.signOut();
-    $('msgList').replaceChildren();
-    $('leadBody').replaceChildren();
-    show('login');
-  });
-  $('btnBack').addEventListener('click', () => show('login'));
 
   // ---------- Abas ----------
   const tabs = [
@@ -126,7 +109,7 @@
       toggle.type = 'button';
       toggle.addEventListener('click', async () => {
         toggle.disabled = true;
-        const { error } = await sb.from('mensagens_contato').update({ lida: !m.lida }).eq('id', m.id);
+        const { error } = await api('mensagens/' + m.id, { method: 'PATCH', body: JSON.stringify({ lida: !m.lida }) });
         if (error) { $('msgStatus').textContent = 'Não foi possível atualizar. Tente novamente.'; toggle.disabled = false; return; }
         m.lida = !m.lida;
         renderMessages();
@@ -136,7 +119,7 @@
       del.addEventListener('click', async () => {
         if (!window.confirm('Excluir esta mensagem de ' + m.nome + '? Não dá para desfazer.')) return;
         del.disabled = true;
-        const { error } = await sb.from('mensagens_contato').delete().eq('id', m.id);
+        const { error } = await api('mensagens/' + m.id, { method: 'DELETE' });
         if (error) { $('msgStatus').textContent = 'Não foi possível excluir. Tente novamente.'; del.disabled = false; return; }
         messages = messages.filter(x => x.id !== m.id);
         renderMessages();
@@ -150,7 +133,7 @@
 
   async function loadMessages() {
     $('msgStatus').textContent = 'Carregando...';
-    const { data, error } = await sb.from('mensagens_contato').select('*').order('criado_em', { ascending: false }).limit(200);
+    const { data, error } = await api('mensagens');
     if (error) { $('msgStatus').textContent = 'Não foi possível carregar as mensagens.'; return; }
     messages = data || [];
     renderMessages();
@@ -195,7 +178,7 @@
       del.addEventListener('click', async () => {
         if (!window.confirm('Excluir o lead ' + l.email + '? Não dá para desfazer.')) return;
         del.disabled = true;
-        const { error } = await sb.from('leads').delete().eq('id', l.id);
+        const { error } = await api('leads/' + l.id, { method: 'DELETE' });
         if (error) { $('leadStatus').textContent = 'Não foi possível excluir. Tente novamente.'; del.disabled = false; return; }
         leads = leads.filter(x => x.id !== l.id);
         renderLeads();
@@ -208,7 +191,7 @@
 
   async function loadLeads() {
     $('leadStatus').textContent = 'Carregando...';
-    const { data, error } = await sb.from('leads').select('*').order('criado_em', { ascending: false }).limit(1000);
+    const { data, error } = await api('leads');
     if (error) { $('leadStatus').textContent = 'Não foi possível carregar os leads.'; return; }
     leads = data || [];
     renderLeads();
@@ -240,7 +223,7 @@
   });
 
   // ---------- Visitantes ----------
-  // Tudo vem pronto da função resumo_visitas do banco, que só responde para admin.
+  // Tudo vem pronto de /api/admin/visitas, que só responde para admin.
   // Todo texto é inserido com textContent, porque parte dele (site de origem) vem de fora.
   let visDias = 30;
 
@@ -515,8 +498,8 @@
     caixaG.append(topo, plot, eixo);
   }
 
-  // A gravação só funciona com as duas variáveis na Vercel. O painel pergunta para a
-  // própria função se elas existem, para não ficar parecendo quebrado quando faltam.
+  // O painel pergunta ao Worker se ele consegue falar com o banco, para não ficar parecendo
+  // quebrado quando a gravação está fora do ar.
   let gravacaoLigada = null;
   async function checarGravacao() {
     try {
@@ -615,11 +598,11 @@
     mostrarDetalhe(!semDados);
     if (semDados && gravacaoLigada === false) {
       aviso('O registro de visitas não está respondendo', [
-        'O teste de saúde falhou: a função /api/visita não conseguiu falar com o banco. Enquanto isso, nenhuma visita é gravada.'
+        'O teste de saúde falhou: o Worker não conseguiu falar com o banco D1. Enquanto isso, nenhuma visita é gravada.'
       ], [
-        'Confira se o projeto do Supabase não está pausado por inatividade.',
-        'Se a coluna token de ingestao_config estiver preenchida, a variável VISITAS_TOKEN precisa existir na Vercel com o mesmo valor.',
-        'Veja os logs da função em Vercel, Deployments, Functions.'
+        'Confira o banco D1 "alexandrewang" no painel do Cloudflare (Storage e bancos de dados, D1).',
+        'Confira se as migrações foram aplicadas: npm run db:aplicar.',
+        'Veja os logs do Worker em Workers e Pages, alexandrewang, Logs.'
       ]);
     } else if (semDados) {
       aviso('Nenhuma visita neste período', [
@@ -656,8 +639,8 @@
       abuso.append(tr);
     }
     $('visAbusoDica').textContent = pesados.some(m => m.robo || (m.n >= 30 && m.minutos <= 10))
-      ? 'Linha em vermelho é provável robô: ou veio de datacenter e VPN, ou abriu muita página em pouco tempo. Para bloquear, use o Firewall da Vercel, em Project Settings e depois Firewall, que vê o endereço de rede e corta o acesso antes de chegar ao site.'
-      : 'Para bloquear alguém, o caminho é o Firewall da Vercel, em Project Settings e depois Firewall. Ele vê o endereço de rede na borda e corta o acesso, sem precisar guardar nada aqui.';
+      ? 'Linha em vermelho é provável robô: ou veio de datacenter e VPN, ou abriu muita página em pouco tempo. Para bloquear, use as regras de WAF do Cloudflare (Segurança, Regras de WAF), que veem o endereço de rede e cortam o acesso antes de chegar ao site.'
+      : 'Para bloquear alguém, o caminho são as regras de WAF do Cloudflare (Segurança, Regras de WAF). Elas veem o endereço de rede na borda e cortam o acesso, sem precisar guardar nada aqui.';
 
     const corpo = $('visJornadas');
     corpo.replaceChildren();
@@ -684,17 +667,14 @@
   async function loadVis() {
     $('visStatus').textContent = 'Carregando...';
     if (gravacaoLigada === null) gravacaoLigada = await checarGravacao();
-    const [principal, extra] = await Promise.all([
-      sb.rpc('resumo_visitas', { p_dias: visDias }),
-      sb.rpc('resumo_extra', { p_dias: visDias })
-    ]);
-    if (principal.error) {
+    const r = await api('visitas?dias=' + visDias);
+    if (r.error) {
       $('visStatus').textContent = 'Não foi possível carregar o relatório de visitas.';
       return;
     }
     $('visStatus').textContent = '';
-    const dados = principal.data || {};
-    dados.extra = extra.error ? {} : (extra.data || {});
+    const dados = (r.data && r.data.resumo) || {};
+    dados.extra = (r.data && r.data.extra) || {};
     renderVis(dados);
   }
 
@@ -723,7 +703,7 @@
     ['/publicacoes/forecast-erro.html', 'Publicação: erro de forecast'],
     ['/publicacoes/importacao-jogo.html', 'Publicação: importação']
   ];
-  const SITE = 'https://alexandrewang.vercel.app';
+  const SITE = location.origin;
   const etiqueta = v => String(v || '').toLowerCase().normalize('NFD')
     .replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '').slice(0, 40);

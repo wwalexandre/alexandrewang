@@ -1,0 +1,21 @@
+# Cabeçalhos de segurança e cache (antes ficavam no vercel.json)
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-YFGi/mz/r2ZamOarnidksX2p7zCMPbq5lNt9pHjpRHI=' https://cdnjs.cloudflare.com https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self'; connect-src 'self' https://formsubmit.co https://cloud.umami.is https://api-gateway.umami.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/assets/img/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/assets/video/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/assets/docs/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400

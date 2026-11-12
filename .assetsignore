@@ -1,0 +1,20 @@
+# Nada disto vai para a internet: só o site em si.
+.git
+.github
+.wrangler
+.dev.vars
+node_modules
+src
+test
+migrations
+docs
+scripts
+package.json
+package-lock.json
+wrangler.jsonc
+README.md
+vercel.json
+api
+supabase
+.assetsignore
+.gitignore

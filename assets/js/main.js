@@ -20,25 +20,21 @@ function track(name, data) {
   try { if (window.umami) window.umami.track(name, data); } catch (e) {}
 }
 
-// Supabase: grava mensagens de contato e leads (e-mails de quem baixa currículo, modelos ou usa demos).
-// A chave abaixo é a PUBLICÁVEL: ela aparece no navegador por design. Quem protege os dados é o RLS do banco
-// (visitante não lê nada e só grava pelas funções enviar_mensagem e registrar_lead, que limitam envios
-// no servidor). Nunca coloque aqui a chave secreta (service_role).
-// Detalhes em docs/SUPABASE.md. A mesma URL e chave estão em assets/js/admin.js.
-const SB_URL = 'https://apezjjrpvlglaawvhqoo.supabase.co';
-const SB_KEY = 'sb_publishable_eHbHUKdtoOVlIg87zQZAew_DgD-GK6J';
-function sbRpc(fn, args) {
-  return fetch(SB_URL + '/rest/v1/rpc/' + fn, {
+// Contato e leads: gravam no banco (Cloudflare D1) pelas rotas /api/contato e /api/lead do Worker.
+// O navegador não tem chave nenhuma: quem valida, limita envios e grava é o servidor.
+// Detalhes em docs/CLOUDFLARE.md.
+function apiPost(rota, args) {
+  return fetch(rota, {
     method: 'POST',
     keepalive: true,
-    headers: { 'Content-Type': 'application/json', apikey: SB_KEY },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(args)
   });
 }
 // Cópia do lead no banco, com o detalhe (qual demonstração ou arquivo). Nunca segura o download nem mostra erro.
 function saveLead(email, origem, detalhe) {
   try {
-    sbRpc('registrar_lead', { p_email: email, p_origem: origem, p_idioma: LANG, p_detalhe: detalhe || null }).catch(() => {});
+    apiPost('/api/lead', { email: email, origem: origem, idioma: LANG, detalhe: detalhe || null }).catch(() => {});
   } catch (e) {}
 }
 document.querySelectorAll('video').forEach(v => v.addEventListener('play', () => {
@@ -46,7 +42,7 @@ document.querySelectorAll('video').forEach(v => v.addEventListener('play', () =>
 }, { once: true }));
 
 // Idioma: quem escolhe PT ou EN no menu fica com essa escolha.
-// A Vercel manda quem acessa de fora do Brasil para a versão em inglês, mas só enquanto não existe o cookie "lang".
+// O Cloudflare manda quem acessa de fora do Brasil para a versão em inglês, mas só enquanto não existe o cookie "lang".
 function setLangCookie(lang) {
   try {
     document.cookie = 'lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
@@ -1153,7 +1149,7 @@ const DEMO_TXT = {
   });
 })();
 
-// Formulário de contato: grava a mensagem no Supabase (função enviar_mensagem) e avisa por e-mail (FormSubmit).
+// Formulário de contato: grava a mensagem no banco (/api/contato) e avisa por e-mail (FormSubmit).
 // Basta um dos dois funcionar para a mensagem não se perder. Se o banco recusar por limite, nada é enviado.
 // Anti-spam: campo oculto (honeypot), limites de tamanho, intervalo neste navegador e limite no servidor.
 (function contactForm() {
@@ -1204,14 +1200,11 @@ const DEMO_TXT = {
       // 1) Banco. "limite" = muitos envios recentes: avisa e para aqui, sem mandar e-mail.
       let noBanco = false;
       try {
-        const res = await sbRpc('enviar_mensagem', {
-          p_nome: nome, p_email: email, p_assunto: assunto, p_mensagem: mensagem, p_idioma: LANG
+        const res = await apiPost('/api/contato', {
+          nome: nome, email: email, assunto: assunto, mensagem: mensagem, idioma: LANG
         });
         if (res.ok) noBanco = true;
-        else {
-          const corpo = await res.json().catch(() => ({}));
-          if (corpo && corpo.message === 'limite') { setStatus(T.limit, 'err'); return; }
-        }
+        else if (res.status === 429) { setStatus(T.limit, 'err'); return; }
       } catch (err) {}
 
       // 2) Aviso por e-mail. Também é o plano B se o banco estiver fora do ar.
@@ -1238,10 +1231,10 @@ const DEMO_TXT = {
   });
 })();
 
-// Painel de visitantes: manda para /api/visita, que é uma função da Vercel rodando no servidor.
+// Painel de visitantes: manda para /api/visita, que é uma rota do Worker do Cloudflare rodando no servidor.
 // O navegador não envia IP, nome nem identificador: quem monta a sessão anônima é o servidor,
 // com um hash que troca todo dia. Quem usa "Do Not Track" não é registrado.
-// Detalhes e o que é guardado: docs/SUPABASE.md e a página de privacidade.
+// Detalhes e o que é guardado: docs/CLOUDFLARE.md e a página de privacidade.
 (function visitas() {
   if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
 
@@ -1260,7 +1253,7 @@ const DEMO_TXT = {
     } catch (e) {}
   };
 
-  // 1) A visita em si. A geolocalização vem dos cabeçalhos da Vercel, não daqui.
+  // 1) A visita em si. A geolocalização vem do Cloudflare (request.cf), não daqui.
   const busca = new URLSearchParams(location.search);
   // A etiqueta do link (?ref=, utm_campaign ou utm_source) vale para a visita inteira, não só
   // para a primeira página: fica guardada enquanto a aba estiver aberta, então toda a jornada

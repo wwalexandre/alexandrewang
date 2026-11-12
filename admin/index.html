@@ -8,7 +8,6 @@
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="../assets/css/admin.css">
-<script src="../assets/js/vendor/supabase-js.umd.js" defer></script>
 <script src="../assets/js/admin.js" defer></script>
 </head>
 <body class="adm">
@@ -18,28 +17,16 @@
     <h1>Painel</h1>
     <div class="adm-head-actions" id="headActions" hidden>
       <span class="adm-user" id="userEmail"></span>
-      <button type="button" class="btn btn-outline btn-sm" id="btnLogout">Sair</button>
+      <a class="btn btn-outline btn-sm" id="btnLogout" href="/cdn-cgi/access/logout">Sair</a>
     </div>
   </header>
 
   <p class="adm-boot" id="bootMsg" role="status">Carregando...</p>
 
-  <section class="adm-card" id="loginView" hidden aria-labelledby="t-login">
-    <h2 id="t-login">Entrar</h2>
-    <form id="loginForm" novalidate>
-      <label for="loginEmail">E-mail</label>
-      <input id="loginEmail" type="email" autocomplete="username" required>
-      <label for="loginPass">Senha</label>
-      <input id="loginPass" type="password" autocomplete="current-password" required>
-      <p class="adm-err" id="loginErr" role="alert"></p>
-      <button type="submit" class="btn btn-primary" id="btnLogin">Entrar</button>
-    </form>
-  </section>
-
   <section class="adm-card" id="deniedView" hidden>
-    <h2>Acesso negado</h2>
-    <p>Esta conta não tem permissão de administrador. A sessão foi encerrada.</p>
-    <button type="button" class="btn btn-outline btn-sm" id="btnBack">Voltar ao login</button>
+    <h2>Acesso indisponível</h2>
+    <p id="deniedMsg">Não foi possível confirmar o seu acesso ao painel.</p>
+    <a class="btn btn-outline btn-sm" href="/cdn-cgi/access/logout">Sair e entrar de novo</a>
   </section>
 
   <section id="appView" hidden>

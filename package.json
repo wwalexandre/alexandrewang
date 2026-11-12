@@ -1,0 +1,16 @@
+{
+  "name": "alexandrewang",
+  "private": true,
+  "description": "Portfólio de Alexandre Wang: site estático e API no Cloudflare Workers com D1",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:aplicar": "wrangler d1 migrations apply alexandrewang --remote",
+    "db:aplicar:local": "wrangler d1 migrations apply alexandrewang --local",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "type": "module"
+}

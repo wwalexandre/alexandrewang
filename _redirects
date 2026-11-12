@@ -1,0 +1,5 @@
+# Atalhos de WhatsApp (antes ficavam no vercel.json)
+/whatsapp https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Vi%20o%20seu%20site%20e%20gostaria%20de%20conversar. 302
+/whatsapp/en https://wa.me/5511944021458?text=Hi%20Alexandre%21%20I%20saw%20your%20website%20and%20would%20like%20to%20talk. 302
+/whatsapp/curriculo https://wa.me/5511944021458?text=Ol%C3%A1%2C%20Alexandre%21%20Baixei%20o%20seu%20curr%C3%ADculo%20e%20gostaria%20de%20conversar. 302
+/whatsapp/resume https://wa.me/5511944021458?text=Hi%20Alexandre%21%20I%20downloaded%20your%20resume%20and%20would%20like%20to%20talk. 302

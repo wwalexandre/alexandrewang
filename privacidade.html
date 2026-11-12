@@ -53,7 +53,7 @@
 
   <h2>O que eu registro em cada visita</h2>
   <ul>
-    <li>País, região, cidade aproximada e fuso horário, que o servidor da Vercel deduz do endereço de rede.</li>
+    <li>País, região, cidade aproximada e fuso horário, que o servidor da Cloudflare deduz do endereço de rede.</li>
     <li>Tipo de aparelho (celular, tablet ou computador), sistema e navegador.</li>
     <li>O site ou a rede de onde você veio, por exemplo LinkedIn ou uma busca no Google.</li>
     <li>O nome da operadora ou da empresa dona da rede que você está usando, por exemplo Vivo, Claro ou o nome de uma empresa. Isso diz de que tipo de conexão veio a visita, não quem você é.</li>
@@ -85,7 +85,7 @@
   </ul>
 
   <h2>Onde ficam os dados, e quem mais vê alguma coisa</h2>
-  <p>O site é publicado na Vercel. Os dados ficam em um banco Postgres no Supabase, em servidor nos Estados Unidos, protegido por regras que só deixam eu mesmo ler. A gravação acontece no servidor, não no seu navegador.</p>
+  <p>O site é publicado na Cloudflare. Os dados ficam em um banco Cloudflare D1, e só eu consigo ler, porque o painel fica atrás do Cloudflare Access. A gravação acontece no servidor, não no seu navegador.</p>
   <p>Há um terceiro envolvido, e prefiro dizer isso de forma direta: para descobrir de quem é a rede, o meu servidor consulta o serviço de geolocalização <a href="https://ipwho.is" target="_blank" rel="noopener">ipwho.is</a>, enviando o endereço de rede. Esse envio acontece entre servidores, nunca a partir do seu navegador, e o endereço continua não sendo gravado nem por mim. Se essa consulta falhar, a visita é registrada do mesmo jeito, só sem o nome da rede.</p>
 
   <h2>Seus direitos</h2>
