@@ -47,6 +47,7 @@
       <button type="button" role="tab" id="tabMsg" aria-selected="true" aria-controls="panelMsg">Mensagens <span class="adm-badge" id="badgeMsg" hidden></span></button>
       <button type="button" role="tab" id="tabLeads" aria-selected="false" aria-controls="panelLeads">Leads <span class="adm-count" id="countLeads"></span></button>
       <button type="button" role="tab" id="tabVis" aria-selected="false" aria-controls="panelVis">Visitantes</button>
+      <button type="button" role="tab" id="tabCont" aria-selected="false" aria-controls="panelCont">Conteúdo</button>
     </div>
 
     <div id="panelMsg" role="tabpanel" aria-labelledby="tabMsg">
@@ -144,6 +145,15 @@
       </section>
     </div>
 
+
+    <div id="panelCont" role="tabpanel" aria-labelledby="tabCont" hidden>
+      <p class="adm-nota">Desligue um item e ele some da home, em português e em inglês, assim que a página for aberta de novo. O texto continua no código da página: isso esconde do visitante, não apaga do site.</p>
+      <div class="adm-bar">
+        <button type="button" class="btn btn-outline btn-sm" id="reloadCont">Atualizar</button>
+      </div>
+      <p class="adm-status" id="contStatus" role="status"></p>
+      <div id="contListas"></div>
+    </div>
   </section>
 
 </main>

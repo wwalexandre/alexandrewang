@@ -100,24 +100,40 @@
     <div class="sec-head">
       <div>
         <h2 id="t-traj">Trajetória</h2>
-        <p>Comecei no desenvolvimento de produto, passei pela produção e encontrei no planejamento o lugar onde dado e operação se encontram.</p>
+        <p>Começou no desenvolvimento de produto, passou pela produção e encontrou no planejamento o lugar onde dado e operação se encontram.</p>
+      </div>
+      <div class="traj-ctrl">
+        <div class="traj-ctrl-linha">
+          <div class="seg" role="group" aria-label="Formato da trajetória">
+            <button type="button" data-modo="topicos" aria-pressed="true">Tópicos</button>
+            <button type="button" data-modo="star" aria-pressed="false">STAR</button>
+          </div>
+          <label class="sw"><input type="checkbox" id="trajImagens" checked><span></span>Imagens</label>
+        </div>
+        <p class="traj-nota">STAR mostra cada experiência em três partes: a situação, as ações e os resultados.</p>
       </div>
     </div>
 
-    <div class="timeline">
-      <article class="tl">
+    <div class="timeline" data-modo="topicos" data-imagens="on">
+      <article class="tl" data-item="sanofi">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/sanofi.png" width="300" height="137" alt="Sanofi"></div>
           <div><div class="tl-co">Sanofi</div><div class="tl-period">jan 2026 a out 2026</div></div>
         </div>
         <h3>Demand Planning Analyst, IBP</h3>
-        <ul>
-          <li>Dashboards Power BI de ODR/SLOB, riscos de supply e acuracidade de forecast por família e BU, usados nos fóruns de IBP.</li>
-          <li>Acompanhamento de MAPE, Bias e FVA em Lag 1 e Lag 3, comparando forecast estatístico e comercial.</li>
-          <li>Modelo de qualificação de forecast (Syntetos-Boylan, 8 critérios) em Power BI e Power Pivot.</li>
-          <li>Reconciliação de dados entre SAP, Kinaxis, Snowflake, TM1, SQL Server e SharePoint.</li>
-          <li>Onboarding do hub LATAM: banco com mais de 135 questões em 6 módulos.</li>
+        <ul class="tl-topicos">
+          <li>Manutenção dos dashboards de ODR/SLOB, risco de supply e acuracidade de forecast que sustentam os fóruns mensais de IBP, acompanhados por Controladoria e Finanças.</li>
+          <li>Acompanhamento de MAPE, Bias e FVA por família de produto e unidade de negócio, em Lag 1 e Lag 3, comparando o forecast estatístico com o comercial.</li>
+          <li>Criação de um modelo de qualificação de forecast em Power BI e Power Pivot que recomenda, produto por produto, qual dos dois usar, com 8 critérios e classificação de demanda Syntetos-Boylan.</li>
+          <li>Inserção e revisão do forecast no Kinaxis RapidResponse durante o Demand Review, antes do consenso.</li>
+          <li>Reconciliação dos dados de SAP, Kinaxis, Snowflake, TM1, SQL Server e SharePoint antes de cada ciclo, para as áreas discutirem o mesmo número.</li>
+          <li>Estruturação do onboarding do hub LATAM, com mais de 135 questões em 6 módulos.</li>
         </ul>
+        <div class="tl-star">
+          <div class="star-bloco"><h4>Situação</h4><p>Planejamento de demanda de cinco unidades de negócio no ciclo mensal de IBP, com time no Brasil, hub LATAM em Bogotá e Planning CoE na Espanha, e os dados espalhados entre SAP, Kinaxis, Snowflake, TM1 e SQL Server.</p></div>
+          <div class="star-bloco"><h4>Ações</h4><ul><li>Inserção e revisão do forecast no Kinaxis RapidResponse no Demand Review, antes do consenso, e suporte da ferramenta ao time.</li><li>Acompanhamento de MAPE, Bias e FVA por família de produto e unidade de negócio, em Lag 1 e Lag 3, comparando o forecast estatístico com o comercial.</li><li>Criação, em Power Pivot e DAX, de um modelo de qualificação que recomenda, produto por produto, qual dos dois forecasts usar, com 8 critérios ponderados e classificação de demanda Syntetos-Boylan.</li><li>Desenvolvimento de dashboards em Power BI de provisão e destruição de estoque (ODR/SLOB), risco de supply e acuracidade de forecast, usados nos fóruns de IBP.</li><li>Troca de um Power Query lento por um script em Python que consolida os arquivos de DR Analysis das cinco unidades numa base mestre única.</li></ul></div>
+          <div class="star-bloco"><h4>Resultados</h4><ul><li>A escolha do forecast deixou de ser subjetiva: o modelo mostra o critério que decidiu e corta o tempo de análise do planejador.</li><li>O relatório de SLOB e provisão que era montado à mão em Excel virou painel em Power BI, com a Controladoria, as Finanças e o Customer Fulfillment entre os interessados.</li><li>A base mestre única acabou com a reconciliação manual entre sistemas antes de cada Demand Review.</li><li>Onboarding do hub LATAM documentado e avaliado, com mais de 135 questões em 6 módulos, que sustentou o handoff da operação.</li></ul></div>
+        </div>
         <div class="tl-produtos">
           <p>Principais produtos que passavam pelo meu planejamento de demanda, separados por business unit (BU).</p>
           <div class="tl-media">
@@ -128,16 +144,22 @@
           <p class="tl-credito">Embalagens e marcas da Sanofi. Imagens ilustrativas.</p>
         </div>
       </article>
-      <article class="tl">
+      <article class="tl" data-item="hering">
         <div class="tl-head">
           <div class="tl-logo mono" aria-hidden="true">Hering</div>
           <div><div class="tl-co">Cia. Hering</div><div class="tl-period">out 2025 a jan 2026</div></div>
         </div>
         <h3>Analista Sênior de Planejamento e Abastecimento</h3>
-        <ul>
-          <li>Boletins automáticos de ruptura para gerentes e coordenadores, agilizando a priorização do abastecimento das lojas próprias.</li>
-          <li>Padronização e automação dos KPIs de Ruptura, Giro e Cobertura com Power BI, SQL e VBA.</li>
+        <ul class="tl-topicos">
+          <li>Automação do boletim de ruptura que gerentes e coordenadores recebem pronto, já com o que repor em cada loja.</li>
+          <li>Padronização do cálculo de ruptura, giro e cobertura em Power BI, SQL e VBA, para todas as áreas usarem a mesma regra.</li>
+          <li>Priorização da reposição pela pirâmide de produto, separando básicos, sazonais e newness num portfólio de mais de 3.000 SKUs.</li>
         </ul>
+        <div class="tl-star">
+          <div class="star-bloco"><h4>Situação</h4><p>Abastecimento das lojas próprias, mais de 3.000 SKUs entre básicos, sazonais e newness, com os indicadores de ruptura, giro e cobertura montados à mão e cada área chegando à reunião com um número diferente.</p></div>
+          <div class="star-bloco"><h4>Ações</h4><ul><li>Automação dos boletins de ruptura para gerentes e coordenadores, já com o que repor em cada loja.</li><li>Padronização do cálculo de Ruptura, Giro e Cobertura em Power BI, SQL e VBA, com a mesma regra para todas as áreas.</li><li>Separação do portfólio na pirâmide de produto, básicos, sazonais e newness, para priorizar a reposição por papel da peça e não só por volume.</li></ul></div>
+          <div class="star-bloco"><h4>Resultados</h4><ul><li>A priorização do abastecimento ficou mais rápida: o boletim chega pronto, em vez de cada um abrir a própria planilha.</li><li>O indicador parou de mudar conforme quem calculava, e a reunião passou a discutir ação em vez de número.</li></ul></div>
+        </div>
         <div class="tl-produtos">
           <p>Abastecimento das lojas próprias com um portfólio de mais de 3.000 SKUs, organizado na pirâmide de produto: básicos, sazonais e newness.</p>
           <div class="tl-media">
@@ -148,31 +170,47 @@
           <p class="tl-credito">Peças e marca da Hering. Imagens ilustrativas.</p>
         </div>
       </article>
-      <article class="tl">
+      <article class="tl" data-item="hypera">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/brainfarma-hypera-pharma.png" width="320" height="93" alt="Brainfarma, Hypera Pharma"></div>
           <div><div class="tl-co">Hypera Pharma (Brainfarma)</div><div class="tl-period">ago 2024 a out 2025</div></div>
         </div>
         <h3>Analista de PCP</h3>
-        <ul>
-          <li>Ciclo do MPS e apresentação mensal do plano de produção e sequenciamento (3 meses) no MBR.</li>
-          <li>Rotina de PCP no SAP ECC PP/MM (MD04, MMBE), lotes e follow-up de materiais críticos.</li>
-          <li>Alertas e KPIs diários automáticos no Teams com Power Automate.</li>
-          <li>2 reconhecimentos Trabalho em Equipe: alerta de separação de ordens (jul 2025) e dashboard de qualidade do almoxarifado (out 2024).</li>
-          <li>Fluxo documental de liberação de lotes conforme a RDC 658.</li>
+        <ul class="tl-topicos">
+          <li>Condução do ciclo de MPS e apresentação mensal do plano de produção e do sequenciamento de linhas, com 3 meses de horizonte, ao comitê de gestão na MBR.</li>
+          <li>Equilíbrio entre demanda, capacidade e disponibilidade de materiais nas reuniões gerenciais com Produção, Engenharia e Qualidade, antecipando gargalos antes de virarem parada de linha.</li>
+          <li>Execução da rotina de PCP no SAP ECC PP/MM (MD04, MMBE, ZPP156): ordens de produção, lotes, análise de necessidades e follow-up dos materiais críticos com Suprimentos, Qualidade e Logística.</li>
+          <li>Construção de um dashboard em Power BI com a explosão de materiais do MRP e os níveis de estoque, que substituiu a consulta ao SAP a cada pergunta.</li>
+          <li>Criação, no Power Automate, do alerta que avisa no Teams quando uma ordem fica mais de 1 hora sem separação de materiais, e do envio diário dos KPIs de produção para a gestão.</li>
+          <li>Acompanhamento de setups de linha e de estudos de holding time, que encurtaram a liberação de produtos novos.</li>
+          <li>Gestão do fluxo de documentação de liberação final de lotes conforme a RDC 658 da Anvisa, com cronograma integrado e SLA acordado com Qualidade e Supply.</li>
+          <li>Apoio às análises de controle de mudanças e desvios, mantendo a rastreabilidade que a auditoria exige.</li>
+          <li>2 reconhecimentos de Trabalho em Equipe, pelo alerta de separação de ordens (jul 2025) e pelo dashboard de qualidade do almoxarifado (out 2024).</li>
         </ul>
+        <div class="tl-star">
+          <div class="star-bloco"><h4>Situação</h4><p>Indústria farmacêutica de grande porte, no elo entre o plano e a execução: controle de estoque de componentes, abastecimento das linhas de produção e embalagem e garantia do plano nas tecnologias.</p></div>
+          <div class="star-bloco"><h4>Ações</h4><ul><li>Condução do ciclo de MPS e apresentação do plano mensal de produção e do sequenciamento de linhas, com horizonte de 3 meses, ao comitê de gestão na MBR, equilibrando demanda, capacidade e materiais.</li><li>Participação nas reuniões gerenciais de capacidade com Produção, Engenharia e Qualidade, organizando cronogramas e antecipando gargalos.</li><li>Desenvolvimento de dashboards em Power BI dos KPIs críticos e dos níveis de estoque, com a explosão de materiais do MRP, integrando dados logísticos e operacionais.</li><li>Elaboração de ordens de produção e conferência documental no SAP ECC (MD04, MMBE, ZPP156), acompanhando materiais críticos com Suprimentos, Qualidade e Logística.</li><li>Acompanhamento de setups de linha e de estudos de holding time, que ajudaram a liberar novos produtos mais rápido.</li><li>Suporte às análises de controle de mudanças e desvios conforme a RDC 658.</li></ul></div>
+          <div class="star-bloco"><h4>Resultados</h4><ul><li>Redução de 70% no tempo de análise operacional e de resposta a desvios, com a extração automatizada e o dashboard de explosão de materiais.</li><li>Consultar o SAP a cada pergunta de estoque deixou de ser necessário: o painel já mostra o produto e seus componentes.</li><li>Cronograma integrado entre Planejamento, Produção, Qualidade e Supply, com as pastas de documentação dentro do SLA e um envio quinzenal por e-mail que unificou as datas de todas as áreas e cortou ruído de comunicação.</li><li>Alerta no Teams em até 1 hora para ordens liberadas sem separação de materiais, reconhecido pela empresa, protegendo a continuidade das linhas.</li></ul></div>
+        </div>
       </article>
-      <article class="tl">
+      <article class="tl" data-item="abbott">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/abbott.png" width="300" height="158" alt="Abbott"></div>
           <div><div class="tl-co">Abbott</div><div class="tl-period">2022 a 2024</div></div>
         </div>
         <h3>Estagiário de Produção</h3>
-        <ul>
-          <li>App em Power Apps e dashboard de KPIs da equipe técnica (Excellence Award Achieving, jun 2024).</li>
-          <li>Projeto A3 de desgargalamento, com rebalanceamento de carga entre etapas produtivas: ganho de capacidade e redução de custo anual (Excellence Award Pioneering, set 2023).</li>
-          <li>Indicadores no SAP BO e Power BI com extração automatizada via Power Automate; Lean e 5S.</li>
+        <ul class="tl-topicos">
+          <li>Construção do app em Power Apps e do dashboard de KPIs da equipe técnica (Excellence Award Achieving, jun 2024).</li>
+          <li>Condução de um projeto A3 de desgargalamento que rebalanceou a carga entre etapas produtivas, com ganho de capacidade e redução de custo anual (Excellence Award Pioneering, set 2023).</li>
+          <li>Análise de WIP e lead time para achar os gargalos e priorizar a melhoria contínua.</li>
+          <li>Automação, com Power Automate, da extração dos indicadores do SAP BO e do Power BI, que antes eram coletados à mão.</li>
+          <li>Implantação de 5S e de gestão visual da rotina nas áreas produtivas.</li>
         </ul>
+        <div class="tl-star">
+          <div class="star-bloco"><h4>Situação</h4><p>Estágio no ambiente produtivo de uma multinacional da saúde, com os indicadores de performance coletados à mão e oportunidades de melhoria espalhadas pelo chão de fábrica.</p></div>
+          <div class="star-bloco"><h4>Ações</h4><ul><li>Desenvolvimento de fórmulas e indicadores no SAP BO, com as visualizações levadas para o Power BI, acompanhando metas diárias e desvios produtivos.</li><li>Automação da extração e do tratamento dos dados com Power Automate, para os dashboards da gestão se atualizarem sozinhos.</li><li>Implantação e condução de programas de 5S nas áreas produtivas.</li><li>Análise de WIP e lead time para identificar gargalos, que levou a um projeto A3 de desgargalamento com rebalanceamento de carga entre etapas.</li><li>Aplicação de Lean na padronização de processos e na gestão visual da rotina.</li><li>Controle da calibração de equipamentos e apoio à rastreabilidade de desvios de processo e qualidade.</li></ul></div>
+          <div class="star-bloco"><h4>Resultados</h4><ul><li>Redução de mais de 30% no tempo de coleta e atualização dos indicadores com a automação.</li><li>Ganho de capacidade e redução de custo anual com o A3 de desgargalamento (Excellence Award Pioneering, set 2023).</li><li>App em Power Apps e dashboard de KPIs para a equipe técnica (Excellence Award Achieving, jun 2024).</li><li>Rastreabilidade de não conformidades melhor e resposta mais rápida nas auditorias internas.</li></ul></div>
+        </div>
         <div class="tl-produtos">
           <p>Linha Epic de válvulas cardíacas de tecido com stent.</p>
           <div class="tl-media">
@@ -183,17 +221,22 @@
           <p class="tl-credito">A linha E200 tem ainda a versão aórtica, de E200-21A a E200-29A (21 a 29 mm). Fotos de produto da <a href="https://www.cardiovascular.abbott/int/en/hcp/products/structural-heart/surgical-valve-solutions/epic-platform.html" target="_blank" rel="noopener">Abbott</a>. Imagens ilustrativas.</p>
         </div>
       </article>
-      <article class="tl">
+      <article class="tl" data-item="funed">
         <div class="tl-head">
           <div class="tl-logo"><img src="assets/img/funed.png" width="200" height="200" alt="FUNED"></div>
           <div><div class="tl-co">FUNED</div><div class="tl-period">2021 a 2022</div></div>
         </div>
         <h3>Estagiário de Desenvolvimento e Formulação</h3>
-        <ul>
-          <li>Acompanhamento de lotes piloto e elaboração de relatórios de desenvolvimento.</li>
+        <ul class="tl-topicos">
+          <li>Acompanhamento de lotes piloto e elaboração dos relatórios de desenvolvimento.</li>
           <li>Apoio na elaboração de dossiês de registro, pós-registro e DIFAs.</li>
-          <li>Revisão regulatória de procedimentos farmacotécnicos.</li>
+          <li>Revisão de procedimentos farmacotécnicos pela ótica regulatória.</li>
         </ul>
+        <div class="tl-star">
+          <div class="star-bloco"><h4>Situação</h4><p>Estágio no desenvolvimento e na formulação de medicamentos sintéticos de uma fundação pública que abastece o SUS.</p></div>
+          <div class="star-bloco"><h4>Ações</h4><ul><li>Acompanhamento de lotes piloto e elaboração dos relatórios de desenvolvimento.</li><li>Apoio na elaboração de dossiês de registro, pós-registro e DIFAs.</li><li>Revisão de procedimentos farmacotécnicos pela ótica regulatória.</li></ul></div>
+          <div class="star-bloco"><h4>Resultados</h4><ul><li>Documentação de desenvolvimento pronta para as submissões, com o histórico de cada lote piloto rastreável.</li><li>Foi onde processo, documento e dado apareceram pela primeira vez dependendo um do outro, o caminho que levou ao planejamento.</li></ul></div>
+        </div>
         <div class="tl-produtos">
           <p>Meu foco eram os medicamentos sintéticos.</p>
           <div class="tl-media">
@@ -303,7 +346,7 @@
     </div>
 
     <div class="featured">
-      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="ruptura" href="projetos/boletim-ruptura.html">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="ruptura" href="projetos/boletim-ruptura.html" data-item="ruptura">
         <div class="feat-img"><img src="assets/img/previews/ruptura.png" alt="Prévia do dashboard de ruptura de lojas" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
           <div class="proj-top"><span class="proj-co">Cia. Hering</span><span>2025</span></div>
@@ -313,7 +356,7 @@
           <span class="more">Abrir o dashboard</span>
         </div>
       </a>
-      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="validador" href="projetos/validador-documentos.html">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="validador" href="projetos/validador-documentos.html" data-item="validador">
         <div class="feat-img"><img src="assets/img/previews/validador.png" alt="Relatório do validador de documentos rodando no navegador" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
           <div class="proj-top"><span class="proj-co">Comércio exterior</span><span>2026</span></div>
@@ -323,7 +366,7 @@
           <span class="more">Testar no navegador</span>
         </div>
       </a>
-      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="cacador" href="projetos/cacador-vencimentos.html">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="cacador" href="projetos/cacador-vencimentos.html" data-item="cacador">
         <div class="feat-img"><img src="assets/img/previews/cacador.png" alt="Prévia do app Caçador de Vencimentos" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
           <div class="proj-top"><span class="proj-co">Projeto pessoal</span><span>2026</span></div>
@@ -333,7 +376,7 @@
           <span class="more">Abrir o app</span>
         </div>
       </a>
-      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="sop" href="projetos/sop-mensal.html">
+      <a class="feat" data-umami-event="abrir-projeto" data-umami-event-projeto="sop" href="projetos/sop-mensal.html" data-item="sop">
         <div class="feat-img"><img src="assets/img/previews/sop.png" alt="Slides do modelo de S&amp;OP mensal, com o waterfall do forecast na frente" loading="lazy" width="1280" height="800"></div>
         <div class="feat-body">
           <div class="proj-top"><span class="proj-co">Supply chain</span><span>2026</span></div>
@@ -354,7 +397,7 @@
     </div>
     <div class="proj-grid">
 
-      <article class="proj" data-cat="dash">
+      <article class="proj" data-cat="dash" data-item="forecast-qualificacao">
         <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
         <h3>Qualificação estatística de forecast</h3>
         <dl class="psi">
@@ -365,7 +408,7 @@
         <div class="tags"><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Power Pivot</span><span class="tag">Snowflake</span></div>
       </article>
 
-      <article class="proj" data-cat="dash">
+      <article class="proj" data-cat="dash" data-item="odr-slob">
         <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
         <h3>Dashboard ODR/SLOB: provisão e destruição</h3>
         <dl class="psi">
@@ -376,7 +419,7 @@
         <div class="tags"><span class="tag">Power BI</span><span class="tag">Power Query</span><span class="tag">SQL Server</span></div>
       </article>
 
-      <article class="proj" data-cat="auto">
+      <article class="proj" data-cat="auto" data-item="dr-analysis">
         <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
         <h3>Consolidação das bases DR Analysis de 5 BUs</h3>
         <dl class="psi">
@@ -387,7 +430,7 @@
         <div class="tags"><span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Power Query M</span></div>
       </article>
 
-      <article class="proj" data-cat="auto">
+      <article class="proj" data-cat="auto" data-item="sharepoint-anexos">
         <div class="proj-top"><span class="proj-co">Sanofi</span><span>2026</span></div>
         <h3>Bases mensais salvas sozinhas no SharePoint</h3>
         <dl class="psi">
@@ -399,7 +442,7 @@
         <a class="case-link" href="projetos/automacoes.html#sanofi-anexos">Ver o fluxo →</a>
       </article>
 
-      <article class="proj" data-cat="auto premio">
+      <article class="proj" data-cat="auto premio" data-item="hypera-alerta">
         <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>jul 2025</span></div>
         <span class="award">★ Reconhecimento Trabalho em Equipe</span>
         <h3>Alerta de ordem sem material separado</h3>
@@ -412,7 +455,7 @@
         <a class="case-link" href="projetos/automacoes.html#hypera-alerta">Ver o fluxo →</a>
       </article>
 
-      <article class="proj" data-cat="dash premio">
+      <article class="proj" data-cat="dash premio" data-item="hypera-almoxarifado">
         <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>out 2024</span></div>
         <span class="award">★ Reconhecimento Trabalho em Equipe</span>
         <h3>Dashboard de qualidade do almoxarifado</h3>
@@ -424,7 +467,7 @@
         <div class="tags"><span class="tag">Power BI</span><span class="tag">SQL</span></div>
       </article>
 
-      <article class="proj" data-cat="auto">
+      <article class="proj" data-cat="auto" data-item="hypera-kpis">
         <div class="proj-top"><span class="proj-co">Hypera Pharma</span><span>2024 a 2025</span></div>
         <h3>KPIs de produção enviados no Teams</h3>
         <dl class="psi">
@@ -436,7 +479,7 @@
         <a class="case-link" href="projetos/automacoes.html#hypera-kpis">Ver o fluxo →</a>
       </article>
 
-      <article class="proj" data-cat="dash auto premio">
+      <article class="proj" data-cat="dash auto premio" data-item="abbott-app">
         <div class="proj-top"><span class="proj-co">Abbott</span><span>jun 2024</span></div>
         <span class="award">★ Abbott Excellence Award, Achieving</span>
         <h3>App e dashboard da equipe técnica</h3>
@@ -449,7 +492,7 @@
         <a class="case-link" href="projetos/automacoes.html#abbott-app">Ver o fluxo →</a>
       </article>
 
-      <article class="proj" data-cat="premio">
+      <article class="proj" data-cat="premio" data-item="abbott-a3">
         <div class="proj-top"><span class="proj-co">Abbott</span><span>set 2023</span></div>
         <span class="award">★ Abbott Excellence Award, Pioneering</span>
         <h3>Desgargalamento de etapa produtiva com A3</h3>
@@ -461,7 +504,7 @@
         <div class="tags"><span class="tag">A3</span><span class="tag">Lean</span><span class="tag">Análise de capacidade</span></div>
       </article>
 
-      <article class="proj" data-cat="auto">
+      <article class="proj" data-cat="auto" data-item="meeting-ai">
         <div class="proj-top"><span class="proj-co">Projeto pessoal</span><span>2026</span></div>
         <h3>Meeting AI: transcrição local de reuniões</h3>
         <dl class="psi">
@@ -488,7 +531,7 @@
 
     <div class="pubs">
       <!-- Nova publicação: copie um bloco <article class="pub-item"> e cole no topo da lista (mais recente primeiro) -->
-      <article class="pub-item">
+      <article class="pub-item" data-item="importacao-jogo">
         <a class="pub-thumb" href="publicacoes/importacao-jogo.html">
           <img src="assets/img/previews/importacao-jogo.jpg" alt="Capa do vídeo: Importação, o jogo dos prazos, com o tabuleiro e o carimbo Volte para a origem." loading="lazy" width="1200" height="750">
           <span class="play">▶ 1:40</span>
@@ -502,7 +545,7 @@
           </div>
         </div>
       </article>
-      <article class="pub-item">
+      <article class="pub-item" data-item="forecast-erro">
         <a class="pub-thumb" href="publicacoes/forecast-erro.html">
           <img src="assets/img/previews/forecast.jpg" alt="Capa do vídeo: Seu forecast erra? Meça antes de culpar o comercial." loading="lazy" width="1200" height="750">
           <span class="play">▶ 0:58</span>
@@ -517,7 +560,7 @@
           </div>
         </div>
       </article>
-      <article class="pub-item">
+      <article class="pub-item" data-item="incoterms">
         <a class="pub-thumb" href="publicacoes/incoterms.html">
           <img src="assets/img/previews/incoterms.jpg" alt="Capa do vídeo: O navio afundou. Quem paga? Frete e risco nem sempre andam juntos." loading="lazy" width="1200" height="750">
           <span class="play">▶ 0:55</span>

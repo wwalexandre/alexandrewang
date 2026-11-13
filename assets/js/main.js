@@ -258,7 +258,7 @@ const Reveal = (function reveal() {
     let n = 0;
     cards.forEach(card => {
       const cats = (card.dataset.cat || '').split(' ');
-      card.hidden = !(f === 'all' || cats.includes(f));
+      card.hidden = card.dataset.oculto === '1' || !(f === 'all' || cats.includes(f));
       if (!card.hidden) n++;
     });
     count.textContent = label(n);
@@ -1466,4 +1466,69 @@ const DEMO_TXT = {
       body: JSON.stringify({ caminho: location.pathname })
     }).catch(() => {});
   } catch (e) {}
+})();
+
+// Trajetória: dois formatos (tópicos ou STAR) e um liga e desliga para as imagens
+// de produto. A escolha fica no navegador de quem visita, por página.
+(function trajetoria() {
+  const tl = document.querySelector('.timeline');
+  const ctrl = document.querySelector('.traj-ctrl');
+  if (!tl || !ctrl) return;
+  const botoes = ctrl.querySelectorAll('[data-modo]');
+  const caixa = ctrl.querySelector('input[type="checkbox"]');
+  const ler = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const guarda = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+
+  function formato(m) {
+    const alvo = m === 'star' ? 'star' : 'topicos';
+    tl.dataset.modo = alvo;
+    botoes.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modo === alvo)));
+    guarda('traj-modo', alvo);
+  }
+  function imagens(on) {
+    tl.dataset.imagens = on ? 'on' : 'off';
+    if (caixa) caixa.checked = on;
+    guarda('traj-imagens', on ? 'on' : 'off');
+  }
+
+  botoes.forEach(b => b.addEventListener('click', () => {
+    formato(b.dataset.modo);
+    track('trajetoria_formato', { formato: b.dataset.modo });
+  }));
+  if (caixa) caixa.addEventListener('change', () => {
+    imagens(caixa.checked);
+    track('trajetoria_imagens', { imagens: caixa.checked ? 'on' : 'off' });
+  });
+
+  formato(ler('traj-modo'));
+  imagens(ler('traj-imagens') !== 'off');
+})();
+
+// Visibilidade dos cards. O painel /admin marca um item como oculto no Supabase e
+// a página esconde esse card. O que já veio antes fica guardado no navegador, para
+// o card não piscar na tela antes da resposta chegar.
+(function visibilidade() {
+  if (!document.querySelector('[data-item]')) return;
+  const CHAVE = 'itens-ocultos';
+  const aplica = lista => {
+    document.querySelectorAll('[data-item]').forEach(n => {
+      const fora = lista.indexOf(n.dataset.item) !== -1;
+      n.dataset.oculto = fora ? '1' : '0';
+      n.hidden = fora;
+    });
+  };
+  try {
+    const guardado = localStorage.getItem(CHAVE);
+    if (guardado) aplica(JSON.parse(guardado));
+  } catch (e) {}
+  fetch(SB_URL + '/rest/v1/itens_site?select=slug&oculto=is.true', {
+    headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+  })
+    .then(r => (r.ok ? r.json() : []))
+    .then(linhas => {
+      const lista = linhas.map(l => l.slug);
+      try { localStorage.setItem(CHAVE, JSON.stringify(lista)); } catch (e) {}
+      aplica(lista);
+    })
+    .catch(() => {});
 })();

@@ -147,3 +147,13 @@
 /* Resumo em palavras, para quem não quer ler gráfico */
 .adm-frase { font-size: 15px; line-height: 1.55; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; margin: -12px 0 24px; max-width: 86ch; }
 .adm-frase[hidden] { display: none; }
+
+/* Aba Conteúdo: o que aparece na home */
+.adm-itens { display: grid; gap: 8px; }
+.adm-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 11px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.adm-item-nome { font-size: 15px; }
+.adm-item .sw b { font-weight: 500; min-width: 56px; }
+.adm-item .sw:has(input:checked) b { color: var(--text); }

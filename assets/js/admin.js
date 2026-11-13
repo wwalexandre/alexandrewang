@@ -79,7 +79,8 @@
   const tabs = [
     { tab: $('tabMsg'), panel: $('panelMsg') },
     { tab: $('tabLeads'), panel: $('panelLeads') },
-    { tab: $('tabVis'), panel: $('panelVis') }
+    { tab: $('tabVis'), panel: $('panelVis') },
+    { tab: $('tabCont'), panel: $('panelCont') }
   ];
   tabs.forEach(t => t.tab.addEventListener('click', () => {
     tabs.forEach(o => {
@@ -776,6 +777,73 @@
     });
     montar();
   })();
+
+  // ---------- Conteúdo: o que aparece na home ----------
+  const GRUPOS = [
+    { tipo: 'trajetoria', titulo: 'Trajetória' },
+    { tipo: 'projeto', titulo: 'Projetos' },
+    { tipo: 'publicacao', titulo: 'Publicações' }
+  ];
+
+  async function carregarConteudo() {
+    const status = $('contStatus');
+    const caixa = $('contListas');
+    status.textContent = 'Carregando...';
+    const { data, error } = await sb.from('itens_site')
+      .select('slug, tipo, titulo, oculto')
+      .order('ordem', { ascending: true });
+    if (error) {
+      status.textContent = 'Não consegui carregar: ' + error.message;
+      return;
+    }
+    caixa.textContent = '';
+    GRUPOS.forEach(g => {
+      const itens = data.filter(d => d.tipo === g.tipo);
+      if (!itens.length) return;
+      const sec = el('section', 'adm-bloco');
+      sec.appendChild(el('h3', null, g.titulo));
+      const lista = el('div', 'adm-itens');
+      itens.forEach(item => lista.appendChild(linhaConteudo(item, status)));
+      sec.appendChild(lista);
+      caixa.appendChild(sec);
+    });
+    const ocultos = data.filter(d => d.oculto).length;
+    status.textContent = ocultos
+      ? ocultos + (ocultos === 1 ? ' item oculto no site.' : ' itens ocultos no site.')
+      : 'Tudo visível no site.';
+  }
+
+  function linhaConteudo(item, status) {
+    const linha = el('div', 'adm-item');
+    linha.appendChild(el('span', 'adm-item-nome', item.titulo));
+    const label = el('label', 'sw');
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = !item.oculto;
+    const pino = document.createElement('span');
+    const texto = el('b', null, item.oculto ? 'Oculto' : 'Visível');
+    label.append(input, pino, texto);
+    input.addEventListener('change', async () => {
+      const visivel = input.checked;
+      input.disabled = true;
+      const { error } = await sb.from('itens_site')
+        .update({ oculto: !visivel }).eq('slug', item.slug);
+      input.disabled = false;
+      if (error) {
+        input.checked = !visivel;
+        status.textContent = 'Não consegui salvar: ' + error.message;
+        return;
+      }
+      item.oculto = !visivel;
+      texto.textContent = visivel ? 'Visível' : 'Oculto';
+      status.textContent = 'Salvo. ' + item.titulo + (visivel ? ' voltou para o site.' : ' saiu do site.');
+    });
+    linha.appendChild(label);
+    return linha;
+  }
+
+  $('tabCont').addEventListener('click', carregarConteudo);
+  $('reloadCont').addEventListener('click', carregarConteudo);
 
   boot();
 })();
