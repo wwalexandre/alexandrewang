@@ -145,5 +145,5 @@
 .adm-table tr.adm-suspeito td:first-child { font-weight: 700; }
 
 /* Resumo em palavras, para quem não quer ler gráfico */
-.adm-frase { font-size: 15px; line-height: 1.55; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--c1); border-radius: var(--radius-sm); padding: 14px 16px; margin: -12px 0 24px; max-width: 86ch; }
+.adm-frase { font-size: 15px; line-height: 1.55; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; margin: -12px 0 24px; max-width: 86ch; }
 .adm-frase[hidden] { display: none; }
