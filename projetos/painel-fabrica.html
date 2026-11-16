@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Capacidade e cobertura de uma fábrica de confeitos | Alexandre Wang</title>
+<meta name="description" content="Painel interativo de ocupação das linhas, perdas de tempo e cobertura de estoque de uma fábrica fictícia de confeitos: para onde vão as horas, o Pareto das paradas e quais itens estão fora da faixa. Dados fictícios.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/painel-fabrica.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/painel-fabrica.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/painel-fabrica-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/projetos/painel-fabrica.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Capacidade e cobertura de uma fábrica de confeitos">
+<meta property="og:description" content="Painel interativo de ocupação das linhas, perdas de tempo e cobertura de estoque de uma fábrica fictícia de confeitos: para onde vão as horas, o Pareto das paradas e quais itens estão fora da faixa. Dados fictícios.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/painel-fabrica.png">
+<meta property="og:url" content="https://alexandrewang.vercel.app/projetos/painel-fabrica.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:alt" content="Painel com ocupação por linha, divisão das horas, Pareto de paradas e cobertura por item">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/fabrica.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Capacidade e cobertura de uma fábrica de confeitos", "description": "Painel interativo de ocupação das linhas, perdas de tempo e cobertura de estoque de uma fábrica fictícia de confeitos: para onde vão as horas, o Pareto das paradas e quais itens estão fora da faixa. Dados fictícios.", "url": "https://alexandrewang.vercel.app/projetos/painel-fabrica.html", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "inLanguage": "pt-BR", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "BRL"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Projetos", "item": "https://alexandrewang.vercel.app/index.html#projetos"}, {"@type": "ListItem", "position": 3, "name": "Capacidade e cobertura de uma fábrica de confeitos", "item": "https://alexandrewang.vercel.app/projetos/painel-fabrica.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="painel-fabrica.html" class="on" aria-current="true">PT</a><a href="painel-fabrica-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a><span>Planejamento de produção</span></div>
+    <h1>Capacidade e cobertura de uma fábrica de confeitos</h1>
+    <p class="lead">Três perguntas decidem o que a fábrica faz no próximo mês: quanto das linhas está ocupado, onde o tempo se perde e se o estoque está saudável. Este painel responde as três com dados fictícios de uma fábrica de confeitos, com três linhas e oito itens.</p>
+    <div class="meta"><span>JavaScript · Chart.js</span><span>Réplica web</span><span>Dados fictícios</span></div>
+  </div>
+</header>
+<main id="conteudo">
+  <section class="dash" id="fbPainel" data-lead-demo="painel de fabrica" aria-label="Painel interativo">
+    <div class="wrap">
+      <div class="dash-bar" role="group" aria-label="Filtros do painel">
+        <label>Mês<select id="fbMes"><option value="all">Trimestre todo</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option></select></label>
+        <label>Linha<select id="fbLinha"><option value="all">Todas</option><option value="L1">Linha 1, balas</option><option value="L2">Linha 2, gomas</option><option value="L3">Linha 3, chocolates</option></select></label>
+        <label>Paradas contam como ocupação?<select id="fbParadas"><option value="sim">Sim</option><option value="nao">Não</option></select></label>
+        <span class="demo">Dados fictícios · 3 linhas · 8 itens · abr a jun/26</span>
+      </div>
+      <div class="kpis">
+        <div class="kpi" id="kOcup"><span>Ocupação da planta</span><b>…</b><small></small></div>
+        <div class="kpi" id="kParada"><span>Horas de parada</span><b>…</b><small></small></div>
+        <div class="kpi" id="kMotivo"><span>Principal motivo de parada</span><b>…</b><small></small></div>
+        <div class="kpi" id="kFora"><span>Itens fora da faixa</span><b>…</b><small></small></div>
+      </div>
+      <p class="fb-frase" id="fbFrase" role="status" aria-live="polite"></p>
+      <div class="charts fb-graficos">
+        <div class="chart-card"><h3>Para onde vão as horas de cada linha</h3><div class="chart-box tall"><canvas id="cA" role="img" aria-label="Barras empilhadas com a divisão das horas disponíveis de cada linha entre produção, setup, paradas e ociosidade"></canvas></div></div>
+        <div class="chart-card"><h3>Ocupação por linha e mês</h3><div class="chart-box tall"><canvas id="cB" role="img" aria-label="Colunas com a ocupação de cada linha em abril, maio e junho, com a linha do teto de 85%"></canvas></div></div>
+        <div class="chart-card wide"><h3>Pareto das horas de parada por motivo</h3><div class="chart-box"><canvas id="cC" role="img" aria-label="Barras com as horas de parada por motivo e linha do percentual acumulado"></canvas></div></div>
+      </div>
+      <div class="chart-card fb-cobertura">
+        <h3>Cobertura por item e mês, em múltiplos do alvo</h3>
+        <p class="iv-dica">Faixa de 0,5x a 1,5x o alvo. ▲ excesso, ▼ risco de ruptura. Passe o mouse para ver os dias de cobertura.</p>
+        <div class="table-wrap" style="margin:0"><table class="fb-tabela"><thead><tr><th>Item</th><th class="num">Abril</th><th class="num">Maio</th><th class="num">Junho</th></tr></thead><tbody id="fbCorpo"></tbody></table></div>
+      </div>
+    </div>
+  </section>
+  <article class="article" style="padding-top:8px">
+    <h2>O problema</h2>
+    <p>Quando a fábrica pede um diagnóstico rápido, o que chega à mesa costuma ser um número só: a ocupação. Esse número esconde três perguntas diferentes. Quanto da linha está de fato ocupado? Em que as horas que sobram, ou que faltam, estão sendo gastas? E o estoque que sai dessa linha está na medida certa?</p>
+    <p>O painel junta as três respostas numa tela, com os mesmos filtros de mês e de linha para todos os gráficos.</p>
+
+    <h2>O que o painel responde</h2>
+    <ul>
+      <li><strong>Para onde vão as horas:</strong> cada linha tem as horas disponíveis divididas entre produção, setup, paradas e ociosidade. A ocupação de cada linha aparece ao lado do nome.</li>
+      <li><strong>Quem está perto do teto:</strong> a ocupação por linha e mês, com o teto de 85% tracejado. Uma linha que sobe todo mês e passa do teto é candidata a gargalo.</li>
+      <li><strong>Onde está a perda:</strong> o Pareto ordena os motivos de parada por horas e mostra o percentual acumulado. Poucos motivos costumam explicar a maior parte das horas perdidas.</li>
+      <li><strong>Quais itens estão fora da faixa:</strong> a cobertura de cada item em múltiplos do alvo. Abaixo de 0,5x é risco de ruptura, acima de 1,5x é excesso.</li>
+    </ul>
+
+    <h2>Uma definição que muda o número</h2>
+    <p>Ocupação é horas ocupadas divididas por horas disponíveis, mas o que conta como hora ocupada é uma escolha. Se as paradas entram, a linha parece mais cheia. Se saem, o número mostra só o tempo em que a linha produziu ou se preparou para produzir.</p>
+    <p>A chave "Paradas contam como ocupação?" alterna as duas leituras, e a diferença entre elas é o tamanho das paradas. A planta como um todo não é a média das linhas: o cálculo usa a soma das horas ocupadas dividida pela soma das horas disponíveis, e as linhas têm horas diferentes. A linha 2, por exemplo, roda 2 turnos, e as outras duas rodam 3.</p>
+
+    <h2>Como o painel foi montado</h2>
+    <p>As horas são geradas turno a turno, com uma semente fixa, de modo que todo visitante vê os mesmos números. Cada turno tem 8 horas, com alguns turnos de 4, e recebe setup e paradas sorteados dentro de faixas por linha. Os motivos de parada têm pesos diferentes em cada linha. O estoque tem início de mês, venda do mês e cobertura alvo por item, e a cobertura é o estoque inicial dividido pela venda média diária do mês.</p>
+
+    <h2>O que o painel mostra com os dados do exemplo</h2>
+    <ul>
+      <li><strong>A média esconde as linhas.</strong> A planta fecha o trimestre em 85,5% de ocupação, mas a linha 1 está em 76,9%, a linha 2 em 87,7% e a linha 3 em 92,6%.</li>
+      <li><strong>Duas linhas passam do teto de 85% nos três meses.</strong> A linha 3 é a que sobe todo mês, de 89,3% em abril para 93,2% em maio e 95,3% em junho. A linha 2 roda só 2 turnos, então um terceiro turno é uma alavanca possível.</li>
+      <li><strong>As paradas somam 318 h, 8,3% das horas disponíveis.</strong> Quebra, falta de material e manutenção corretiva explicam 86% delas. Na linha 3, quebra e manutenção corretiva juntas respondem por 69,5 h.</li>
+      <li><strong>Sem contar as paradas, a ocupação da planta cai de 85,5% para 77,2%.</strong> A diferença é o tamanho das paradas.</li>
+      <li><strong>O gargalo começa a aparecer no estoque.</strong> Em junho, a goma ácida está em risco de ruptura (0,38x o alvo) e a bala de menta em excesso (2,40x). Os dois itens de drágea da linha 3 perdem cobertura de abril a junho.</li>
+    </ul>
+
+    <h2>Limites</h2>
+    <ul>
+      <li>A cobertura usa a venda do próprio mês. Para itens sazonais, vale ler também a previsão do mês seguinte, como na publicação sobre cobertura.</li>
+      <li>A ocupação mede horas, não volume. Dois turnos com a mesma ocupação podem produzir quantidades diferentes se a vazão mudar.</li>
+      <li>O teto de 85% é uma convenção, aplicada aqui por linha.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>Sobre esta página:</strong> é uma demonstração feita em HTML e JavaScript, com uma fábrica, linhas, turnos, itens e números inventados e gerados no navegador. Nenhum dado de empresa foi usado.</p>
+    </div>
+    <aside class="cta-card" aria-label="Contato">
+      <div><h2>Quer conversar sobre esse projeto?</h2><p>Para quem trabalha com planejamento de produção ou S&amp;OP e quer trocar experiências.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-fabrica">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-fabrica">Baixar currículo</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-fabrica">LinkedIn</a>
+      </div>
+    </aside>
+    <div class="next-links">
+      <a href="../publicacoes/mps-que-cabe-na-linha.html"><small>Publicação relacionada</small>O MPS que cabe na linha: onde o teto de ocupação aparece</a>
+      <a href="../publicacoes/cobertura-que-engana.html"><small>Publicação relacionada</small>Cobertura de estoque que engana: o mesmo estoque, duas leituras</a>
+    </div>
+  </article>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+    <a href="../privacidade.html">Privacidade</a>
+  </div>
+</footer>
+</body>
+</html>

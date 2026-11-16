@@ -1132,3 +1132,13 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
 .mp-tabela th, .mp-tabela td { padding: 8px 9px; }
 .mp-tabela th { white-space: normal; line-height: 1.2; vertical-align: bottom; font-size: 13px; }
 .mp-tabela td small { display: block; font-size: 12px; margin-top: 2px; }
+
+/* Painel da fábrica */
+.fb-frase { font-weight: 600; margin: 0 0 16px; }
+@media (min-width: 900px) { .charts.fb-graficos { grid-template-columns: 1fr 1fr; } }
+.fb-cobertura { margin-top: 16px; }
+.fb-tabela { font-size: 14px; }
+.fb-tabela td.num, .fb-tabela th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fb-cel { font-weight: 600; }
+.fb-cel.fb-excesso { color: var(--cov-excesso); } .fb-cel.fb-risco { color: var(--cov-risco); } .fb-cel.fb-ok { color: var(--text); font-weight: 500; }
+.fb-cel.fb-sel { background: var(--surface-2); }

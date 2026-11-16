@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Capacity and coverage of a confectionery plant | Alexandre Wang</title>
+<meta name="description" content="Interactive dashboard of line occupancy, lost time and stock coverage for a fictional confectionery plant: where the hours go, the Pareto of stops and which items are out of range. Fictional data.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/painel-fabrica-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/painel-fabrica.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/painel-fabrica-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/projetos/painel-fabrica.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Capacity and coverage of a confectionery plant">
+<meta property="og:description" content="Interactive dashboard of line occupancy, lost time and stock coverage for a fictional confectionery plant: where the hours go, the Pareto of stops and which items are out of range. Fictional data.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/painel-fabrica.png">
+<meta property="og:url" content="https://alexandrewang.vercel.app/projetos/painel-fabrica-en.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:image:alt" content="Dashboard with occupancy by line, hours breakdown, stop Pareto and coverage by item">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/fabrica.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Capacity and coverage of a confectionery plant", "description": "Interactive dashboard of line occupancy, lost time and stock coverage for a fictional confectionery plant: where the hours go, the Pareto of stops and which items are out of range. Fictional data.", "url": "https://alexandrewang.vercel.app/projetos/painel-fabrica-en.html", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "inLanguage": "en", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "BRL"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/en.html"}, {"@type": "ListItem", "position": 2, "name": "Projects", "item": "https://alexandrewang.vercel.app/en.html#projetos"}, {"@type": "ListItem", "position": 3, "name": "Capacity and coverage of a confectionery plant", "item": "https://alexandrewang.vercel.app/projetos/painel-fabrica-en.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="painel-fabrica.html" hreflang="pt-BR">PT</a><a href="painel-fabrica-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#projetos">← Projects</a><span>Production planning</span></div>
+    <h1>Capacity and coverage of a confectionery plant</h1>
+    <p class="lead">Three questions decide what the plant does next month: how much of the lines is occupied, where time is lost and whether stock is healthy. This dashboard answers all three with fictional data from a confectionery plant, with three lines and eight items.</p>
+    <div class="meta"><span>JavaScript · Chart.js</span><span>Web replica</span><span>Fictional data</span></div>
+  </div>
+</header>
+<main id="conteudo">
+  <section class="dash" id="fbPainel" data-lead-demo="painel de fabrica" aria-label="Interactive dashboard">
+    <div class="wrap">
+      <div class="dash-bar" role="group" aria-label="Dashboard filters">
+        <label>Month<select id="fbMes"><option value="all">Whole quarter</option><option value="4">April</option><option value="5">May</option><option value="6">June</option></select></label>
+        <label>Line<select id="fbLinha"><option value="all">All</option><option value="L1">Line 1, hard candy</option><option value="L2">Line 2, gummies</option><option value="L3">Line 3, chocolates</option></select></label>
+        <label>Do stops count as occupancy?<select id="fbParadas"><option value="sim">Yes</option><option value="nao">No</option></select></label>
+        <span class="demo">Fictional data · 3 lines · 8 items · Apr to Jun/26</span>
+      </div>
+      <div class="kpis">
+        <div class="kpi" id="kOcup"><span>Plant occupancy</span><b>…</b><small></small></div>
+        <div class="kpi" id="kParada"><span>Stop hours</span><b>…</b><small></small></div>
+        <div class="kpi" id="kMotivo"><span>Main stop reason</span><b>…</b><small></small></div>
+        <div class="kpi" id="kFora"><span>Items out of range</span><b>…</b><small></small></div>
+      </div>
+      <p class="fb-frase" id="fbFrase" role="status" aria-live="polite"></p>
+      <div class="charts fb-graficos">
+        <div class="chart-card"><h3>Where each line's hours go</h3><div class="chart-box tall"><canvas id="cA" role="img" aria-label="Stacked bars showing how each line's available hours split between production, setup, stops and idle time"></canvas></div></div>
+        <div class="chart-card"><h3>Occupancy by line and month</h3><div class="chart-box tall"><canvas id="cB" role="img" aria-label="Columns with each line's occupancy in April, May and June, with the 85% cap line"></canvas></div></div>
+        <div class="chart-card wide"><h3>Pareto of stop hours by reason</h3><div class="chart-box"><canvas id="cC" role="img" aria-label="Bars with stop hours by reason and a cumulative percentage line"></canvas></div></div>
+      </div>
+      <div class="chart-card fb-cobertura">
+        <h3>Coverage by item and month, in multiples of the target</h3>
+        <p class="iv-dica">Band from 0.5x to 1.5x the target. ▲ excess, ▼ stockout risk. Hover to see the days of coverage.</p>
+        <div class="table-wrap" style="margin:0"><table class="fb-tabela"><thead><tr><th>Item</th><th class="num">April</th><th class="num">May</th><th class="num">June</th></tr></thead><tbody id="fbCorpo"></tbody></table></div>
+      </div>
+    </div>
+  </section>
+  <article class="article" style="padding-top:8px">
+    <h2>The problem</h2>
+    <p>When the plant asks for a quick diagnosis, what reaches the table is usually a single number: occupancy. That number hides three different questions. How much of the line is really occupied? What are the leftover hours, or the missing ones, being spent on? And is the stock leaving that line the right size?</p>
+    <p>The dashboard brings the three answers onto one screen, with the same month and line filters for every chart.</p>
+
+    <h2>What the dashboard answers</h2>
+    <ul>
+      <li><strong>Where the hours go:</strong> each line's available hours are split between production, setup, stops and idle time. Each line's occupancy appears beside its name.</li>
+      <li><strong>Who is close to the cap:</strong> occupancy by line and month, with the 85% cap dashed. A line that climbs every month and passes the cap is a bottleneck candidate.</li>
+      <li><strong>Where the loss is:</strong> the Pareto orders stop reasons by hours and shows the cumulative percentage. A few reasons usually explain most of the lost hours.</li>
+      <li><strong>Which items are out of range:</strong> each item's coverage in multiples of the target. Below 0.5x is stockout risk, above 1.5x is excess.</li>
+    </ul>
+
+    <h2>A definition that changes the number</h2>
+    <p>Occupancy is occupied hours divided by available hours, but what counts as an occupied hour is a choice. If stops are included, the line looks fuller. If they are left out, the number shows only the time the line produced or prepared to produce.</p>
+    <p>The "Do stops count as occupancy?" switch toggles the two readings, and the difference between them is the size of the stops. The plant as a whole is not the average of its lines: the calculation uses the sum of occupied hours divided by the sum of available hours, and the lines have different hours. Line 2, for example, runs 2 shifts, and the other two run 3.</p>
+
+    <h2>How the dashboard was built</h2>
+    <p>The hours are generated shift by shift, with a fixed seed, so every visitor sees the same numbers. Each shift has 8 hours, with a few of 4, and gets setup and stops drawn within ranges per line. Stop reasons have different weights on each line. Stock has a start-of-month level, the month's sales and a target coverage per item, and coverage is the opening stock divided by the month's average daily sales.</p>
+
+    <h2>What the dashboard shows with the example data</h2>
+    <ul>
+      <li><strong>The average hides the lines.</strong> The plant closes the quarter at 85.5% occupancy, but line 1 is at 76.9%, line 2 at 87.7% and line 3 at 92.6%.</li>
+      <li><strong>Two lines pass the 85% cap in all three months.</strong> Line 3 is the one that climbs every month, from 89.3% in April to 93.2% in May and 95.3% in June. Line 2 runs only 2 shifts, so a third shift is a possible lever.</li>
+      <li><strong>Stops add up to 318 h, 8.3% of available hours.</strong> Breakdowns, material shortages and corrective maintenance explain 86% of them. On line 3, breakdowns and corrective maintenance together account for 69.5 h.</li>
+      <li><strong>Without counting stops, plant occupancy falls from 85.5% to 77.2%.</strong> The difference is the size of the stops.</li>
+      <li><strong>The bottleneck starts to show in stock.</strong> In June, sour gummies are at stockout risk (0.38x the target) and mint hard candy is in excess (2.40x). The two dragée items on line 3 lose coverage from April to June.</li>
+    </ul>
+
+    <h2>Limits</h2>
+    <ul>
+      <li>Coverage uses the month's own sales. For seasonal items, it pays to read next month's forecast too, as in the publication on coverage.</li>
+      <li>Occupancy measures hours, not volume. Two shifts with the same occupancy can produce different quantities if throughput changes.</li>
+      <li>The 85% cap is a convention, applied here per line.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>About this page:</strong> it is a demo built in HTML and JavaScript, with an invented plant, lines, shifts, items and numbers generated in the browser. No company data was used.</p>
+    </div>
+    <aside class="cta-card" aria-label="Contato">
+      <div><h2>Want to talk about this project?</h2><p>For anyone working with production planning or S&amp;OP who wants to compare notes.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-fabrica">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-fabrica">Download resume</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-fabrica">LinkedIn</a>
+      </div>
+    </aside>
+    <div class="next-links">
+      <a href="../publicacoes/mps-que-cabe-na-linha-en.html"><small>Related publication</small>The MPS that fits the line: where the occupancy cap shows up</a>
+      <a href="../publicacoes/cobertura-que-engana-en.html"><small>Related publication</small>Inventory coverage that misleads: the same stock, two readings</a>
+    </div>
+  </article>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+    <a href="../privacy.html">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>
