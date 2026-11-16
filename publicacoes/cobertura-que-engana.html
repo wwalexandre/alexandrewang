@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Cobertura de estoque que engana: o mesmo estoque, duas leituras | Alexandre Wang</title>
+<meta name="description" content="A cobertura em dias é a conta mais usada do planejamento de estoques e engana nos itens sazonais: o mesmo estoque aparece como excesso ou como risco de ruptura. Com um gráfico para alternar as duas leituras.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cobertura de estoque que engana: o mesmo estoque, duas leituras">
+<meta property="og:description" content="A cobertura em dias é a conta mais usada do planejamento de estoques e engana nos itens sazonais: o mesmo estoque aparece como excesso ou como risco de ruptura. Com um gráfico para alternar as duas leituras.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/cobertura-que-engana.jpg">
+<meta property="og:url" content="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:alt" content="Barras de cobertura em relação ao alvo, com a faixa de 0,5x a 1,5x e dois itens sazonais mudando de classe.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/cobertura.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "Cobertura de estoque que engana: o mesmo estoque, duas leituras", "description": "A cobertura em dias é a conta mais usada do planejamento de estoques e engana nos itens sazonais: o mesmo estoque aparece como excesso ou como risco de ruptura. Com um gráfico para alternar as duas leituras.", "inLanguage": "pt-BR", "image": "https://alexandrewang.vercel.app/assets/img/previews/cobertura-que-engana.jpg", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "mainEntityOfPage": "https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Publicações", "item": "https://alexandrewang.vercel.app/index.html#publicacoes"}, {"@type": "ListItem", "position": 3, "name": "Cobertura de estoque que engana: o mesmo estoque, duas leituras", "item": "https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="cobertura-que-engana.html" class="on" aria-current="true">PT</a><a href="cobertura-que-engana-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#publicacoes">← Publicações</a><span>Gestão de estoques</span></div>
+    <h1>Cobertura de estoque que engana: o mesmo estoque, duas leituras</h1>
+    <p class="lead">Cobertura de estoque é a conta mais repetida do planejamento e uma das que mais enganam. Para a maioria dos itens ela funciona. Para o item sazonal, o mesmo estoque aparece como excesso ou como risco de ruptura, conforme o lado para onde se olha. Este texto mostra a conta, a classificação e o caso em que ela falha, com um gráfico para alternar as duas leituras. Os números são fictícios.</p>
+    <div class="meta"><span>Leitura de 5 min</span><span>Gráfico interativo</span><span>Nov 2026</span></div>
+  </div>
+</header>
+<main id="conteudo" class="article">
+  <h2>A conta que todo planejador faz</h2>
+  <p>A cobertura diz quantos dias o estoque dura, se a venda continuar no ritmo atual.</p>
+  <p><code>Cobertura (dias) = estoque ÷ venda média diária</code></p>
+  <p>A venda média diária é a venda do mês dividida pelos dias do mês. Para a cobertura no início do mês, o estoque é o estoque final do mês anterior.</p>
+  <p>Um item com 120.000 unidades em estoque e venda de 180.000 unidades em um mês de 30 dias vende 6.000 por dia. A cobertura é 120.000 ÷ 6.000 = 20 dias.</p>
+
+  <h2>Classificar pela razão com o alvo</h2>
+  <p>Cada item tem uma cobertura alvo, definida pela variabilidade da demanda e pelo prazo de reposição. Comparar a cobertura com o alvo, e não com um número fixo, permite usar a mesma régua em itens diferentes.</p>
+  <p><code>Razão = cobertura ÷ cobertura alvo</code></p>
+  <ul>
+    <li><strong>Acima de 1,5x:</strong> excesso. Capital parado e risco de vencimento.</li>
+    <li><strong>Entre 0,5x e 1,5x:</strong> dentro da faixa.</li>
+    <li><strong>Abaixo de 0,5x:</strong> risco de ruptura.</li>
+  </ul>
+  <p>As faixas de 0,5x e 1,5x são uma convenção comum, que cada empresa ajusta. O importante é fixar e documentar.</p>
+
+  <h2>Onde a conta engana: o item sazonal</h2>
+  <p>A cobertura acima usa a venda do próprio mês. Em item de venda estável, o mês atual e o próximo se parecem, e tanto faz. Em item sazonal, não. Um ovo de chocolate fora da temporada vende pouco, e o estoque parece enorme. Mas a campanha está a poucas semanas, e a previsão do mês seguinte é muitas vezes maior.</p>
+  <p>No gráfico abaixo, alterne entre as duas leituras. Os itens estáveis não mudam de classe. Os dois ovos mudam.</p>
+  <section class="sim cov" id="grafico-cobertura" aria-labelledby="covT">
+    <h2 id="covT">O mesmo estoque, duas leituras</h2>
+    <p>Dez itens de uma fábrica fictícia de confeitos, com o estoque no início de outubro. Alterne a leitura e observe quais itens mudam de classe.</p>
+    <div class="seg" id="covSeg" role="group" aria-label="Escolha a leitura da cobertura">
+      <button type="button" data-modo="tras" aria-pressed="true">Olhando para trás</button>
+      <button type="button" data-modo="frente" aria-pressed="false">Olhando para a frente</button>
+    </div>
+    <p class="cov-formula" id="covFormula"></p>
+    <div class="cov-grafico" id="covGrafico"></div>
+    <p class="cov-legenda"><i class="cov-faixa" aria-hidden="true"></i>Faixa de 0,5x a 1,5x o alvo. Barras que passam de 3x aparecem cortadas, e o número ao lado mostra o valor real.</p>
+    <p class="cov-resumo" id="covResumo" role="status" aria-live="polite"></p>
+  </section>
+  <p>No exemplo, o ovo de 300 g tem 150 dias de cobertura pela venda de setembro, 6 vezes o alvo, e o status é excesso. Pela previsão de outubro, o mesmo estoque de 18.000 unidades dura 10 dias, 0,41 vez o alvo: risco de ruptura. A primeira leitura sugere reduzir produção. A segunda exige produzir.</p>
+  <p>O ovo de 150 g mostra a outra face: sai de excesso e fica dentro da faixa. O alarme some, mas o estoque também não sobra como parecia.</p>
+
+  <h2>Como evitar o erro</h2>
+  <ul>
+    <li><strong>Mostrar as duas coberturas lado a lado:</strong> a retrospectiva, com as vendas do mês, e a prospectiva, com a previsão do mês seguinte. Quando divergem muito, o item é sazonal ou está mudando de ritmo.</li>
+    <li><strong>Consumir o estoque contra a previsão,</strong> mês a mês, em vez de dividir por uma média única. Quando o estoque atravessa dois meses de ritmos diferentes, a média esconde o dia em que ele acaba.</li>
+    <li><strong>Dar regra própria aos sazonais:</strong> alvo e faixa diferentes dentro e fora da temporada.</li>
+    <li><strong>Revisar o excesso de um sazonal antes de reduzir a produção,</strong> confirmando a previsão do mês seguinte.</li>
+  </ul>
+
+  <h2>Casos de borda que quebram a fórmula</h2>
+  <ul>
+    <li><strong>Primeiro mês, sem estoque inicial:</strong> mostrar "sem histórico", nunca zero.</li>
+    <li><strong>Venda zero com estoque:</strong> a divisão não existe. Tratar com regra explícita, por exemplo classificar como excesso.</li>
+    <li><strong>Venda zero e estoque zero:</strong> não se aplica.</li>
+    <li><strong>Estoque negativo:</strong> quase sempre erro de sistema. Sinalizar para conferência em vez de classificar.</li>
+  </ul>
+
+  <h2>O que levar</h2>
+  <p>Cobertura é um número simples que depende de uma escolha: que venda usar no denominador. Para a maioria dos itens a escolha não muda a resposta. Para os sazonais muda tudo, e vale mostrar as duas leituras antes de decidir produzir ou parar.</p>
+  <p class="note">Todos os itens e números deste artigo são fictícios e servem só de exemplo. Nenhum dado de empresa foi usado.</p>
+    <div class="share" data-share="cobertura-que-engana"><span>Compartilhar</span></div>
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Vamos conversar?</h2><p>Para quem trabalha com planejamento de estoques ou S&amp;OP e quer trocar experiências.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-cobertura">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-cobertura">Baixar currículo</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-cobertura">LinkedIn</a>
+    </div>
+  </aside>
+  <div class="next-links">
+    <a href="ponto-de-pedido.html"><small>Publicação relacionada</small>Quanto pedir, quando pedir e quanto guardar de reserva</a>
+    <a href="../projetos/boletim-ruptura.html"><small>Projeto relacionado</small>Dashboard de ruptura de lojas</a>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+    <a href="../privacidade.html">Privacidade</a>
+  </div>
+</footer>
+</body>
+</html>

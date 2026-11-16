@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Inventory coverage that misleads: the same stock, two readings | Alexandre Wang</title>
+<meta name="description" content="Days of coverage is the most used number in inventory planning and it misleads on seasonal items: the same stock shows up as excess or as stockout risk. With a chart to switch between the two readings.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Inventory coverage that misleads: the same stock, two readings">
+<meta property="og:description" content="Days of coverage is the most used number in inventory planning and it misleads on seasonal items: the same stock shows up as excess or as stockout risk. With a chart to switch between the two readings.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/cobertura-que-engana.jpg">
+<meta property="og:url" content="https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana-en.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:image:alt" content="Coverage bars against the target, with the 0.5x to 1.5x band and two seasonal items changing class.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/cobertura.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "Inventory coverage that misleads: the same stock, two readings", "description": "Days of coverage is the most used number in inventory planning and it misleads on seasonal items: the same stock shows up as excess or as stockout risk. With a chart to switch between the two readings.", "inLanguage": "en", "image": "https://alexandrewang.vercel.app/assets/img/previews/cobertura-que-engana.jpg", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "mainEntityOfPage": "https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana-en.html"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/en.html"}, {"@type": "ListItem", "position": 2, "name": "Publications", "item": "https://alexandrewang.vercel.app/en.html#publicacoes"}, {"@type": "ListItem", "position": 3, "name": "Inventory coverage that misleads: the same stock, two readings", "item": "https://alexandrewang.vercel.app/publicacoes/cobertura-que-engana-en.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="cobertura-que-engana.html" hreflang="pt-BR">PT</a><a href="cobertura-que-engana-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#publicacoes">← Publications</a><span>Inventory management</span></div>
+    <h1>Inventory coverage that misleads: the same stock, two readings</h1>
+    <p class="lead">Inventory coverage is the most repeated calculation in planning and one of the most misleading. For most items it works. For a seasonal item, the same stock shows up as excess or as stockout risk, depending on which way you look. This text shows the calculation, the classification and the case where it fails, with a chart to switch between the two readings. The numbers are fictional.</p>
+    <div class="meta"><span>5 min read</span><span>Interactive chart</span><span>Nov 2026</span></div>
+  </div>
+</header>
+<main id="conteudo" class="article">
+  <h2>The calculation every planner makes</h2>
+  <p>Coverage says how many days the stock lasts, if sales continue at the current pace.</p>
+  <p><code>Coverage (days) = stock ÷ average daily sales</code></p>
+  <p>Average daily sales is the month's sales divided by the days in the month. For coverage at the start of the month, stock is the previous month's ending stock.</p>
+  <p>An item with 120,000 units in stock and sales of 180,000 units in a 30-day month sells 6,000 a day. Coverage is 120,000 ÷ 6,000 = 20 days.</p>
+
+  <h2>Classifying by the ratio to the target</h2>
+  <p>Each item has a target coverage, set by demand variability and replenishment lead time. Comparing coverage with the target, instead of a fixed number, allows the same ruler to be used on different items.</p>
+  <p><code>Ratio = coverage ÷ target coverage</code></p>
+  <ul>
+    <li><strong>Above 1.5x:</strong> excess. Tied-up capital and expiry risk.</li>
+    <li><strong>Between 0.5x and 1.5x:</strong> within range.</li>
+    <li><strong>Below 0.5x:</strong> stockout risk.</li>
+  </ul>
+  <p>The 0.5x and 1.5x bands are a common convention that each company adjusts. What matters is to fix them and document them.</p>
+
+  <h2>Where the calculation misleads: the seasonal item</h2>
+  <p>The coverage above uses the month's own sales. For a stable item, this month and the next look alike, and it makes no difference. For a seasonal item, it does. A chocolate egg out of season sells little, and the stock looks enormous. But the campaign is a few weeks away, and next month's forecast is many times larger.</p>
+  <p>In the chart below, switch between the two readings. Stable items do not change class. The two eggs do.</p>
+  <section class="sim cov" id="grafico-cobertura" aria-labelledby="covT">
+    <h2 id="covT">The same stock, two readings</h2>
+    <p>Ten items from a fictional confectionery plant, with stock at the start of October. Switch the reading and watch which items change class.</p>
+    <div class="seg" id="covSeg" role="group" aria-label="Choose how coverage is read">
+      <button type="button" data-modo="tras" aria-pressed="true">Looking back</button>
+      <button type="button" data-modo="frente" aria-pressed="false">Looking ahead</button>
+    </div>
+    <p class="cov-formula" id="covFormula"></p>
+    <div class="cov-grafico" id="covGrafico"></div>
+    <p class="cov-legenda"><i class="cov-faixa" aria-hidden="true"></i>Band from 0.5x to 1.5x the target. Bars above 3x are shown cut off, and the number beside them shows the real value.</p>
+    <p class="cov-resumo" id="covResumo" role="status" aria-live="polite"></p>
+  </section>
+  <p>In the example, the 300 g egg has 150 days of coverage on September sales, 6 times the target, and its status is excess. On the October forecast, the same stock of 18,000 units lasts 10 days, 0.41 times the target: stockout risk. The first reading suggests cutting production. The second demands producing.</p>
+  <p>The 150 g egg shows the other face: it leaves excess and lands within range. The alarm disappears, but the stock is not the surplus it seemed either.</p>
+
+  <h2>How to avoid the mistake</h2>
+  <ul>
+    <li><strong>Show both coverages side by side:</strong> the backward one, with the month's sales, and the forward one, with next month's forecast. When they diverge a lot, the item is seasonal or changing pace.</li>
+    <li><strong>Consume the stock against the forecast,</strong> month by month, instead of dividing by a single average. When stock spans two months of different pace, the average hides the day it runs out.</li>
+    <li><strong>Give seasonal items their own rule:</strong> different target and band in and out of season.</li>
+    <li><strong>Review a seasonal item's excess before cutting production,</strong> by confirming next month's forecast.</li>
+  </ul>
+
+  <h2>Edge cases that break the formula</h2>
+  <ul>
+    <li><strong>First month, no opening stock:</strong> show "no history", never zero.</li>
+    <li><strong>Zero sales with stock:</strong> the division does not exist. Handle it with an explicit rule, for example classifying it as excess.</li>
+    <li><strong>Zero sales and zero stock:</strong> not applicable.</li>
+    <li><strong>Negative stock:</strong> almost always a system error. Flag it for review instead of classifying it.</li>
+  </ul>
+
+  <h2>What to take from it</h2>
+  <p>Coverage is a simple number that depends on one choice: which sales to use in the denominator. For most items the choice does not change the answer. For seasonal items it changes everything, and it pays to show both readings before deciding to produce or to stop.</p>
+  <p class="note">All items and numbers in this article are fictional and serve only as an example. No company data was used.</p>
+    <div class="share" data-share="cobertura-que-engana"><span>Share</span></div>
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Shall we talk?</h2><p>For anyone working with inventory planning or S&amp;OP who wants to compare notes.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-cobertura">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-cobertura">Download resume</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-cobertura">LinkedIn</a>
+    </div>
+  </aside>
+  <div class="next-links">
+    <a href="ponto-de-pedido-en.html"><small>Related publication</small>How much to order, when to order and how much to keep in reserve</a>
+    <a href="../projetos/boletim-ruptura-en.html"><small>Related project</small>Store stockout dashboard</a>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+    <a href="../privacy.html">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>

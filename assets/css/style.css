@@ -1073,3 +1073,37 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
 .iv-trilha li.atual { border-top-color: var(--orange); }
 .iv-trilha li.falta { color: var(--muted); }
 .iv-trilha span { color: var(--muted); font-size: 12px; }
+
+/* Cobertura que engana: barras da razão cobertura / alvo */
+:root { --cov-risco: #C96A0A; --cov-excesso: #2A6CB8; --cov-ok: #1B7F5B; --cov-faixa: rgba(27, 127, 91, .14); }
+:root[data-theme="dark"] { --cov-risco: #E08A2E; --cov-excesso: #3F86D6; --cov-ok: #2FA07A; --cov-faixa: rgba(47, 160, 122, .16); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --cov-risco: #E08A2E; --cov-excesso: #3F86D6; --cov-ok: #2FA07A; --cov-faixa: rgba(47, 160, 122, .16); } }
+.cov .seg { margin: 14px 0 6px; }
+.cov-formula { font: 500 13px/1.4 var(--mono); color: var(--muted); margin: 6px 0 14px; }
+.cov-linha { display: grid; grid-template-columns: minmax(130px, 175px) 1fr 56px 44px 74px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.cov-cab { border-top: 0; padding: 0 0 4px; }
+.cov-nome { font-size: 14px; line-height: 1.25; }
+.cov-eixo { position: relative; height: 16px; font: 500 11px/1 var(--mono); color: var(--muted); }
+.cov-eixo span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.cov-eixo span:first-child { transform: none; }
+.cov-eixo span:last-child { transform: translateX(-100%); }
+.cov-trilho { position: relative; height: 22px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.cov-trilho::before { content: ""; position: absolute; top: 0; bottom: 0; left: 16.667%; width: 33.333%; background: var(--cov-faixa); }
+.cov-trilho::after { content: ""; position: absolute; top: 0; bottom: 0; left: 33.333%; width: 2px; background: var(--text); opacity: .55; }
+.cov-barra { position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: 0 3px 3px 0; transition: width .35s cubic-bezier(.2, .7, .2, 1), background-color .2s; z-index: 1; }
+.cov-barra.cov-excesso { background: var(--cov-excesso); } .cov-barra.cov-risco { background: var(--cov-risco); } .cov-barra.cov-ok { background: var(--cov-ok); }
+.cov-barra.cov-cortada { clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%); }
+.cov-razao { font: 700 16px/1 var(--display); text-align: right; font-variant-numeric: tabular-nums; }
+.cov-dias { font: 500 12px/1 var(--mono); color: var(--muted); text-align: right; }
+.cov-tag { font: 600 12px/1.2 var(--font); padding: 4px 6px; border-radius: 5px; color: #fff; text-align: center; }
+.cov-tag-excesso { background: var(--cov-excesso); } .cov-tag-risco { background: var(--cov-risco); } .cov-tag-ok { background: var(--cov-ok); }
+.cov-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
+.cov-faixa { display: inline-block; width: 22px; height: 12px; border-radius: 3px; background: var(--cov-faixa); border: 1px solid var(--cov-ok); }
+.cov-resumo { font-weight: 600; margin: 8px 0 0; }
+@media (max-width: 720px) {
+  .cov-linha { grid-template-columns: 1fr 58px 48px; grid-template-areas: "nome nome nome" "trilho trilho trilho" "tag razao dias"; gap: 4px 8px; padding: 10px 0; }
+  .cov-linha .cov-nome { grid-area: nome; } .cov-linha .cov-trilho { grid-area: trilho; } .cov-linha .cov-tag { grid-area: tag; justify-self: start; }
+  .cov-linha .cov-razao { grid-area: razao; } .cov-linha .cov-dias { grid-area: dias; }
+  .cov-cab { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cov-barra { transition: none; } }
