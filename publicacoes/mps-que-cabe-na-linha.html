@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>O MPS que cabe na linha: onde o teto de ocupação aparece | Alexandre Wang</title>
+<meta name="description" content="Como montar o plano de produção de um item de campanha que entrega a cobertura alvo e respeita o teto de ocupação da linha, com um simulador que mostra quando o plano não cabe e o que fazer.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="O MPS que cabe na linha: onde o teto de ocupação aparece">
+<meta property="og:description" content="Como montar o plano de produção de um item de campanha que entrega a cobertura alvo e respeita o teto de ocupação da linha, com um simulador que mostra quando o plano não cabe e o que fazer.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/mps-que-cabe-na-linha.jpg">
+<meta property="og:url" content="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:alt" content="Colunas de horas da linha por mês, com os outros itens, este item e a linha tracejada do teto de 85%.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/mps.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "O MPS que cabe na linha: onde o teto de ocupação aparece", "description": "Como montar o plano de produção de um item de campanha que entrega a cobertura alvo e respeita o teto de ocupação da linha, com um simulador que mostra quando o plano não cabe e o que fazer.", "inLanguage": "pt-BR", "image": "https://alexandrewang.vercel.app/assets/img/previews/mps-que-cabe-na-linha.jpg", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "mainEntityOfPage": "https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Publicações", "item": "https://alexandrewang.vercel.app/index.html#publicacoes"}, {"@type": "ListItem", "position": 3, "name": "O MPS que cabe na linha: onde o teto de ocupação aparece", "item": "https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="mps-que-cabe-na-linha.html" class="on" aria-current="true">PT</a><a href="mps-que-cabe-na-linha-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#publicacoes">← Publicações</a><span>Planejamento de produção</span></div>
+    <h1>O MPS que cabe na linha: onde o teto de ocupação aparece</h1>
+    <p class="lead">Um plano de produção que entrega a cobertura alvo e um plano de produção que cabe na linha são duas contas diferentes, e o encontro delas costuma ser onde o MPS falha. Este texto monta o MPS de um item de campanha passo a passo, mostra por que o teto de ocupação deve ser medido na linha inteira e não só no item, e termina num simulador em que o teto, a carga dos outros itens e os sábados trabalhados podem ser alterados. Os números são fictícios.</p>
+    <div class="meta"><span>Leitura de 7 min</span><span>Simulador</span><span>Nov 2026</span></div>
+  </div>
+</header>
+<main id="conteudo" class="article">
+  <h2>A conta base do MPS</h2>
+  <p>O MPS (plano mestre de produção) responde quanto produzir em cada mês. Para um item com cobertura alvo, a conta é:</p>
+  <p><code>Produção do mês = demanda do mês + estoque alvo no fim do mês − estoque inicial</code></p>
+  <p>O estoque alvo no fim do mês é a cobertura alvo, em dias, vezes a venda média diária do mês seguinte:</p>
+  <p><code>Estoque alvo no fim do mês = cobertura alvo × (demanda do mês seguinte ÷ dias do mês seguinte)</code></p>
+  <p>Por isso o último mês do plano precisa de uma premissa para a demanda do mês depois dele. No exemplo, janeiro repete dezembro.</p>
+  <p>O exemplo é o ovo de chocolate de 300 g da publicação sobre cobertura: 18.000 unidades em estoque no início de outubro, cobertura alvo de 25 dias e demanda de 54.000, 80.000 e 66.000 unidades de outubro a dezembro. Outubro já começa abaixo do alvo, com 18.000 unidades contra as 43.548 que 25 dias de outubro pediriam.</p>
+
+  <h2>Do volume para as horas</h2>
+  <p>Volume só vira plano quando cabe na linha. A conversão usa a vazão média, em unidades por hora de produção, e soma o que a linha gasta sem produzir:</p>
+  <p><code>Horas do item = produção ÷ vazão + setup e paradas planejadas</code></p>
+  <p><code>Horas disponíveis da linha = dias úteis × horas por dia</code></p>
+  <p>O lote é arredondado para cima, em centenas. No exemplo, a vazão é de 1.400 un/h, o setup e as paradas somam 3 h por mês e a linha trabalha 3 turnos de 8 h nos dias úteis de outubro (21), novembro (19) e dezembro (22), já descontados os feriados nacionais.</p>
+
+  <h2>O teto de ocupação: no item ou na linha?</h2>
+  <p>O plano precisa respeitar um teto de ocupação, aqui de 85%. A pergunta que decide o resultado é: 85% de quê?</p>
+  <ul>
+    <li><strong>Só do item:</strong> as horas do item divididas pelas horas disponíveis da linha. Dá cerca de 15% em outubro, e o teto nunca aperta.</li>
+    <li><strong>Da linha inteira:</strong> as horas de todos os itens que passam por ela, somadas, divididas pelas horas disponíveis. É a leitura que protege a linha de verdade, porque o teto existe para deixar folga para quebra, setup e imprevisto, e essa folga é compartilhada.</li>
+  </ul>
+  <p>No exemplo, os outros itens da linha ocupam 17,5 h por dia útil. Em outubro isso são 367,5 h de 504 disponíveis: 73% antes de produzir uma unidade do ovo. O teto de 85% deixa 428,4 h, e sobram 57,9 h para o item depois do setup e das paradas. O plano completo pede 76,4 h.</p>
+  <p>No simulador abaixo, alterne entre as duas leituras e compare.</p>
+  <section class="sim mp" id="simulador-mps" aria-labelledby="mpT">
+    <h2 id="mpT">Simulador: o plano cabe sob o teto?</h2>
+    <p>Os campos começam com o exemplo do texto. Alterne a leitura do teto, mude qualquer número e veja o plano, a cobertura e a ocupação da linha se recalcularem.</p>
+    <h3 class="mp-sub">Demanda e estoque</h3>
+    <div class="rp-form">
+      <label for="mpEstoque">Estoque no início de outubro (un)<input id="mpEstoque" type="number" inputmode="decimal" min="0" step="1" value="18000" data-padrao="18000"></label>
+      <label for="mpAlvo">Cobertura alvo (dias)<input id="mpAlvo" type="number" inputmode="decimal" min="0" step="1" value="25" data-padrao="25"></label>
+      <label for="mpD0">Demanda de outubro (un)<input id="mpD0" type="number" inputmode="decimal" min="0" step="1" value="54000" data-padrao="54000"></label>
+      <label for="mpD1">Demanda de novembro (un)<input id="mpD1" type="number" inputmode="decimal" min="0" step="1" value="80000" data-padrao="80000"></label>
+      <label for="mpD2">Demanda de dezembro (un)<input id="mpD2" type="number" inputmode="decimal" min="0" step="1" value="66000" data-padrao="66000"></label>
+    </div>
+    <h3 class="mp-sub">Linha e teto</h3>
+    <div class="rp-form">
+      <label for="mpVazao">Vazão do item (un/h)<input id="mpVazao" type="number" inputmode="decimal" min="0" step="1" value="1400" data-padrao="1400"></label>
+      <label for="mpFixas">Setup e paradas planejadas do item (h por mês)<input id="mpFixas" type="number" inputmode="decimal" min="0" step="0.5" value="3" data-padrao="3"></label>
+      <label for="mpOutros">Carga dos outros itens da linha (h por dia útil)<input id="mpOutros" type="number" inputmode="decimal" min="0" step="0.5" value="17.5" data-padrao="17.5"></label>
+      <label for="mpHDia">Horas da linha por dia útil<input id="mpHDia" type="number" inputmode="decimal" min="0" step="1" value="24" data-padrao="24"></label>
+      <label for="mpTeto">Teto de ocupação (%)<input id="mpTeto" type="number" inputmode="decimal" min="0" step="1" value="85" data-padrao="85"></label>
+      <label for="mpSab">Sábados trabalhados por mês (3 turnos)<input id="mpSab" type="number" inputmode="decimal" min="0" step="1" value="0" data-padrao="0"></label>
+    </div>
+    <p class="rp-erro" id="mpErro" role="alert"></p>
+    <div class="seg" id="mpSeg" role="group" aria-label="Escolha como o teto é lido">
+      <button type="button" data-modo="linha" aria-pressed="true">Teto na linha inteira</button>
+      <button type="button" data-modo="item" aria-pressed="false">Teto só no item</button>
+    </div>
+    <div class="table-wrap" style="margin:14px 0"><table class="mp-tabela"><thead><tr><th>Mês</th><th class="num">Necessário (un)</th><th class="num">Cabe sob o teto (un)</th><th class="num">Planejado (un)</th><th class="num">Cobertura no mês seguinte</th><th>Ocupação da linha</th></tr></thead><tbody id="mpCorpo"></tbody></table></div>
+    <div class="rp-grafico" id="mpGrafico"></div>
+    <p class="mp-legenda"><span><i class="mp-l-outros"></i>Outros itens</span><span><i class="mp-l-item"></i>Este item</span><span><i class="mp-l-disp"></i>Horas disponíveis do mês</span><span><i class="mp-l-teto"></i>Teto de ocupação</span></p>
+    <p class="rp-frase" id="mpFrase" role="status" aria-live="polite"></p>
+    <p><button type="button" class="btn btn-outline btn-sm" id="mpReset">Voltar ao exemplo</button></p>
+  </section>
+  <h2>O que o simulador mostra com os valores iniciais</h2>
+  <p>Com o teto na linha inteira, outubro e novembro não cabem. Outubro pede 102.700 unidades, mas só cabem 81.000 sob o teto. Novembro pede 88.300 e cabem 72.900. A cobertura no início de novembro fica em 16,9 dias e, no início de dezembro, em 17,8, contra os 25 do alvo. Dezembro recupera, e a cobertura volta a 25 dias no início de janeiro.</p>
+  <p>Com o teto lido só no item, o mesmo plano cabe em todos os meses, e a produção de outubro é a completa, de 102.700 unidades. A linha inteira, porém, chega a 88% em outubro, acima do teto. O plano parece cumprir tudo e não cumpre.</p>
+  <p>Experimente subir os sábados trabalhados para 1. Um sábado de 3 turnos por mês basta para o plano inteiro caber, com a cobertura alvo entregue.</p>
+
+  <h2>Quando não cabe: as alavancas</h2>
+  <ul>
+    <li><strong>Reduzir a carga dos outros itens no mês de pico,</strong> deslocando lotes para meses folgados quando a validade e a cobertura deles permitem.</li>
+    <li><strong>Abrir capacidade,</strong> com sábados trabalhados, por exemplo. Cada sábado de 3 turnos soma 24 h de horas disponíveis, das quais 20,4 h cabem sob o teto de 85%.</li>
+    <li><strong>Antecipar a produção do item,</strong> quando a validade permite. No exemplo isso não é possível em outubro, porque o mês anterior já passou.</li>
+    <li><strong>Aceitar uma cobertura menor no pico</strong> e levar o risco ao S&amp;OP, em vez de entregar um plano que parece cumprir tudo e não cabe.</li>
+    <li><strong>Conferir a vazão.</strong> O plano usa a média histórica, e uma campanha curta pede checar se essa média é confiável para o volume pedido.</li>
+  </ul>
+
+  <h2>Premissas e limites do simulador</h2>
+  <ul>
+    <li>A vazão é constante, igual à média histórica do item.</li>
+    <li>Os outros itens ocupam a mesma carga por dia útil em todos os meses.</li>
+    <li>Os sábados somam horas disponíveis só para o item; os outros itens não produzem aos sábados.</li>
+    <li>Quando o estoque não cobre a demanda, a falta vira venda perdida, sem pedido atrasado.</li>
+    <li>A demanda de janeiro é igual à de dezembro e não há estoque de segurança além da cobertura alvo.</li>
+  </ul>
+
+  <h2>O que levar</h2>
+  <p>Um MPS que entrega a cobertura alvo no papel e estoura a linha na prática não é um plano. O teste que separa os dois é medir o teto na linha inteira e olhar mês a mês o que cabe. Quando não cabe, o resultado útil do plano é a decisão que ele obriga a tomar.</p>
+  <p class="note">Todos os números deste artigo são fictícios e servem só de exemplo. Nenhum dado de empresa foi usado.</p>
+    <div class="share" data-share="mps-que-cabe-na-linha"><span>Compartilhar</span></div>
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Vamos conversar?</h2><p>Para quem trabalha com planejamento de produção ou S&amp;OP e quer trocar experiências.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-mps">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-mps">Baixar currículo</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-mps">LinkedIn</a>
+    </div>
+  </aside>
+  <div class="next-links">
+    <a href="cobertura-que-engana.html"><small>Publicação relacionada</small>Cobertura de estoque que engana: o mesmo estoque, duas leituras</a>
+    <a href="ponto-de-pedido.html"><small>Publicação relacionada</small>Quanto pedir, quando pedir e quanto guardar de reserva</a>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+    <a href="../privacidade.html">Privacidade</a>
+  </div>
+</footer>
+</body>
+</html>

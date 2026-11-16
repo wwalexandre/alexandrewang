@@ -1107,3 +1107,28 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
   .cov-cab { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .cov-barra { transition: none; } }
+
+/* Simulador de MPS com teto de ocupação */
+.mp-sub { font: 600 14px/1.3 var(--font); color: var(--muted); margin: 16px 0 0; }
+.mp .seg { margin: 6px 0 0; }
+.mp-tabela { font-size: 14px; }
+.mp-tabela td.num, .mp-tabela th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mp-baixo { color: var(--orange-ink); font-weight: 600; }
+.mp-cabe { font-weight: 600; color: var(--iv-entregue, #1B7F5B); }
+.mp-naocabe { font-weight: 700; color: var(--orange-ink); }
+.mp-eixo { stroke: var(--line); stroke-width: 1.5; }
+.mp-disp { fill: none; stroke: var(--muted); stroke-width: 1.2; opacity: .6; }
+.mp-outros { fill: var(--iv-aguardando, #8A98A8); }
+.mp-item { fill: var(--orange); }
+.mp-teto { stroke: var(--text); stroke-width: 2; stroke-dasharray: 6 4; }
+.mp-pct { font: 700 16px/1 var(--display); fill: var(--text); }
+.mp-pct.mp-acima { fill: var(--orange-ink); }
+.mp-mes { font: 500 13px/1 var(--mono); fill: var(--muted); }
+.mp-legenda { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); margin: 8px 0 12px; }
+.mp-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.mp-legenda i { display: inline-block; width: 16px; height: 12px; border-radius: 2px; }
+.mp-l-outros { background: var(--iv-aguardando, #8A98A8); } .mp-l-item { background: var(--orange); }
+.mp-l-disp { border: 1.5px solid var(--muted); } .mp-l-teto { height: 0 !important; border-top: 2px dashed var(--text); border-radius: 0 !important; }
+.mp-tabela th, .mp-tabela td { padding: 8px 9px; }
+.mp-tabela th { white-space: normal; line-height: 1.2; vertical-align: bottom; font-size: 13px; }
+.mp-tabela td small { display: block; font-size: 12px; margin-top: 2px; }

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>The MPS that fits the line: where the occupancy cap shows up | Alexandre Wang</title>
+<meta name="description" content="How to build the production plan for a campaign item that delivers the target coverage and respects the line's occupancy cap, with a simulator that shows when the plan does not fit and what to do.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The MPS that fits the line: where the occupancy cap shows up">
+<meta property="og:description" content="How to build the production plan for a campaign item that delivers the target coverage and respects the line's occupancy cap, with a simulator that shows when the plan does not fit and what to do.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/mps-que-cabe-na-linha.jpg">
+<meta property="og:url" content="https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha-en.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:image:alt" content="Columns of line hours per month, with the other items, this item and the dashed line of the 85% cap.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/mps.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "The MPS that fits the line: where the occupancy cap shows up", "description": "How to build the production plan for a campaign item that delivers the target coverage and respects the line's occupancy cap, with a simulator that shows when the plan does not fit and what to do.", "inLanguage": "en", "image": "https://alexandrewang.vercel.app/assets/img/previews/mps-que-cabe-na-linha.jpg", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "mainEntityOfPage": "https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha-en.html"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/en.html"}, {"@type": "ListItem", "position": 2, "name": "Publications", "item": "https://alexandrewang.vercel.app/en.html#publicacoes"}, {"@type": "ListItem", "position": 3, "name": "The MPS that fits the line: where the occupancy cap shows up", "item": "https://alexandrewang.vercel.app/publicacoes/mps-que-cabe-na-linha-en.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="mps-que-cabe-na-linha.html" hreflang="pt-BR">PT</a><a href="mps-que-cabe-na-linha-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#publicacoes">← Publications</a><span>Production planning</span></div>
+    <h1>The MPS that fits the line: where the occupancy cap shows up</h1>
+    <p class="lead">A production plan that delivers the target coverage and a production plan that fits the line are two different calculations, and where they meet is usually where the MPS fails. This text builds the MPS of a campaign item step by step, shows why the occupancy cap must be measured on the whole line and not just the item, and ends in a simulator where the cap, the load of the other items and the Saturdays worked can be changed. The numbers are fictional.</p>
+    <div class="meta"><span>7 min read</span><span>Simulator</span><span>Nov 2026</span></div>
+  </div>
+</header>
+<main id="conteudo" class="article">
+  <h2>The base MPS calculation</h2>
+  <p>The MPS (master production schedule) answers how much to produce each month. For an item with a target coverage, the calculation is:</p>
+  <p><code>Month's production = month's demand + target stock at month end − opening stock</code></p>
+  <p>Target stock at month end is the target coverage, in days, times the average daily sales of the following month:</p>
+  <p><code>Target stock at month end = target coverage × (next month's demand ÷ days in next month)</code></p>
+  <p>That is why the last month of the plan needs an assumption for the demand of the month after it. In the example, January repeats December.</p>
+  <p>The example is the 300 g chocolate egg from the publication on coverage: 18,000 units in stock at the start of October, a target coverage of 25 days and demand of 54,000, 80,000 and 66,000 units from October to December. October already starts below target, with 18,000 units against the 43,548 that 25 days of October would call for.</p>
+
+  <h2>From volume to hours</h2>
+  <p>Volume only becomes a plan when it fits the line. The conversion uses the average throughput, in units per production hour, and adds what the line spends without producing:</p>
+  <p><code>Item hours = production ÷ throughput + planned setup and stops</code></p>
+  <p><code>Line hours available = working days × hours per day</code></p>
+  <p>The lot is rounded up to the hundred. In the example, throughput is 1,400 units/h, setup and stops add up to 3 h a month and the line runs 3 shifts of 8 h on the working days of October (21), November (19) and December (22), net of national holidays.</p>
+
+  <h2>The occupancy cap: on the item or on the line?</h2>
+  <p>The plan has to respect an occupancy cap, here 85%. The question that decides the result is: 85% of what?</p>
+  <ul>
+    <li><strong>Of the item only:</strong> the item's hours divided by the line's available hours. It gives about 15% in October, and the cap never bites.</li>
+    <li><strong>Of the whole line:</strong> the hours of every item that runs on it, added up, divided by the available hours. This is the reading that really protects the line, because the cap exists to leave room for breakdowns, setups and the unexpected, and that room is shared.</li>
+  </ul>
+  <p>In the example, the other items on the line take 17.5 h per working day. In October that is 367.5 h of 504 available: 73% before a single egg is produced. The 85% cap leaves 428.4 h, and 57.9 h remain for the item after setup and stops. The full plan needs 76.4 h.</p>
+  <p>In the simulator below, switch between the two readings and compare.</p>
+  <section class="sim mp" id="simulador-mps" aria-labelledby="mpT">
+    <h2 id="mpT">Simulator: does the plan fit under the cap?</h2>
+    <p>The fields start with the example from the text. Switch how the cap is read, change any number and watch the plan, the coverage and the line occupancy recalculate.</p>
+    <h3 class="mp-sub">Demand and stock</h3>
+    <div class="rp-form">
+      <label for="mpEstoque">Stock at the start of October (units)<input id="mpEstoque" type="number" inputmode="decimal" min="0" step="1" value="18000" data-padrao="18000"></label>
+      <label for="mpAlvo">Target coverage (days)<input id="mpAlvo" type="number" inputmode="decimal" min="0" step="1" value="25" data-padrao="25"></label>
+      <label for="mpD0">October demand (units)<input id="mpD0" type="number" inputmode="decimal" min="0" step="1" value="54000" data-padrao="54000"></label>
+      <label for="mpD1">November demand (units)<input id="mpD1" type="number" inputmode="decimal" min="0" step="1" value="80000" data-padrao="80000"></label>
+      <label for="mpD2">December demand (units)<input id="mpD2" type="number" inputmode="decimal" min="0" step="1" value="66000" data-padrao="66000"></label>
+    </div>
+    <h3 class="mp-sub">Line and cap</h3>
+    <div class="rp-form">
+      <label for="mpVazao">Item throughput (units/h)<input id="mpVazao" type="number" inputmode="decimal" min="0" step="1" value="1400" data-padrao="1400"></label>
+      <label for="mpFixas">Item's planned setup and stops (h per month)<input id="mpFixas" type="number" inputmode="decimal" min="0" step="0.5" value="3" data-padrao="3"></label>
+      <label for="mpOutros">Load of the other items on the line (h per working day)<input id="mpOutros" type="number" inputmode="decimal" min="0" step="0.5" value="17.5" data-padrao="17.5"></label>
+      <label for="mpHDia">Line hours per working day<input id="mpHDia" type="number" inputmode="decimal" min="0" step="1" value="24" data-padrao="24"></label>
+      <label for="mpTeto">Occupancy cap (%)<input id="mpTeto" type="number" inputmode="decimal" min="0" step="1" value="85" data-padrao="85"></label>
+      <label for="mpSab">Saturdays worked per month (3 shifts)<input id="mpSab" type="number" inputmode="decimal" min="0" step="1" value="0" data-padrao="0"></label>
+    </div>
+    <p class="rp-erro" id="mpErro" role="alert"></p>
+    <div class="seg" id="mpSeg" role="group" aria-label="Choose how the cap is read">
+      <button type="button" data-modo="linha" aria-pressed="true">Cap on the whole line</button>
+      <button type="button" data-modo="item" aria-pressed="false">Cap on the item only</button>
+    </div>
+    <div class="table-wrap" style="margin:14px 0"><table class="mp-tabela"><thead><tr><th>Month</th><th class="num">Needed (units)</th><th class="num">Fits under the cap (units)</th><th class="num">Planned (units)</th><th class="num">Coverage next month</th><th>Line occupancy</th></tr></thead><tbody id="mpCorpo"></tbody></table></div>
+    <div class="rp-grafico" id="mpGrafico"></div>
+    <p class="mp-legenda"><span><i class="mp-l-outros"></i>Other items</span><span><i class="mp-l-item"></i>This item</span><span><i class="mp-l-disp"></i>Hours available in the month</span><span><i class="mp-l-teto"></i>Occupancy cap</span></p>
+    <p class="rp-frase" id="mpFrase" role="status" aria-live="polite"></p>
+    <p><button type="button" class="btn btn-outline btn-sm" id="mpReset">Back to the example</button></p>
+  </section>
+  <h2>What the simulator shows with the starting values</h2>
+  <p>With the cap on the whole line, October and November do not fit. October calls for 102,700 units, but only 81,000 fit under the cap. November calls for 88,300 and 72,900 fit. Coverage at the start of November is 16.9 days and, at the start of December, 17.8, against the target of 25. December recovers, and coverage returns to 25 days at the start of January.</p>
+  <p>With the cap read on the item only, the same plan fits every month, and October's production is the full 102,700 units. The whole line, however, reaches 88% in October, above the cap. The plan seems to deliver everything and does not.</p>
+  <p>Try raising the Saturdays worked to 1. One Saturday of 3 shifts a month is enough for the whole plan to fit, with the target coverage delivered.</p>
+
+  <h2>When it does not fit: the levers</h2>
+  <ul>
+    <li><strong>Reduce the load of the other items in the peak month,</strong> moving lots to slack months when their shelf life and coverage allow.</li>
+    <li><strong>Open capacity,</strong> with Saturdays worked, for example. Each 3-shift Saturday adds 24 h of available hours, of which 20.4 h fit under the 85% cap.</li>
+    <li><strong>Build the item ahead,</strong> when shelf life allows. In the example this is not possible in October, because the previous month has already passed.</li>
+    <li><strong>Accept a lower coverage at the peak</strong> and take the risk to S&amp;OP, instead of delivering a plan that seems to do everything and does not fit.</li>
+    <li><strong>Check the throughput.</strong> The plan uses the historical average, and a short campaign calls for checking that this average is reliable for the volume requested.</li>
+  </ul>
+
+  <h2>Assumptions and limits of the simulator</h2>
+  <ul>
+    <li>Throughput is constant, equal to the item's historical average.</li>
+    <li>The other items take the same load per working day in every month.</li>
+    <li>Saturdays add available hours for the item only; the other items do not run on Saturdays.</li>
+    <li>When stock does not cover demand, the shortfall becomes lost sales, with no backorders.</li>
+    <li>January demand equals December's and there is no safety stock beyond the target coverage.</li>
+  </ul>
+
+  <h2>What to take from it</h2>
+  <p>An MPS that delivers the target coverage on paper and overruns the line in practice is not a plan. The test that separates the two is to measure the cap on the whole line and look month by month at what fits. When it does not fit, the useful result of the plan is the decision it forces.</p>
+  <p class="note">All numbers in this article are fictional and serve only as an example. No company data was used.</p>
+    <div class="share" data-share="mps-que-cabe-na-linha"><span>Share</span></div>
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Shall we talk?</h2><p>For anyone working with production planning or S&amp;OP who wants to compare notes.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-mps">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-mps">Download resume</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-mps">LinkedIn</a>
+    </div>
+  </aside>
+  <div class="next-links">
+    <a href="cobertura-que-engana-en.html"><small>Related publication</small>Inventory coverage that misleads: the same stock, two readings</a>
+    <a href="ponto-de-pedido-en.html"><small>Related publication</small>How much to order, when to order and how much to keep in reserve</a>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+    <a href="../privacy.html">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>
