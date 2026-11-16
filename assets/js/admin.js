@@ -842,8 +842,36 @@
     return linha;
   }
 
-  $('tabCont').addEventListener('click', carregarConteudo);
-  $('reloadCont').addEventListener('click', carregarConteudo);
+  // ---------- Textos editados ao vivo ----------
+  async function carregarTextos() {
+    const caixa = $('textosLista');
+    const { data, error } = await sb.from('textos_site')
+      .select('id, pagina, original, novo, atualizado_em')
+      .order('atualizado_em', { ascending: false });
+    caixa.textContent = '';
+    if (error) { caixa.appendChild(el('p', 'adm-nota', 'Não consegui carregar: ' + error.message)); return; }
+    if (!data.length) { caixa.appendChild(el('p', 'adm-nota', 'Nenhum texto editado ainda.')); return; }
+    data.forEach(t => {
+      const linha = el('div', 'adm-item adm-texto');
+      const corpo = el('div');
+      corpo.appendChild(el('small', null, t.pagina + ' · ' + fmt(t.atualizado_em)));
+      corpo.appendChild(el('s', null, t.original));
+      corpo.appendChild(el('span', 'adm-item-nome', t.novo));
+      const desfaz = el('button', 'btn btn-outline btn-sm', 'Desfazer');
+      desfaz.type = 'button';
+      desfaz.addEventListener('click', async () => {
+        desfaz.disabled = true;
+        const { error: e2 } = await sb.from('textos_site').delete().eq('id', t.id);
+        if (e2) { desfaz.disabled = false; desfaz.textContent = 'Falhou'; return; }
+        linha.remove();
+      });
+      linha.append(corpo, desfaz);
+      caixa.appendChild(linha);
+    });
+  }
+
+  $('tabCont').addEventListener('click', () => { carregarConteudo(); carregarTextos(); });
+  $('reloadCont').addEventListener('click', () => { carregarConteudo(); carregarTextos(); });
 
   boot();
 })();

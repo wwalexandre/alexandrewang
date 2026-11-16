@@ -107,6 +107,7 @@
           <div class="seg" role="group" aria-label="Formato da trajetória">
             <button type="button" data-modo="topicos" aria-pressed="true">Tópicos</button>
             <button type="button" data-modo="star" aria-pressed="false">STAR</button>
+            <button type="button" data-modo="chaves" aria-pressed="false">Palavras-chave</button>
           </div>
           <label class="sw"><input type="checkbox" id="trajImagens" checked><span></span>Imagens</label>
         </div>
@@ -134,6 +135,10 @@
           <div class="star-bloco"><h4>Ações</h4><ul><li>Inserção e revisão do forecast no Kinaxis RapidResponse no Demand Review, antes do consenso, e suporte da ferramenta ao time.</li><li>Acompanhamento de MAPE, Bias e FVA por família de produto e unidade de negócio, em Lag 1 e Lag 3, comparando o forecast estatístico com o comercial.</li><li>Criação, em Power Pivot e DAX, de um modelo de qualificação que recomenda, produto por produto, qual dos dois forecasts usar, com 8 critérios ponderados e classificação de demanda Syntetos-Boylan.</li><li>Desenvolvimento de dashboards em Power BI de provisão e destruição de estoque (ODR/SLOB), risco de supply e acuracidade de forecast, usados nos fóruns de IBP.</li><li>Troca de um Power Query lento por um script em Python que consolida os arquivos de DR Analysis das cinco unidades numa base mestre única.</li></ul></div>
           <div class="star-bloco"><h4>Resultados</h4><ul><li>A escolha do forecast deixou de ser subjetiva: o modelo mostra o critério que decidiu e corta o tempo de análise do planejador.</li><li>O relatório de SLOB e provisão que era montado à mão em Excel virou painel em Power BI, com a Controladoria, as Finanças e o Customer Fulfillment entre os interessados.</li><li>A base mestre única acabou com a reconciliação manual entre sistemas antes de cada Demand Review.</li><li>Onboarding do hub LATAM documentado e avaliado, com mais de 135 questões em 6 módulos, que sustentou o handoff da operação.</li></ul></div>
         </div>
+        <div class="tl-chaves">
+          <div class="chave-linha"><h4>Processos</h4><div class="tags"><span class="tag">Demand Planning</span><span class="tag">IBP</span><span class="tag">S&amp;OP</span><span class="tag">Forecast estatístico</span><span class="tag">Acuracidade de forecast</span><span class="tag">MAPE</span><span class="tag">Bias</span><span class="tag">FVA</span><span class="tag">SLOB</span><span class="tag">Provisão de estoque</span><span class="tag">Classificação ABC</span></div></div>
+          <div class="chave-linha"><h4>Ferramentas</h4><div class="tags"><span class="tag">Kinaxis RapidResponse</span><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Power Pivot</span><span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Snowflake</span><span class="tag">SAP ECC</span><span class="tag">TM1</span><span class="tag">Power Automate</span></div></div>
+        </div>
         <div class="tl-produtos">
           <p>Principais produtos que passavam pelo meu planejamento de demanda, separados por business unit (BU).</p>
           <div class="tl-media">
@@ -160,6 +165,10 @@
           <div class="star-bloco"><h4>Situação</h4><p>Abastecimento das lojas próprias, mais de 3.000 SKUs entre básicos, sazonais e newness, com os indicadores de ruptura, giro e cobertura montados à mão e cada área chegando à reunião com um número diferente.</p></div>
           <div class="star-bloco"><h4>Ações</h4><ul><li>Automação dos boletins de ruptura para gerentes e coordenadores, já com o que repor em cada loja.</li><li>Padronização do cálculo de Ruptura, Giro e Cobertura em Power BI, SQL e VBA, com a mesma regra para todas as áreas.</li><li>Separação do portfólio na pirâmide de produto, básicos, sazonais e newness, para priorizar a reposição por papel da peça e não só por volume.</li></ul></div>
           <div class="star-bloco"><h4>Resultados</h4><ul><li>A priorização do abastecimento ficou mais rápida: o boletim chega pronto, em vez de cada um abrir a própria planilha.</li><li>O indicador parou de mudar conforme quem calculava, e a reunião passou a discutir ação em vez de número.</li></ul></div>
+        </div>
+        <div class="tl-chaves">
+          <div class="chave-linha"><h4>Processos</h4><div class="tags"><span class="tag">Abastecimento de lojas</span><span class="tag">Reposição</span><span class="tag">Ruptura</span><span class="tag">Giro</span><span class="tag">Cobertura de estoque</span><span class="tag">Varejo de moda</span></div></div>
+          <div class="chave-linha"><h4>Ferramentas</h4><div class="tags"><span class="tag">Power BI</span><span class="tag">SQL</span><span class="tag">VBA</span></div></div>
         </div>
         <div class="tl-produtos">
           <p>Abastecimento das lojas próprias com um portfólio de mais de 3.000 SKUs, organizado na pirâmide de produto: básicos, sazonais e newness.</p>
@@ -194,6 +203,10 @@
           <div class="star-bloco"><h4>Ações</h4><ul><li>Condução do ciclo de MPS e apresentação do plano mensal de produção e do sequenciamento de linhas, com horizonte de 3 meses, ao comitê de gestão na MBR, equilibrando demanda, capacidade e materiais.</li><li>Participação nas reuniões gerenciais de capacidade com Produção, Engenharia e Qualidade, organizando cronogramas e antecipando gargalos.</li><li>Desenvolvimento de dashboards em Power BI dos KPIs críticos e dos níveis de estoque, com a explosão de materiais do MRP, integrando dados logísticos e operacionais.</li><li>Elaboração de ordens de produção e conferência documental no SAP ECC (MD04, MMBE, ZPP156), acompanhando materiais críticos com Suprimentos, Qualidade e Logística.</li><li>Acompanhamento de setups de linha e de estudos de holding time, que ajudaram a liberar novos produtos mais rápido.</li><li>Suporte às análises de controle de mudanças e desvios conforme a RDC 658.</li></ul></div>
           <div class="star-bloco"><h4>Resultados</h4><ul><li>Redução de 70% no tempo de análise operacional e de resposta a desvios, com a extração automatizada e o dashboard de explosão de materiais.</li><li>Consultar o SAP a cada pergunta de estoque deixou de ser necessário: o painel já mostra o produto e seus componentes.</li><li>Cronograma integrado entre Planejamento, Produção, Qualidade e Supply, com as pastas de documentação dentro do SLA e um envio quinzenal por e-mail que unificou as datas de todas as áreas e cortou ruído de comunicação.</li><li>Alerta no Teams em até 1 hora para ordens liberadas sem separação de materiais, reconhecido pela empresa, protegendo a continuidade das linhas.</li></ul></div>
         </div>
+        <div class="tl-chaves">
+          <div class="chave-linha"><h4>Processos</h4><div class="tags"><span class="tag">PCP</span><span class="tag">MPS</span><span class="tag">MRP</span><span class="tag">Sequenciamento de produção</span><span class="tag">Planejamento de capacidade</span><span class="tag">Ordens de produção</span><span class="tag">Follow-up de materiais</span><span class="tag">Liberação de lotes</span><span class="tag">RDC 658</span><span class="tag">MBR</span></div></div>
+          <div class="chave-linha"><h4>Ferramentas</h4><div class="tags"><span class="tag">SAP ECC PP/MM</span><span class="tag">MD04</span><span class="tag">Power BI</span><span class="tag">Power Automate</span><span class="tag">Teams</span></div></div>
+        </div>
         <div class="tl-produtos">
           <p>Principais marcas que passavam pelo plano de produção e pelo sequenciamento das linhas.</p>
           <div class="tl-media">
@@ -223,6 +236,10 @@
           <div class="star-bloco"><h4>Ações</h4><ul><li>Desenvolvimento de fórmulas e indicadores no SAP BO, com as visualizações levadas para o Power BI, acompanhando metas diárias e desvios produtivos.</li><li>Automação da extração e do tratamento dos dados com Power Automate, para os dashboards da gestão se atualizarem sozinhos.</li><li>Implantação e condução de programas de 5S nas áreas produtivas.</li><li>Análise de WIP e lead time para identificar gargalos, que levou a um projeto A3 de desgargalamento com rebalanceamento de carga entre etapas.</li><li>Aplicação de Lean na padronização de processos e na gestão visual da rotina.</li><li>Controle da calibração de equipamentos e apoio à rastreabilidade de desvios de processo e qualidade.</li></ul></div>
           <div class="star-bloco"><h4>Resultados</h4><ul><li>Redução de mais de 30% no tempo de coleta e atualização dos indicadores com a automação.</li><li>Ganho de capacidade e redução de custo anual com o A3 de desgargalamento (Excellence Award Pioneering, set 2023).</li><li>App em Power Apps e dashboard de KPIs para a equipe técnica (Excellence Award Achieving, jun 2024).</li><li>Rastreabilidade de não conformidades melhor e resposta mais rápida nas auditorias internas.</li></ul></div>
         </div>
+        <div class="tl-chaves">
+          <div class="chave-linha"><h4>Processos</h4><div class="tags"><span class="tag">Melhoria contínua</span><span class="tag">Lean</span><span class="tag">5S</span><span class="tag">A3</span><span class="tag">WIP</span><span class="tag">Lead time</span><span class="tag">KPIs de produção</span><span class="tag">Gestão visual</span></div></div>
+          <div class="chave-linha"><h4>Ferramentas</h4><div class="tags"><span class="tag">SAP BO</span><span class="tag">Power BI</span><span class="tag">Power Apps</span><span class="tag">Power Automate</span></div></div>
+        </div>
         <div class="tl-produtos">
           <p>Linha Epic de válvulas cardíacas de tecido com stent.</p>
           <div class="tl-media">
@@ -249,6 +266,9 @@
           <div class="star-bloco"><h4>Situação</h4><p>Estágio no desenvolvimento e na formulação de medicamentos sintéticos de uma fundação pública que abastece o SUS.</p></div>
           <div class="star-bloco"><h4>Ações</h4><ul><li>Acompanhamento de lotes piloto e elaboração dos relatórios de desenvolvimento.</li><li>Apoio na elaboração de dossiês de registro, pós-registro e DIFAs.</li><li>Revisão de procedimentos farmacotécnicos pela ótica regulatória.</li></ul></div>
           <div class="star-bloco"><h4>Resultados</h4><ul><li>Documentação de desenvolvimento pronta para as submissões, com o histórico de cada lote piloto rastreável.</li><li>Foi onde processo, documento e dado apareceram pela primeira vez dependendo um do outro, o caminho que levou ao planejamento.</li></ul></div>
+        </div>
+        <div class="tl-chaves">
+          <div class="chave-linha"><h4>Processos</h4><div class="tags"><span class="tag">Desenvolvimento farmacotécnico</span><span class="tag">Lotes piloto</span><span class="tag">Dossiê de registro</span><span class="tag">Pós-registro</span><span class="tag">Assuntos regulatórios</span></div></div>
         </div>
         <div class="tl-produtos">
           <p>Meu foco eram os medicamentos sintéticos.</p>

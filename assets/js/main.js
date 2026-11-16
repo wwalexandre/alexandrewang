@@ -552,172 +552,41 @@ const Reveal = (function reveal() {
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-// Currículo em PDF gerado no navegador (mesmo conteúdo do site)
-const CV = {
+// Currículo em PDF: três versões prontas, no mesmo modelo das candidaturas (gerado pelo
+// Caçador de Vagas a partir do currículo-mestre). Quem baixa escolhe a área e leva a
+// versão que conversa com ela. RH recebe a versão de supply chain, que é a mais geral.
+const CV_ARQ = {
   pt: {
-    file: 'Curriculo-Alexandre-Wang.pdf',
-    role: 'Supply Chain Analytics e Automação | Demand Planning, IBP/S&OP, PCP',
-    contact: 'alexandre01.w@gmail.com  |  +55 (11) 94402-1458  |  linkedin.com/in/alexandrewwang  |  São Paulo, SP',
-    sections: [
-      ['Resumo', [
-        ['p', 'Farmacêutico (UFMG) com pós em Supply Chain (PUC Goiás) e cerca de 6 anos na indústria de saúde e no varejo. Uno planejamento (IBP/S&OP, demanda, PCP) com analytics e automação (Power BI, Power Automate, Python, SQL, SAP) para transformar dados operacionais em decisões.']
-      ]],
-      ['Experiência', [
-        ['h', 'Sanofi | Demand Planning Analyst, IBP', 'jan 2026 a out 2026'],
-        ['b', 'Dashboards Power BI de ODR/SLOB, riscos de supply e acuracidade de forecast por família e BU para os fóruns de IBP.'],
-        ['b', 'Acompanhamento de MAPE, Bias e FVA (Lag 1 e Lag 3), comparando forecast estatístico e comercial.'],
-        ['b', 'Modelo de qualificação de forecast em Power BI e DAX (Syntetos-Boylan, 8 critérios).'],
-        ['b', 'Script Python que consolida as bases DR Analysis de cinco BUs; fluxos em Power Automate.'],
-        ['h', 'Cia. Hering | Analista Sênior de Planejamento e Abastecimento', 'out 2025 a jan 2026'],
-        ['b', 'Boletins automáticos de ruptura para gerentes e coordenadores de lojas.'],
-        ['b', 'KPIs de Ruptura, Giro e Cobertura padronizados com Power BI, SQL e VBA.'],
-        ['h', 'Hypera Pharma (Brainfarma) | Analista de PCP', 'ago 2024 a out 2025'],
-        ['b', 'Ciclo do MPS e apresentação mensal do plano de produção no MBR.'],
-        ['b', 'Rotina de PCP no SAP ECC PP/MM (MD04, MMBE) e follow-up de materiais críticos.'],
-        ['b', 'Alerta no Teams para ordens sem material separado em 1 hora; KPIs diários automáticos.'],
-        ['h', 'Abbott | Estagiário de Produção', '2022 a 2024'],
-        ['b', 'App em Power Apps e dashboard de KPIs da equipe técnica (Excellence Award Achieving, 2024).'],
-        ['b', 'Projeto A3 com ganho de capacidade e redução de custo (Excellence Award Pioneering, 2023).'],
-        ['h', 'FUNED | Estagiário de Desenvolvimento e Formulação', '2021 a 2022'],
-        ['b', 'Lotes piloto, relatórios de desenvolvimento e apoio a dossiês de registro.']
-      ]],
-      ['Formação', [
-        ['b', 'Bacharelado em Farmácia, UFMG (2019 a 2024)'],
-        ['b', 'Pós-graduação em Supply Chain, Gestão da Qualidade e Auditoria na Indústria Farmacêutica, PUC Goiás (2024 a 2026)'],
-        ['b', 'Lean Six Sigma Yellow Belt; Certificado A3 de Melhoria Contínua (Abbott, 2023)']
-      ]],
-      ['Habilidades', [
-        ['p', 'Power BI (DAX), Excel (Power Query, Power Pivot), Power Automate, Power Apps, Python (pandas), SQL (Snowflake, SQL Server), VBA, SAP ECC (PP/MM), Kinaxis, TM1, SharePoint. IBP/S&OP, MPS, MAPE, Bias, FVA, ABC/XYZ, ruptura, giro e cobertura. Incoterms e documentação de importação. RDC 658, GMP.']
-      ]],
-      ['Idiomas', [['p', 'Português (nativo), Inglês (avançado), Mandarim (básico)']]]
-    ]
+    rh: 'Curriculo_Alexandre_Wang_Supply_Chain.pdf',
+    supply: 'Curriculo_Alexandre_Wang_Supply_Chain.pdf',
+    digital: 'Curriculo_Alexandre_Wang_Transformacao_Digital.pdf',
+    auto: 'Curriculo_Alexandre_Wang_Automacao.pdf'
   },
   en: {
-    file: 'Resume-Alexandre-Wang.pdf',
-    role: 'Supply Chain Analytics and Automation | Demand Planning, IBP/S&OP, Production Planning',
-    contact: 'alexandre01.w@gmail.com  |  +55 11 94402-1458  |  linkedin.com/in/alexandrewwang  |  São Paulo, Brazil',
-    sections: [
-      ['Summary', [
-        ['p', 'Pharmacist (UFMG) with a postgraduate degree in Supply Chain (PUC Goiás) and about 6 years in healthcare manufacturing and retail. I combine planning (IBP/S&OP, demand, production planning) with analytics and automation (Power BI, Power Automate, Python, SQL, SAP) to turn operational data into decisions.']
-      ]],
-      ['Experience', [
-        ['h', 'Sanofi | Demand Planning Analyst, IBP', 'Jan 2026 to Oct 2026'],
-        ['b', 'Power BI dashboards for ODR/SLOB, supply risks and forecast accuracy by family and BU for IBP forums.'],
-        ['b', 'Tracking of MAPE, Bias and FVA (Lag 1 and Lag 3), comparing statistical and commercial forecasts.'],
-        ['b', 'Forecast qualification model in Power BI and DAX (Syntetos-Boylan, 8 criteria).'],
-        ['b', 'Python script that consolidates DR Analysis files from five BUs; Power Automate flows.'],
-        ['h', 'Cia. Hering | Senior Planning and Replenishment Analyst', 'Oct 2025 to Jan 2026'],
-        ['b', 'Automated stockout bulletins for store managers and coordinators.'],
-        ['b', 'Standardized Stockout, Turnover and Coverage KPIs with Power BI, SQL and VBA.'],
-        ['h', 'Hypera Pharma (Brainfarma) | Production Planning Analyst', 'Aug 2024 to Oct 2025'],
-        ['b', 'MPS cycle and monthly production plan review in the MBR.'],
-        ['b', 'Production planning in SAP ECC PP/MM (MD04, MMBE) and critical material follow-up.'],
-        ['b', 'Teams alert for orders without picked material within 1 hour; automated daily KPIs.'],
-        ['h', 'Abbott | Production Intern', '2022 to 2024'],
-        ['b', 'Power Apps app and KPI dashboard for the technical team (Excellence Award Achieving, 2024).'],
-        ['b', 'A3 project with capacity gain and cost reduction (Excellence Award Pioneering, 2023).'],
-        ['h', 'FUNED | Development and Formulation Intern', '2021 to 2022'],
-        ['b', 'Pilot batches, development reports and support for registration dossiers.']
-      ]],
-      ['Education', [
-        ['b', 'B.Sc. in Pharmacy, UFMG (2019 to 2024)'],
-        ['b', 'Postgraduate degree in Supply Chain, Quality Management and Auditing in the Pharmaceutical Industry, PUC Goiás (2024 to 2026)'],
-        ['b', 'Lean Six Sigma Yellow Belt; A3 Continuous Improvement Certificate (Abbott, 2023)']
-      ]],
-      ['Skills', [
-        ['p', 'Power BI (DAX), Excel (Power Query, Power Pivot), Power Automate, Power Apps, Python (pandas), SQL (Snowflake, SQL Server), VBA, SAP ECC (PP/MM), Kinaxis, TM1, SharePoint. IBP/S&OP, MPS, MAPE, Bias, FVA, ABC/XYZ, stockout, turnover and coverage. Incoterms and import documentation. GMP.']
-      ]],
-      ['Languages', [['p', 'Portuguese (native), English (advanced), Mandarin (basic)']]]
-    ]
+    rh: 'Resume_Alexandre_Wang_Supply_Chain.pdf',
+    supply: 'Resume_Alexandre_Wang_Supply_Chain.pdf',
+    digital: 'Resume_Alexandre_Wang_Digital_Transformation.pdf',
+    auto: 'Resume_Alexandre_Wang_Automation.pdf'
   }
 };
-
-// A biblioteca de PDF só é baixada quando alguém pede o currículo (o site carrega mais rápido)
-const JSPDF_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-const JSPDF_SRI = 'sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==';
-let jspdfPromise;
-function loadJsPDF() {
-  if (window.jspdf) return Promise.resolve();
-  jspdfPromise = jspdfPromise || new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = JSPDF_SRC; s.integrity = JSPDF_SRI; s.crossOrigin = 'anonymous'; s.referrerPolicy = 'no-referrer';
-    s.onload = resolve;
-    s.onerror = () => { jspdfPromise = null; reject(new Error('jspdf')); };
-    document.head.appendChild(s);
-  });
-  return jspdfPromise;
+function baixarCV(perfil) {
+  const nome = CV_ARQ[LANG][perfil] || CV_ARQ[LANG].supply;
+  const eu = [...document.scripts].find(s => /\/main\.js(\?|$)/.test(s.src));
+  const a = document.createElement('a');
+  a.href = new URL('../docs/cv/' + nome, eu ? eu.src : location.href).href;
+  a.download = nome;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
-// Gera e baixa o PDF. Devolve false se a biblioteca não carregou
-async function generateCV() {
-  try { await loadJsPDF(); } catch (e) {
-    alert(LANG === 'en' ? 'Could not load the PDF. Check your connection and try again.' : 'Não foi possível gerar o PDF. Confira a conexão e tente de novo.');
-    return false;
-  }
-  const cv = CV[LANG];
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  const NAVY = [15, 28, 44], GREEN = [27, 127, 91], ORANGE = [240, 138, 36], INK = [20, 32, 48], MUTED = [83, 97, 113];
-  const L = 44, W = 507, BOTTOM = 790;
-  let y;
-
-  doc.setFillColor(...NAVY); doc.rect(0, 0, 595, 104, 'F');
-  doc.setFillColor(...ORANGE); doc.rect(0, 104, 595, 4, 'F');
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(26); doc.setTextColor(255, 255, 255);
-  doc.text('Alexandre Wang', L, 50);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(11); doc.setTextColor(...ORANGE);
-  doc.text(cv.role, L, 72);
-  doc.setFontSize(9); doc.setTextColor(220, 228, 236);
-  doc.text(cv.contact, L, 90);
-  y = 138;
-
-  const ensure = h => { if (y + h > BOTTOM) { doc.addPage(); y = 56; } };
-  const write = (text, size, style, color, indent = 0) => {
-    doc.setFont('helvetica', style); doc.setFontSize(size); doc.setTextColor(...color);
-    const lines = doc.splitTextToSize(text, W - indent);
-    ensure(lines.length * size * 1.35);
-    doc.text(lines, L + indent, y);
-    y += lines.length * size * 1.35;
-  };
-
-  cv.sections.forEach(([title, items]) => {
-    ensure(40);
-    doc.setFillColor(...GREEN); doc.rect(L, y - 11, W, 16, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(255, 255, 255);
-    doc.text(title.toUpperCase(), L + 6, y);
-    y += 20;
-    items.forEach(([kind, text, extra]) => {
-      if (kind === 'h') {
-        y += 4; ensure(30);
-        write(text, 10.5, 'bold', INK);
-        y -= 2; write(extra, 9, 'normal', MUTED); y += 2;
-      } else if (kind === 'b') {
-        ensure(14);
-        doc.setFillColor(...ORANGE); doc.circle(L + 4, y - 3, 1.6, 'F');
-        write(text, 9.5, 'normal', INK, 12);
-      } else {
-        write(text, 9.5, 'normal', INK);
-      }
-    });
-    y += 10;
-  });
-
-  const pages = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pages; i++) {
-    doc.setPage(i);
-    doc.setFontSize(8); doc.setTextColor(...MUTED);
-    doc.text(SITE_URL.replace('https://', '') + '   ' + i + '/' + pages, L, 820);
-  }
-  doc.save(cv.file);
-  return true;
-}
-
-// Antes do download: pede o e-mail do visitante, avisa o Alexandre e oferece o WhatsApp
 const LEAD_ENDPOINT = 'https://formsubmit.co/ajax/alexandre01.w@gmail.com';
 const CV_TXT = {
   pt: {
     title: 'Baixar currículo',
-    lead: 'Deixe seu e-mail para baixar o PDF.',
+    lead: 'Escolha a sua área e deixe seu e-mail. O PDF vem na versão que conversa com ela.',
+    area: 'Qual é a sua área?',
+    perfis: [['rh', 'RH ou recrutamento'], ['supply', 'Supply chain'], ['digital', 'Transformação digital e dados'], ['auto', 'Automação']],
     label: 'Seu e-mail',
     placeholder: 'nome@empresa.com',
     submit: 'Baixar currículo',
@@ -733,7 +602,9 @@ const CV_TXT = {
   },
   en: {
     title: 'Download resume',
-    lead: 'Leave your email to download the PDF.',
+    lead: 'Pick your area and leave your email. The PDF comes in the version that speaks to it.',
+    area: 'What is your area?',
+    perfis: [['rh', 'HR or recruiting'], ['supply', 'Supply chain'], ['digital', 'Digital transformation and data'], ['auto', 'Automation']],
     label: 'Your email',
     placeholder: 'name@company.com',
     submit: 'Download resume',
@@ -759,6 +630,9 @@ const CV_TXT = {
     '<form method="dialog" id="cvForm" novalidate>' +
       '<h2 id="cvTitle">' + t.title + '</h2>' +
       '<p>' + t.lead + '</p>' +
+      '<fieldset class="cv-perfil"><legend>' + t.area + '</legend>' +
+        t.perfis.map((p, i) => '<label><input type="radio" name="perfil" value="' + p[0] + '"' + (i === 0 ? ' checked' : '') + '> ' + p[1] + '</label>').join('') +
+      '</fieldset>' +
       '<label for="cvEmail">' + t.label + '</label>' +
       '<input type="email" id="cvEmail" name="email" autocomplete="email" placeholder="' + t.placeholder + '" required>' +
       '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
@@ -786,15 +660,8 @@ const CV_TXT = {
     err.textContent = '';
     let saved = '';
     try { saved = localStorage.getItem('cv_email') || ''; } catch (e) {}
-    if (saved) {
-      // Quem já deixou o e-mail baixa direto
-      generateCV().then(ok => {
-        if (!ok) return;
-        track('curriculo-baixado', { repetido: true });
-        showDone(); show();
-      });
-      return;
-    }
+    // Quem já deixou o e-mail só escolhe a área de novo
+    if (saved) email.value = saved;
     form.hidden = false; done.hidden = true;
     show();
     email.focus();
@@ -804,21 +671,20 @@ const CV_TXT = {
     e.preventDefault();
     const value = email.value.trim();
     if (!email.checkValidity() || !value) { err.textContent = t.invalid; email.focus(); return; }
+    const perfil = form.perfil.value || 'supply';
     if (!form._honey.value) {
-      saveLead(value, 'curriculo');
+      saveLead(value, 'curriculo', perfil);
       fetch(LEAD_ENDPOINT, {
         method: 'POST',
         keepalive: true,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ email: value, idioma: LANG, pagina: location.href, _subject: t.subject, _template: 'table', _captcha: 'false' })
+        body: JSON.stringify({ email: value, area: perfil, idioma: LANG, pagina: location.href, _subject: t.subject, _template: 'table', _captcha: 'false' })
       }).catch(() => {});
     }
-    generateCV().then(ok => {
-      if (!ok) return;
-      try { localStorage.setItem('cv_email', value); } catch (e) {}
-      track('curriculo-baixado');
-      showDone();
-    });
+    baixarCV(perfil);
+    try { localStorage.setItem('cv_email', value); } catch (e) {}
+    track('curriculo-baixado', { area: perfil });
+    showDone();
   });
 
   const close = () => (dlg.close ? dlg.close() : dlg.removeAttribute('open'));
@@ -1491,7 +1357,7 @@ const DEMO_TXT = {
   const guarda = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
 
   function formato(m) {
-    const alvo = m === 'star' ? 'star' : 'topicos';
+    const alvo = ['star', 'chaves'].indexOf(m) !== -1 ? m : 'topicos';
     tl.dataset.modo = alvo;
     botoes.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modo === alvo)));
     guarda('traj-modo', alvo);
@@ -1542,4 +1408,68 @@ const DEMO_TXT = {
       aplica(lista);
     })
     .catch(() => {});
+})();
+
+// Textos editados ao vivo. No modo de edição (aberto pelo painel /admin) o dono do site
+// corrige um texto direto na página; a correção fica no Supabase, guardada como
+// "texto original -> texto novo" por página. Aqui a página troca o original pelo novo.
+// O texto entra com textContent, nunca como HTML.
+const Textos = (function textos() {
+  const pagina = location.pathname.replace(/\/$/, '/index.html');
+  const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const FORA = 'script,style,noscript,svg,select,option,input,textarea,[data-sem-edicao]';
+  // "folha": elemento que só tem texto dentro, sem outras tags
+  const folhas = () => [...document.body.querySelectorAll('*')].filter(n =>
+    !n.children.length && norm(n.textContent) && !n.closest(FORA));
+  const aplica = linhas => {
+    const mapa = new Map(linhas.map(l => [l.original, l.novo]));
+    // edição desfeita no painel: o texto volta ao original, mesmo que o navegador tivesse a versão antiga guardada
+    document.querySelectorAll('[data-texto-orig]').forEach(n => {
+      if (mapa.has(n.dataset.textoOrig)) return;
+      n.textContent = n.dataset.textoOrig;
+      delete n.dataset.textoOrig;
+    });
+    if (!linhas.length) return;
+    folhas().forEach(n => {
+      const chave = n.dataset.textoOrig || norm(n.textContent);
+      if (!mapa.has(chave)) return;
+      n.dataset.textoOrig = chave;
+      n.textContent = mapa.get(chave);
+    });
+  };
+  const CHAVE = 'textos:' + pagina;
+  try {
+    const guardado = localStorage.getItem(CHAVE);
+    if (guardado) aplica(JSON.parse(guardado));
+  } catch (e) {}
+  const pronto = fetch(SB_URL + '/rest/v1/textos_site?select=original,novo&pagina=eq.' + encodeURIComponent(pagina), {
+    headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+  })
+    .then(r => (r.ok ? r.json() : []))
+    .then(linhas => {
+      try { localStorage.setItem(CHAVE, JSON.stringify(linhas)); } catch (e) {}
+      aplica(linhas);
+    })
+    .catch(() => {});
+  return { pagina, norm, folhas, pronto, url: SB_URL, key: SB_KEY };
+})();
+
+// Modo de edição: só carrega o editor quando o painel pediu (?editar=1) nesta aba.
+(function modoEdicao() {
+  let ligado = false;
+  try {
+    if (new URLSearchParams(location.search).has('editar')) sessionStorage.setItem('editar', '1');
+    ligado = sessionStorage.getItem('editar') === '1';
+  } catch (e) {}
+  if (!ligado) return;
+  const eu = [...document.scripts].find(s => /\/main\.js(\?|$)/.test(s.src));
+  if (!eu) return;
+  const base = eu.src.replace(/main\.js.*$/, '');
+  window.__Textos = Textos;
+  const carrega = src => new Promise((ok, erro) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = erro;
+    document.head.appendChild(s);
+  });
+  carrega(base + 'vendor/supabase-js.umd.js').then(() => carrega(base + 'editar.js')).catch(() => {});
 })();

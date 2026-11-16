@@ -157,3 +157,7 @@
 .adm-item-nome { font-size: 15px; }
 .adm-item .sw b { font-weight: 500; min-width: 56px; }
 .adm-item .sw:has(input:checked) b { color: var(--text); }
+
+.adm-texto > div { display: grid; gap: 3px; min-width: 0; }
+.adm-texto small { font-size: 12px; color: var(--muted); }
+.adm-texto s { font-size: 14px; color: var(--muted); }

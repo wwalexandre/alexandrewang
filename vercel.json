@@ -32,8 +32,14 @@
     {
       "source": "/admin(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-        { "key": "Cache-Control", "value": "no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
       ]
     },
     {
@@ -52,9 +58,20 @@
       "destination": "/en.html",
       "permanent": false,
       "missing": [
-        { "type": "header", "key": "x-vercel-ip-country", "value": "BR" },
-        { "type": "cookie", "key": "lang" },
-        { "type": "header", "key": "user-agent", "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*" }
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "BR"
+        },
+        {
+          "type": "cookie",
+          "key": "lang"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*"
+        }
       ]
     },
     {
@@ -62,9 +79,20 @@
       "destination": "/en.html",
       "permanent": false,
       "missing": [
-        { "type": "header", "key": "x-vercel-ip-country", "value": "BR" },
-        { "type": "cookie", "key": "lang" },
-        { "type": "header", "key": "user-agent", "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*" }
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "BR"
+        },
+        {
+          "type": "cookie",
+          "key": "lang"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*"
+        }
       ]
     },
     {
@@ -72,9 +100,20 @@
       "destination": "/projetos/:slug-en.html",
       "permanent": false,
       "missing": [
-        { "type": "header", "key": "x-vercel-ip-country", "value": "BR" },
-        { "type": "cookie", "key": "lang" },
-        { "type": "header", "key": "user-agent", "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*" }
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "BR"
+        },
+        {
+          "type": "cookie",
+          "key": "lang"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*"
+        }
       ]
     },
     {
@@ -82,9 +121,20 @@
       "destination": "/publicacoes/:slug-en.html",
       "permanent": false,
       "missing": [
-        { "type": "header", "key": "x-vercel-ip-country", "value": "BR" },
-        { "type": "cookie", "key": "lang" },
-        { "type": "header", "key": "user-agent", "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*" }
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": "BR"
+        },
+        {
+          "type": "cookie",
+          "key": "lang"
+        },
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*([Bb]ot|[Cc]rawl|[Ss]pider|[Ss]lurp|facebookexternalhit|WhatsApp|Lighthouse|Inspection|Preview).*"
+        }
       ]
     },
     {
@@ -106,6 +156,12 @@
       "source": "/whatsapp/resume",
       "destination": "https://wa.me/5511944021458?text=Hi%20Alexandre%21%20I%20downloaded%20your%20resume%20and%20would%20like%20to%20talk.",
       "permanent": false
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/ping",
+      "schedule": "0 9 * * *"
     }
   ]
 }
