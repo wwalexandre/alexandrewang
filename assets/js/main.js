@@ -279,6 +279,17 @@ const Reveal = (function reveal() {
       cards.forEach(c => { c.style.viewTransitionName = ''; });
     });
   }));
+  // Na trajetória, o link de cada empresa abre os projetos já filtrados por ela
+  document.querySelectorAll('[data-filtro-empresa]').forEach(a => a.addEventListener('click', e => {
+    const alvo = group.querySelector('[data-filter="' + a.dataset.filtroEmpresa + '"]');
+    const titulo = document.getElementById('outros-projetos');
+    if (!alvo || !titulo) return;
+    e.preventDefault();
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b === alvo)));
+    cards.forEach(Reveal.finish);
+    run(alvo.dataset.filter);
+    titulo.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }));
 })();
 
 // Fotos dos produtos na Trajetória: abrem numa janela com setas, deslize no celular e Esc para fechar

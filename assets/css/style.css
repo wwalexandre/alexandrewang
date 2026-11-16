@@ -248,6 +248,10 @@ p { margin: 0 0 1em; }
 .filter:hover { border-color: var(--orange); }
 .filter:active { transform: scale(.96); }
 .filter[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.filter-sep { width: 1px; align-self: stretch; margin: 4px 4px; background: var(--line); }
+#outros-projetos { scroll-margin-top: 96px; }
+.tl-liga { margin: 14px 0 0; font-size: 14px; font-weight: 600; }
+.tl-liga a { color: var(--orange-ink); }
 .filter-count { align-self: center; margin-left: auto; font: 500 13px/1 var(--mono); color: var(--muted); }
 :root[data-theme="dark"] .filter[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: var(--navy); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .filter[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: var(--navy); } }
