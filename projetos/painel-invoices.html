@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Painel de invoices de importação | Alexandre Wang</title>
+<meta name="description" content="Painel para acompanhar invoices de importação por Incoterm, etapa e prazo, com o fluxo que tira a invoice do e-mail e leva para uma lista única. Demonstração com dados fictícios.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/painel-invoices.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/painel-invoices.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/painel-invoices-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/projetos/painel-invoices.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Painel de invoices de importação">
+<meta property="og:description" content="Painel para acompanhar invoices de importação por Incoterm, etapa e prazo, com o fluxo que tira a invoice do e-mail e leva para uma lista única. Demonstração com dados fictícios.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/painel-invoices.png">
+<meta property="og:url" content="https://alexandrewang.vercel.app/projetos/painel-invoices.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:alt" content="Painel de invoices com indicadores, barra de situação e lista por previsão de chegada">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/invoices.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Painel de invoices de importação", "description": "Painel para acompanhar invoices de importação por Incoterm, etapa e prazo, com o fluxo que tira a invoice do e-mail e leva para uma lista única. Demonstração com dados fictícios.", "url": "https://alexandrewang.vercel.app/projetos/painel-invoices.html", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "inLanguage": "pt-BR", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "BRL"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Projetos", "item": "https://alexandrewang.vercel.app/index.html#projetos"}, {"@type": "ListItem", "position": 3, "name": "Painel de invoices de importação", "item": "https://alexandrewang.vercel.app/projetos/painel-invoices.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="painel-invoices.html" class="on" aria-current="true">PT</a><a href="painel-invoices-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#projetos">← Projetos</a><span>Comércio exterior</span></div>
+    <h1>Painel de invoices de importação</h1>
+    <p class="lead">Invoice de importação chega por e-mail, vira anexo perdido numa caixa de entrada e só reaparece quando alguém pergunta onde está a carga. Este painel junta todas numa lista única e responde três perguntas: em que etapa cada uma está, qual está atrasada e o que o Incoterm muda no acompanhamento.</p>
+    <div class="meta"><span>Power Automate · SharePoint</span><span>Outlook</span><span>Incoterms 2020</span><span>Dados fictícios</span></div>
+  </div>
+</header>
+<main id="conteudo">
+  <section class="dash" data-lead-demo="painel de invoices" aria-label="Painel interativo">
+    <div class="wrap">
+      <div class="dash-bar" role="group" aria-label="Filtros do painel">
+        <label>Incoterm<select id="fInc"><option value="all">Todos</option><option>EXW</option><option>FCA</option><option>FOB</option><option>CIF</option><option>DAP</option></select></label>
+        <label>Situação<select id="fStatus"><option value="all">Todas</option><option value="aguardando">Aguardando embarque</option><option value="transito">Em trânsito</option><option value="desembaraco">Em desembaraço</option><option value="entregue">Entregue</option><option value="atrasada">Atrasada</option></select></label>
+        <label>Buscar invoice ou fornecedor<input id="fBusca" type="search" autocomplete="off"></label>
+        <span class="demo">Dados fictícios · posição em 16/11/2026</span>
+      </div>
+      <div class="kpis iv-kpis">
+        <div class="kpi"><span>Invoices no painel</span><b id="kTot">…</b></div>
+        <div class="kpi"><span>Em trânsito</span><b id="kTran">…</b></div>
+        <div class="kpi"><span>Em desembaraço</span><b id="kDes">…</b></div>
+        <div class="kpi"><span>Atrasadas</span><b id="kAtr">…</b></div>
+        <div class="kpi"><span>Valor ainda a receber</span><b id="kVal">…</b></div>
+      </div>
+      <div class="charts iv-duas">
+        <div class="chart-card"><h3>Situação das invoices</h3><div class="iv-barra" id="ivBarra"></div><div class="iv-legenda" id="ivLegenda"></div></div>
+        <div class="chart-card"><h3>Invoices por Incoterm</h3><div class="iv-inc" id="ivInc"></div></div>
+      </div>
+      <div class="chart-card iv-lista">
+        <div class="iv-topo"><h3>Invoices: atrasadas primeiro, depois por previsão de chegada</h3><span class="filter-count" id="ivConta"></span></div>
+        <p class="iv-dica">Clique numa linha para ver as etapas da invoice e o que o Incoterm dela pede.</p>
+        <div class="table-wrap" style="margin:0"><table class="iv-tabela"><thead><tr><th>Invoice</th><th>Fornecedor</th><th>Incoterm</th><th>Modal</th><th class="num">Valor</th><th class="num">Previsão</th><th>Situação</th></tr></thead><tbody id="ivCorpo"></tbody></table></div>
+        <p class="iv-dica" id="ivVazio" role="status"></p>
+        <div class="iv-detalhe" id="ivDetalhe" hidden aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+  <article class="article" style="padding-top:8px">
+    <h2>O problema</h2>
+    <p>Numa operação de importação, a invoice é o documento que dá início a tudo: ela diz o que foi comprado, por quanto e em que condição de entrega. O problema é o caminho que ela faz. Chega como anexo de e-mail, cada analista guarda a sua numa pasta, e o acompanhamento vira uma planilha que alguém atualiza quando lembra.</p>
+    <p>O resultado é conhecido: ninguém sabe dizer rápido quantas invoices estão a caminho, qual passou do prazo e quem deveria estar cobrando o transportador.</p>
+
+    <h2>Como o fluxo funciona</h2>
+    <p>A ideia é tirar a invoice do e-mail no momento em que ela chega, sem depender de alguém salvar o anexo:</p>
+    <ol>
+      <li><strong>O e-mail chega no Outlook.</strong> Uma regra reconhece as mensagens de invoice pelo remetente e pelo assunto.</li>
+      <li><strong>O Power Automate salva o anexo.</strong> O PDF vai para uma pasta do SharePoint organizada por ano e mês, com o número da invoice no nome do arquivo.</li>
+      <li><strong>Os dados principais viram uma linha.</strong> Número, fornecedor, Incoterm, valor e datas entram numa lista única. O que o fluxo não consegue ler fica marcado para conferência manual.</li>
+      <li><strong>O painel lê a lista.</strong> Cada invoice ganha uma etapa e uma previsão de chegada, e as atrasadas sobem para o topo.</li>
+    </ol>
+    <p>O layout segue a lógica de um aplicativo de acompanhamento: os números em cima, a situação geral numa barra e a lista embaixo, com o detalhe de cada invoice a um clique.</p>
+
+    <h2>O que o Incoterm muda no acompanhamento</h2>
+    <p>As três letras da invoice definem quem contrata o frete e em que ponto o risco passa do vendedor para o comprador. Isso muda quem precisa ser cobrado em cada etapa:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Incoterm</th><th>Quem contrata o frete principal</th><th>Onde o risco passa</th><th>O que acompanhar</th></tr></thead>
+        <tbody>
+          <tr><td><strong>EXW</strong></td><td>Comprador</td><td>No local do vendedor, antes de carregar.</td><td>Coleta na origem e desembaraço de exportação, que também ficam com o comprador.</td></tr>
+          <tr><td><strong>FCA</strong></td><td>Comprador</td><td>Na entrega ao transportador indicado pelo comprador.</td><td>A entrega ao transportador e o desembaraço de exportação, que é do vendedor.</td></tr>
+          <tr><td><strong>FOB</strong></td><td>Comprador</td><td>Quando a carga está a bordo do navio.</td><td>A data de embarque no conhecimento (BL). Só marítimo.</td></tr>
+          <tr><td><strong>CIF</strong></td><td>Vendedor</td><td>A bordo no porto de embarque, embora o vendedor pague frete e seguro.</td><td>O conhecimento (BL) e a apólice de seguro. Só marítimo.</td></tr>
+          <tr><td><strong>DAP</strong></td><td>Vendedor</td><td>No local de destino combinado, pronta para descarregar.</td><td>A chegada ao destino. O desembaraço de importação continua com o comprador.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>O detalhe que mais engana está no CIF: o vendedor paga o frete até o destino, mas o risco já passou para o comprador no embarque. Quem lê só "frete pago" acha que a carga está protegida até chegar.</p>
+
+    <h2>O que o painel responde</h2>
+    <ul>
+      <li><strong>Quantas invoices estão abertas e quanto valem:</strong> os números de cima, que mudam com os filtros.</li>
+      <li><strong>Onde está o acúmulo:</strong> a barra de situação mostra se o volume está parado antes do embarque, em trânsito ou no desembaraço.</li>
+      <li><strong>O que cobrar hoje:</strong> a lista vem ordenada pela previsão de chegada, com as atrasadas marcadas e os dias de atraso.</li>
+      <li><strong>De quem cobrar:</strong> o detalhe de cada invoice diz quem contrata o frete e o que aquele Incoterm pede.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>Sobre esta página:</strong> é uma demonstração feita em HTML e JavaScript, com 30 invoices e fornecedores fictícios gerados no navegador. O fluxo descrito usa Outlook, Power Automate e SharePoint. Nenhum dado de empresa foi usado.</p>
+    </div>
+    <aside class="cta-card" aria-label="Contato">
+      <div><h2>Quer conversar sobre esse projeto?</h2><p>Para quem quer tirar um acompanhamento de importação da planilha e do e-mail.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-invoices">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-invoices">Baixar currículo</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-invoices">LinkedIn</a>
+      </div>
+    </aside>
+    <div class="next-links">
+      <a href="validador-documentos.html"><small>Projeto relacionado</small>Validador de documentos de importação com OCR</a>
+      <a href="../publicacoes/incoterms.html"><small>Publicação relacionada</small>O navio afundou. Quem paga o prejuízo?</a>
+    </div>
+  </article>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+    <a href="../privacidade.html">Privacidade</a>
+  </div>
+</footer>
+</body>
+</html>

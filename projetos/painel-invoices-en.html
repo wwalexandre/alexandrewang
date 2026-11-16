@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Import invoice tracker | Alexandre Wang</title>
+<meta name="description" content="A tracker for import invoices by Incoterm, stage and deadline, with the flow that takes the invoice out of email and into a single list. Demo with fictional data.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/projetos/painel-invoices-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/projetos/painel-invoices.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/projetos/painel-invoices-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/projetos/painel-invoices.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Import invoice tracker">
+<meta property="og:description" content="A tracker for import invoices by Incoterm, stage and deadline, with the flow that takes the invoice out of email and into a single list. Demo with fictional data.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/painel-invoices.png">
+<meta property="og:url" content="https://alexandrewang.vercel.app/projetos/painel-invoices-en.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:image:alt" content="Invoice tracker with indicators, status bar and list by expected arrival">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/invoices.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Import invoice tracker", "description": "A tracker for import invoices by Incoterm, stage and deadline, with the flow that takes the invoice out of email and into a single list. Demo with fictional data.", "url": "https://alexandrewang.vercel.app/projetos/painel-invoices-en.html", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "inLanguage": "en", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "BRL"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/en.html"}, {"@type": "ListItem", "position": 2, "name": "Projects", "item": "https://alexandrewang.vercel.app/en.html#projetos"}, {"@type": "ListItem", "position": 3, "name": "Import invoice tracker", "item": "https://alexandrewang.vercel.app/projetos/painel-invoices-en.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="painel-invoices.html" hreflang="pt-BR">PT</a><a href="painel-invoices-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#projetos">← Projects</a><span>International trade</span></div>
+    <h1>Import invoice tracker</h1>
+    <p class="lead">An import invoice arrives by email, becomes an attachment lost in an inbox and only resurfaces when someone asks where the cargo is. This tracker brings them all into one list and answers three questions: what stage each one is at, which one is late and what the Incoterm changes in the follow-up.</p>
+    <div class="meta"><span>Power Automate · SharePoint</span><span>Outlook</span><span>Incoterms 2020</span><span>Fictional data</span></div>
+  </div>
+</header>
+<main id="conteudo">
+  <section class="dash" data-lead-demo="painel de invoices" aria-label="Interactive tracker">
+    <div class="wrap">
+      <div class="dash-bar" role="group" aria-label="Tracker filters">
+        <label>Incoterm<select id="fInc"><option value="all">All</option><option>EXW</option><option>FCA</option><option>FOB</option><option>CIF</option><option>DAP</option></select></label>
+        <label>Status<select id="fStatus"><option value="all">All</option><option value="aguardando">Awaiting shipment</option><option value="transito">In transit</option><option value="desembaraco">In customs</option><option value="entregue">Delivered</option><option value="atrasada">Late</option></select></label>
+        <label>Search invoice or supplier<input id="fBusca" type="search" autocomplete="off"></label>
+        <span class="demo">Fictional data · position on Nov 16, 2026</span>
+      </div>
+      <div class="kpis iv-kpis">
+        <div class="kpi"><span>Invoices on the tracker</span><b id="kTot">…</b></div>
+        <div class="kpi"><span>In transit</span><b id="kTran">…</b></div>
+        <div class="kpi"><span>In customs</span><b id="kDes">…</b></div>
+        <div class="kpi"><span>Late</span><b id="kAtr">…</b></div>
+        <div class="kpi"><span>Value still to arrive</span><b id="kVal">…</b></div>
+      </div>
+      <div class="charts iv-duas">
+        <div class="chart-card"><h3>Invoice status</h3><div class="iv-barra" id="ivBarra"></div><div class="iv-legenda" id="ivLegenda"></div></div>
+        <div class="chart-card"><h3>Invoices by Incoterm</h3><div class="iv-inc" id="ivInc"></div></div>
+      </div>
+      <div class="chart-card iv-lista">
+        <div class="iv-topo"><h3>Invoices: late ones first, then by expected arrival</h3><span class="filter-count" id="ivConta"></span></div>
+        <p class="iv-dica">Click a row to see the invoice's stages and what its Incoterm requires.</p>
+        <div class="table-wrap" style="margin:0"><table class="iv-tabela"><thead><tr><th>Invoice</th><th>Supplier</th><th>Incoterm</th><th>Mode</th><th class="num">Value</th><th class="num">Expected</th><th>Status</th></tr></thead><tbody id="ivCorpo"></tbody></table></div>
+        <p class="iv-dica" id="ivVazio" role="status"></p>
+        <div class="iv-detalhe" id="ivDetalhe" hidden aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+  <article class="article" style="padding-top:8px">
+    <h2>The problem</h2>
+    <p>In an import operation, the invoice is the document that starts everything: it says what was bought, for how much and on what delivery terms. The problem is the path it takes. It arrives as an email attachment, each analyst keeps their own in a folder, and the follow-up becomes a spreadsheet someone updates when they remember.</p>
+    <p>The result is familiar: nobody can quickly say how many invoices are on the way, which one is past its deadline and who should be chasing the carrier.</p>
+
+    <h2>How the flow works</h2>
+    <p>The idea is to take the invoice out of email the moment it arrives, without depending on someone saving the attachment:</p>
+    <ol>
+      <li><strong>The email arrives in Outlook.</strong> A rule recognises invoice messages by sender and subject.</li>
+      <li><strong>Power Automate saves the attachment.</strong> The PDF goes to a SharePoint folder organised by year and month, with the invoice number in the file name.</li>
+      <li><strong>The main data becomes a row.</strong> Number, supplier, Incoterm, value and dates go into a single list. What the flow cannot read is flagged for manual checking.</li>
+      <li><strong>The tracker reads the list.</strong> Each invoice gets a stage and an expected arrival, and the late ones rise to the top.</li>
+    </ol>
+    <p>The layout follows the logic of a tracking app: the numbers on top, the overall status in one bar and the list below, with each invoice's detail one click away.</p>
+
+    <h2>What the Incoterm changes in the follow-up</h2>
+    <p>The three letters on the invoice define who contracts the freight and at what point the risk passes from seller to buyer. That changes who has to be chased at each stage:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Incoterm</th><th>Who contracts the main freight</th><th>Where the risk passes</th><th>What to track</th></tr></thead>
+        <tbody>
+          <tr><td><strong>EXW</strong></td><td>Buyer</td><td>At the seller's premises, before loading.</td><td>Pickup at origin and export clearance, which are also on the buyer.</td></tr>
+          <tr><td><strong>FCA</strong></td><td>Buyer</td><td>On handover to the carrier named by the buyer.</td><td>The handover to the carrier and the export clearance, which is the seller's.</td></tr>
+          <tr><td><strong>FOB</strong></td><td>Buyer</td><td>When the goods are on board the vessel.</td><td>The on-board date on the bill of lading. Sea only.</td></tr>
+          <tr><td><strong>CIF</strong></td><td>Seller</td><td>On board at the port of shipment, although the seller pays freight and insurance.</td><td>The bill of lading and the insurance policy. Sea only.</td></tr>
+          <tr><td><strong>DAP</strong></td><td>Seller</td><td>At the named place of destination, ready for unloading.</td><td>Arrival at destination. Import clearance stays with the buyer.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The detail that misleads most is in CIF: the seller pays freight to destination, but the risk already passed to the buyer at shipment. Anyone reading only "freight paid" assumes the cargo is protected until it arrives.</p>
+
+    <h2>What the tracker answers</h2>
+    <ul>
+      <li><strong>How many invoices are open and what they are worth:</strong> the numbers on top, which change with the filters.</li>
+      <li><strong>Where the build-up is:</strong> the status bar shows whether volume is stuck before shipment, in transit or in customs.</li>
+      <li><strong>What to chase today:</strong> the list is ordered by expected arrival, with late ones flagged and the days of delay.</li>
+      <li><strong>Who to chase:</strong> each invoice's detail says who contracts the freight and what that Incoterm requires.</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>About this page:</strong> it is a demo built in HTML and JavaScript, with 30 fictional invoices and suppliers generated in the browser. The flow described uses Outlook, Power Automate and SharePoint. No company data was used.</p>
+    </div>
+    <aside class="cta-card" aria-label="Contato">
+      <div><h2>Want to talk about this project?</h2><p>For anyone who wants to move import tracking out of spreadsheets and email.</p></div>
+      <div class="btn-row">
+        <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-invoices">WhatsApp</a>
+        <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-invoices">Download resume</a>
+        <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-invoices">LinkedIn</a>
+      </div>
+    </aside>
+    <div class="next-links">
+      <a href="validador-documentos-en.html"><small>Related project</small>Import document checker with OCR</a>
+      <a href="../publicacoes/incoterms-en.html"><small>Related publication</small>The ship sank. Who pays for the loss?</a>
+    </div>
+  </article>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+    <a href="../privacy.html">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>

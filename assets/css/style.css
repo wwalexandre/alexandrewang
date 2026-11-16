@@ -1028,3 +1028,48 @@ body.hint-open .to-top { bottom: 96px; }
 .rp-rotulo { font: 600 12px/1 var(--font); fill: var(--text); }
 .rp-rotulo-rop { fill: var(--orange-ink); }
 .rp-frase { font-weight: 600; margin: 12px 0; }
+
+/* Painel de invoices */
+:root { --iv-aguardando: #8A98A8; --iv-transito: #2A6CB8; --iv-desembaraco: #C96A0A; --iv-entregue: #1B7F5B; }
+:root[data-theme="dark"] { --iv-aguardando: #7B8A9B; --iv-transito: #3F86D6; --iv-desembaraco: #D9740F; --iv-entregue: #2FA07A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --iv-aguardando: #7B8A9B; --iv-transito: #3F86D6; --iv-desembaraco: #D9740F; --iv-entregue: #2FA07A; } }
+.dash-bar input[type="search"] { font: 500 14px/1 var(--font); padding: 9px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); min-width: 200px; }
+@media (min-width: 900px) { .kpis.iv-kpis { grid-template-columns: repeat(5, 1fr); } .charts.iv-duas { grid-template-columns: 1fr 1fr; } }
+.iv-kpis .kpi b { font-size: 30px; }
+.iv-barra { display: flex; gap: 3px; height: 22px; border-radius: 6px; overflow: hidden; margin: 6px 0 12px; }
+.iv-barra i { display: block; min-width: 4px; }
+i.iv-aguardando { background: var(--iv-aguardando); } i.iv-transito { background: var(--iv-transito); }
+i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { background: var(--iv-entregue); }
+.iv-legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.iv-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.iv-legenda i { width: 10px; height: 10px; border-radius: 3px; }
+.iv-inc { display: grid; gap: 7px; }
+.iv-inc-linha { display: grid; grid-template-columns: 40px 1fr 26px; align-items: center; gap: 10px; font-size: 13px; }
+.iv-inc-linha b { font: 600 13px/1 var(--mono); }
+.iv-inc-linha span { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.iv-inc-trilho { height: 12px; border-radius: 4px; background: var(--surface-2); }
+.iv-inc-trilho i { display: block; height: 100%; border-radius: 4px; background: var(--iv-transito); }
+.iv-lista { margin-top: 16px; }
+.iv-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.iv-dica { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+.iv-tabela { font-size: 14px; }
+.iv-tabela td.num, .iv-tabela th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.iv-tabela tbody tr { cursor: pointer; }
+.iv-tabela tbody tr:hover, .iv-tabela tbody tr[aria-selected="true"] { background: var(--surface-2); }
+.iv-tag { display: inline-block; font: 600 12px/1 var(--font); padding: 5px 7px; border-radius: 5px; margin: 1px 4px 1px 0; color: #fff; white-space: nowrap; }
+.iv-tag.iv-aguardando { background: var(--iv-aguardando); } .iv-tag.iv-transito { background: var(--iv-transito); }
+.iv-tag.iv-desembaraco { background: var(--iv-desembaraco); } .iv-tag.iv-entregue { background: var(--iv-entregue); }
+.iv-tag.iv-atrasada { background: none; color: #C0392B; border: 1px solid currentColor; }
+:root[data-theme="dark"] .iv-tag.iv-atrasada { color: #F08A7B; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .iv-tag.iv-atrasada { color: #F08A7B; } }
+.iv-detalhe { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.iv-detalhe h3 { font-size: 16px; margin-bottom: 12px; }
+.iv-ficha { display: grid; gap: 10px 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin: 0 0 16px; }
+.iv-ficha dt { font-size: 12px; color: var(--muted); }
+.iv-ficha dd { margin: 2px 0 0; font-size: 14px; }
+.iv-trilha { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+.iv-trilha li { border-top: 4px solid var(--line); padding-top: 8px; display: grid; gap: 2px; font-size: 13px; }
+.iv-trilha li.feita { border-top-color: var(--iv-entregue); }
+.iv-trilha li.atual { border-top-color: var(--orange); }
+.iv-trilha li.falta { color: var(--muted); }
+.iv-trilha span { color: var(--muted); font-size: 12px; }
