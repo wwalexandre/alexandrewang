@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Quanto pedir, quando pedir e quanto guardar de reserva | Alexandre Wang</title>
+<meta name="description" content="Lote econômico, ponto de pedido e estoque de segurança explicados com um pote de whey, as três fórmulas com um exemplo resolvido e um simulador para testar os próprios números.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Quanto pedir, quando pedir e quanto guardar de reserva">
+<meta property="og:description" content="Lote econômico, ponto de pedido e estoque de segurança explicados com um pote de whey, as três fórmulas com um exemplo resolvido e um simulador para testar os próprios números.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/ponto-de-pedido.jpg">
+<meta property="og:url" content="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:alt" content="Gráfico dente de serra do estoque, com a linha do ponto de pedido e a faixa do estoque de segurança.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/reposicao.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "Quanto pedir, quando pedir e quanto guardar de reserva", "description": "Lote econômico, ponto de pedido e estoque de segurança explicados com um pote de whey, as três fórmulas com um exemplo resolvido e um simulador para testar os próprios números.", "inLanguage": "pt-BR", "image": "https://alexandrewang.vercel.app/assets/img/previews/ponto-de-pedido.jpg", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "mainEntityOfPage": "https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/"}, {"@type": "ListItem", "position": 2, "name": "Publicações", "item": "https://alexandrewang.vercel.app/index.html#publicacoes"}, {"@type": "ListItem", "position": 3, "name": "Quanto pedir, quando pedir e quanto guardar de reserva", "item": "https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="../index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../index.html#trajetoria">Trajetória</a>
+      <a href="../index.html#projetos">Projetos</a>
+      <a href="../index.html#publicacoes">Publicações</a>
+      <a href="../index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="ponto-de-pedido.html" class="on" aria-current="true">PT</a><a href="ponto-de-pedido-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../index.html#publicacoes">← Publicações</a><span>Gestão de estoques</span></div>
+    <h1>Quanto pedir, quando pedir e quanto guardar de reserva</h1>
+    <p class="lead">Estoque alto e ruptura ao mesmo tempo quase nunca é falta de produto. É falta de critério para três decisões: quanto pedir, quando pedir e quanto guardar de reserva. Este texto explica as três com um pote de whey, mostra as fórmulas com um exemplo resolvido e termina num simulador. Os números são fictícios.</p>
+    <div class="meta"><span>Leitura de 6 min</span><span>Simulador</span><span>Nov 2026</span></div>
+  </div>
+</header>
+<main id="conteudo" class="article">
+  <h2>O pote de whey</h2>
+  <p>Quem toma whey todo dia já faz gestão de estoque sem chamar por esse nome. Comprar potes demais ocupa espaço, pode vencer e deixa dinheiro parado no armário. Comprar de menos acaba em ficar sem no pós-treino. E quem compra pouco toda hora paga frete em todo pedido.</p>
+  <p>Na empresa a lógica é a mesma, só que com milhares de produtos. Tudo se resume a três perguntas, e cada uma tem um nome técnico:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Pergunta</th><th>No pote de whey</th><th>Nome técnico</th></tr></thead>
+      <tbody>
+        <tr><td>Quanto comprar?</td><td>O tamanho da compra que equilibra frete e armário cheio.</td><td>Lote econômico (EOQ)</td></tr>
+        <tr><td>Quando comprar?</td><td>O nível do pote em que o pedido precisa sair, para chegar antes de acabar.</td><td>Ponto de pedido (ROP)</td></tr>
+        <tr><td>Quanto de reserva?</td><td>O fundo do pote que só é usado quando a entrega atrasa ou o consumo sobe.</td><td>Estoque de segurança (SS)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>1. Quanto pedir: o lote econômico</h2>
+  <p>Dois custos andam em sentidos opostos. Pedir pouco, várias vezes, aumenta o custo de pedido: frete, tempo de quem compra, recebimento. Pedir muito, poucas vezes, aumenta o custo de manter estoque: capital parado, espaço, risco de vencer. O lote econômico é o tamanho de pedido em que a soma dos dois é a menor.</p>
+  <p><code>EOQ = √(2 × D × S ÷ H)</code></p>
+  <ul>
+    <li><strong>D:</strong> demanda do ano, em unidades.</li>
+    <li><strong>S:</strong> custo de fazer um pedido.</li>
+    <li><strong>H:</strong> custo de manter uma unidade em estoque por um ano.</li>
+  </ul>
+
+  <h2>2. Quanto de reserva: o estoque de segurança</h2>
+  <p>A demanda nunca é igual à média. O estoque de segurança é o colchão que absorve a variação da demanda enquanto o pedido está a caminho.</p>
+  <p><code>SS = z × σ × √L</code></p>
+  <ul>
+    <li><strong>z:</strong> fator do nível de serviço desejado. Para 95%, z = 1,65.</li>
+    <li><strong>σ:</strong> desvio padrão da demanda diária.</li>
+    <li><strong>L:</strong> lead time, em dias.</li>
+  </ul>
+  <p>A reserva cresce com a raiz do lead time. Dobrar o lead time não dobra o estoque de segurança: aumenta cerca de 41%.</p>
+
+  <h2>3. Quando pedir: o ponto de pedido</h2>
+  <p>É o consumo esperado durante o lead time, mais a reserva. Quando o estoque chega nesse nível, o pedido sai.</p>
+  <p><code>ROP = d × L + SS</code></p>
+  <ul>
+    <li><strong>d:</strong> demanda média por dia.</li>
+    <li><strong>L:</strong> lead time, em dias.</li>
+  </ul>
+
+  <h2>O exemplo resolvido</h2>
+  <p>Um produto vende 50 unidades por dia, em 300 dias de venda no ano, com desvio padrão de 10 unidades por dia. Cada pedido custa R$ 50, manter uma unidade por um ano custa R$ 6, o fornecedor entrega em 5 dias e o nível de serviço desejado é 95%.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Conta</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td>Demanda do ano = 50 × 300</td><td>15.000 unidades</td></tr>
+        <tr><td>EOQ = √(2 × 15.000 × 50 ÷ 6)</td><td><strong>500 unidades</strong></td></tr>
+        <tr><td>SS = 1,65 × 10 × √5</td><td><strong>37 unidades</strong></td></tr>
+        <tr><td>ROP = 50 × 5 + 37</td><td><strong>287 unidades</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A decisão cabe numa frase: quando o estoque chegar a 287, pedir 500. Se a demanda seguir a média, o lote novo chega quando ainda restam 37 unidades de reserva.</p>
+
+  <section class="sim" id="simulador" aria-labelledby="simT">
+    <h2 id="simT">Simulador: teste com os seus números</h2>
+    <p>Os campos começam com o exemplo do texto. Mude qualquer um e os três resultados, o custo e o gráfico se recalculam na hora.</p>
+    <div class="rp-form">
+      <label for="rpDemanda">Demanda média por dia (un)<input id="rpDemanda" type="number" inputmode="decimal" min="0" step="1" value="50" data-padrao="50"></label>
+      <label for="rpDesvio">Desvio padrão da demanda diária (un)<input id="rpDesvio" type="number" inputmode="decimal" min="0" step="1" value="10" data-padrao="10"></label>
+      <label for="rpLead">Lead time (dias)<input id="rpLead" type="number" inputmode="decimal" min="0" step="1" value="5" data-padrao="5"></label>
+      <label for="rpServico">Nível de serviço<select id="rpServico" data-padrao="1.65"><option value="1.28">90%</option><option value="1.65" selected>95%</option><option value="2.05">98%</option><option value="2.33">99%</option></select></label>
+      <label for="rpPedido">Custo de fazer um pedido (R$)<input id="rpPedido" type="number" inputmode="decimal" min="0" step="1" value="50" data-padrao="50"></label>
+      <label for="rpManter">Custo de manter 1 unidade por ano (R$)<input id="rpManter" type="number" inputmode="decimal" min="0" step="0.5" value="6" data-padrao="6"></label>
+      <label for="rpDias">Dias de venda no ano<input id="rpDias" type="number" inputmode="decimal" min="0" step="1" value="300" data-padrao="300"></label>
+    </div>
+    <p class="rp-erro" id="rpErro" role="alert"></p>
+    <div class="rp-kpis" aria-live="polite">
+      <div class="rp-k rp-k-forte"><span>Quanto pedir (lote econômico)</span><b id="rpEoq"></b><small id="rpCiclo"></small></div>
+      <div class="rp-k rp-k-forte"><span>Quando pedir (ponto de pedido)</span><b id="rpRop"></b><small>pedir quando o estoque chegar aqui</small></div>
+      <div class="rp-k rp-k-forte"><span>Quanto de reserva (estoque de segurança)</span><b id="rpSs"></b><small>colchão para variação da demanda</small></div>
+      <div class="rp-k"><span>Frequência</span><b id="rpFreq"></b></div>
+      <div class="rp-k"><span>Estoque médio</span><b id="rpMedio"></b></div>
+      <div class="rp-k"><span>Custo anual de pedir e manter</span><b id="rpCusto"></b></div>
+    </div>
+    <div class="rp-grafico" id="rpGrafico"></div>
+    <p class="rp-frase" id="rpFrase"></p>
+    <p><button type="button" class="btn btn-outline btn-sm" id="rpReset">Voltar ao exemplo</button></p>
+  </section>
+  <h2>Onde a fórmula não basta</h2>
+  <ul>
+    <li><strong>O lote real quase nunca é o EOQ exato.</strong> Lote mínimo do fornecedor, múltiplo de embalagem, capacidade de armazenagem e desconto por volume costumam definir o número final. O EOQ serve de referência para saber quanto custa se afastar dele.</li>
+    <li><strong>Lead time que varia pede mais reserva.</strong> A fórmula acima supõe prazo de entrega fixo. Quando o prazo oscila, a variação dele entra na conta junto com a da demanda.</li>
+    <li><strong>Demanda intermitente quebra a premissa.</strong> Em item que vende pouco e de forma irregular, média e desvio padrão descrevem mal o consumo, e o estoque de segurança calculado assim engana.</li>
+    <li><strong>Validade limita o lote.</strong> Em produto perecível ou farmacêutico, um lote econômico maior que o consumo dentro do prazo de validade vira perda.</li>
+    <li><strong>Nível de serviço é decisão de negócio.</strong> Passar de 95% para 99% aumenta a reserva em cerca de 41% no exemplo. O simulador mostra esse custo antes de alguém prometer o nível.</li>
+  </ul>
+  <p class="note">Todos os números deste artigo são fictícios e servem só de exemplo. Nenhum dado de empresa foi usado.</p>
+    <div class="share" data-share="ponto-de-pedido"><span>Compartilhar</span></div>
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Vamos conversar?</h2><p>Para quem trabalha com planejamento de estoques ou S&amp;OP e quer trocar experiências.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-ponto-de-pedido">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-ponto-de-pedido">Baixar currículo</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-ponto-de-pedido">LinkedIn</a>
+    </div>
+  </aside>
+  <div class="next-links">
+    <a href="../projetos/boletim-ruptura.html"><small>Projeto relacionado</small>Dashboard de ruptura de lojas</a>
+    <a href="forecast-erro.html"><small>Outra publicação</small>Seu forecast erra? Meça antes de culpar o comercial.</a>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../index.html">Voltar ao portfólio</a>
+    <a href="../privacidade.html">Privacidade</a>
+  </div>
+</footer>
+</body>
+</html>

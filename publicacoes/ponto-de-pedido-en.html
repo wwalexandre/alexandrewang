@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>How much to order, when to order and how much to keep in reserve | Alexandre Wang</title>
+<meta name="description" content="Economic order quantity, reorder point and safety stock explained with a tub of whey protein, the three formulas with a worked example and a simulator to test your own numbers.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido-en.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How much to order, when to order and how much to keep in reserve">
+<meta property="og:description" content="Economic order quantity, reorder point and safety stock explained with a tub of whey protein, the three formulas with a worked example and a simulator to test your own numbers.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/previews/ponto-de-pedido.jpg">
+<meta property="og:url" content="https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido-en.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:image:alt" content="Sawtooth chart of stock over time, with the reorder point line and the safety stock band.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/main.js" defer></script>
+<script src="../assets/js/reposicao.js" defer></script>
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "How much to order, when to order and how much to keep in reserve", "description": "Economic order quantity, reorder point and safety stock explained with a tub of whey protein, the three formulas with a worked example and a simulator to test your own numbers.", "inLanguage": "en", "image": "https://alexandrewang.vercel.app/assets/img/previews/ponto-de-pedido.jpg", "datePublished": "2026-11-16", "dateModified": "2026-11-16", "author": {"@type": "Person", "name": "Alexandre Wang", "url": "https://alexandrewang.vercel.app/"}, "mainEntityOfPage": "https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido-en.html"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Alexandre Wang", "item": "https://alexandrewang.vercel.app/en.html"}, {"@type": "ListItem", "position": 2, "name": "Publications", "item": "https://alexandrewang.vercel.app/en.html#publicacoes"}, {"@type": "ListItem", "position": 3, "name": "How much to order, when to order and how much to keep in reserve", "item": "https://alexandrewang.vercel.app/publicacoes/ponto-de-pedido-en.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<nav class="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="../en.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="../en.html#experience">Experience</a>
+      <a href="../en.html#projects">Projects</a>
+      <a href="../en.html#publications">Publications</a>
+      <a href="../en.html#contact">Contact</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Language"><a href="ponto-de-pedido.html" hreflang="pt-BR">PT</a><a href="ponto-de-pedido-en.html" class="on" aria-current="true">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="../en.html#publicacoes">← Publications</a><span>Inventory management</span></div>
+    <h1>How much to order, when to order and how much to keep in reserve</h1>
+    <p class="lead">High inventory and stockouts at the same time are rarely a lack of product. They are a lack of criteria for three decisions: how much to order, when to order and how much to keep in reserve. This text explains the three with a tub of whey protein, shows the formulas with a worked example and ends in a simulator. The numbers are fictional.</p>
+    <div class="meta"><span>6 min read</span><span>Simulator</span><span>Nov 2026</span></div>
+  </div>
+</header>
+<main id="conteudo" class="article">
+  <h2>The tub of whey</h2>
+  <p>Anyone who takes whey protein every day already manages inventory without calling it that. Buying too many tubs takes up space, may expire and leaves money sitting in the cupboard. Buying too few ends with nothing left after training. And buying a little all the time means paying shipping on every order.</p>
+  <p>In a company the logic is the same, only with thousands of products. It all comes down to three questions, and each has a technical name:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Question</th><th>In the tub of whey</th><th>Technical name</th></tr></thead>
+      <tbody>
+        <tr><td>How much to buy?</td><td>The purchase size that balances shipping against a full cupboard.</td><td>Economic order quantity (EOQ)</td></tr>
+        <tr><td>When to buy?</td><td>The level in the tub at which the order has to go out, to arrive before it runs out.</td><td>Reorder point (ROP)</td></tr>
+        <tr><td>How much reserve?</td><td>The bottom of the tub, used only when delivery is late or consumption rises.</td><td>Safety stock (SS)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>1. How much to order: the economic order quantity</h2>
+  <p>Two costs move in opposite directions. Ordering little, many times, raises the ordering cost: freight, buyer time, receiving. Ordering a lot, few times, raises the holding cost: tied-up capital, space, risk of expiry. The economic order quantity is the order size where the sum of the two is lowest.</p>
+  <p><code>EOQ = √(2 × D × S ÷ H)</code></p>
+  <ul>
+    <li><strong>D:</strong> demand for the year, in units.</li>
+    <li><strong>S:</strong> cost of placing one order.</li>
+    <li><strong>H:</strong> cost of holding one unit in stock for a year.</li>
+  </ul>
+
+  <h2>2. How much reserve: safety stock</h2>
+  <p>Demand is never equal to the average. Safety stock is the cushion that absorbs demand variation while the order is on its way.</p>
+  <p><code>SS = z × σ × √L</code></p>
+  <ul>
+    <li><strong>z:</strong> factor for the desired service level. For 95%, z = 1.65.</li>
+    <li><strong>σ:</strong> standard deviation of daily demand.</li>
+    <li><strong>L:</strong> lead time, in days.</li>
+  </ul>
+  <p>The reserve grows with the square root of the lead time. Doubling the lead time does not double safety stock: it raises it by about 41%.</p>
+
+  <h2>3. When to order: the reorder point</h2>
+  <p>It is the expected consumption during the lead time, plus the reserve. When stock reaches that level, the order goes out.</p>
+  <p><code>ROP = d × L + SS</code></p>
+  <ul>
+    <li><strong>d:</strong> average demand per day.</li>
+    <li><strong>L:</strong> lead time, in days.</li>
+  </ul>
+
+  <h2>The worked example</h2>
+  <p>A product sells 50 units a day, over 300 selling days a year, with a standard deviation of 10 units a day. Each order costs R$ 50, holding one unit for a year costs R$ 6, the supplier delivers in 5 days and the desired service level is 95%.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Calculation</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Annual demand = 50 × 300</td><td>15,000 units</td></tr>
+        <tr><td>EOQ = √(2 × 15,000 × 50 ÷ 6)</td><td><strong>500 units</strong></td></tr>
+        <tr><td>SS = 1.65 × 10 × √5</td><td><strong>37 units</strong></td></tr>
+        <tr><td>ROP = 50 × 5 + 37</td><td><strong>287 units</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The decision fits in one sentence: when stock reaches 287, order 500. If demand follows the average, the new lot arrives with 37 units still in reserve.</p>
+
+  <section class="sim" id="simulador" aria-labelledby="simT">
+    <h2 id="simT">Simulator: try your own numbers</h2>
+    <p>The fields start with the example from the text. Change any of them and the three results, the cost and the chart recalculate at once.</p>
+    <div class="rp-form">
+      <label for="rpDemanda">Average demand per day (units)<input id="rpDemanda" type="number" inputmode="decimal" min="0" step="1" value="50" data-padrao="50"></label>
+      <label for="rpDesvio">Standard deviation of daily demand (units)<input id="rpDesvio" type="number" inputmode="decimal" min="0" step="1" value="10" data-padrao="10"></label>
+      <label for="rpLead">Lead time (days)<input id="rpLead" type="number" inputmode="decimal" min="0" step="1" value="5" data-padrao="5"></label>
+      <label for="rpServico">Service level<select id="rpServico" data-padrao="1.65"><option value="1.28">90%</option><option value="1.65" selected>95%</option><option value="2.05">98%</option><option value="2.33">99%</option></select></label>
+      <label for="rpPedido">Cost of placing an order (R$)<input id="rpPedido" type="number" inputmode="decimal" min="0" step="1" value="50" data-padrao="50"></label>
+      <label for="rpManter">Cost of holding 1 unit for a year (R$)<input id="rpManter" type="number" inputmode="decimal" min="0" step="0.5" value="6" data-padrao="6"></label>
+      <label for="rpDias">Selling days in the year<input id="rpDias" type="number" inputmode="decimal" min="0" step="1" value="300" data-padrao="300"></label>
+    </div>
+    <p class="rp-erro" id="rpErro" role="alert"></p>
+    <div class="rp-kpis" aria-live="polite">
+      <div class="rp-k rp-k-forte"><span>How much to order (EOQ)</span><b id="rpEoq"></b><small id="rpCiclo"></small></div>
+      <div class="rp-k rp-k-forte"><span>When to order (reorder point)</span><b id="rpRop"></b><small>order when stock gets here</small></div>
+      <div class="rp-k rp-k-forte"><span>How much reserve (safety stock)</span><b id="rpSs"></b><small>cushion for demand variation</small></div>
+      <div class="rp-k"><span>Frequency</span><b id="rpFreq"></b></div>
+      <div class="rp-k"><span>Average stock</span><b id="rpMedio"></b></div>
+      <div class="rp-k"><span>Annual cost of ordering and holding</span><b id="rpCusto"></b></div>
+    </div>
+    <div class="rp-grafico" id="rpGrafico"></div>
+    <p class="rp-frase" id="rpFrase"></p>
+    <p><button type="button" class="btn btn-outline btn-sm" id="rpReset">Back to the example</button></p>
+  </section>
+  <h2>Where the formula is not enough</h2>
+  <ul>
+    <li><strong>The real lot is almost never the exact EOQ.</strong> Supplier minimum lot, pack multiples, storage capacity and volume discounts usually set the final number. EOQ works as a reference for what it costs to move away from it.</li>
+    <li><strong>A lead time that varies needs more reserve.</strong> The formula above assumes a fixed delivery time. When it swings, its variation enters the calculation along with demand's.</li>
+    <li><strong>Intermittent demand breaks the assumption.</strong> For an item that sells little and irregularly, mean and standard deviation describe consumption poorly, and safety stock calculated this way misleads.</li>
+    <li><strong>Shelf life limits the lot.</strong> For a perishable or pharmaceutical product, an economic lot larger than what is consumed within shelf life becomes a loss.</li>
+    <li><strong>Service level is a business decision.</strong> Going from 95% to 99% raises the reserve by about 41% in the example. The simulator shows that cost before anyone promises the level.</li>
+  </ul>
+  <p class="note">All numbers in this article are fictional and serve only as an example. No company data was used.</p>
+    <div class="share" data-share="ponto-de-pedido"><span>Share</span></div>
+  <aside class="cta-card" aria-label="Contato">
+    <div><h2>Shall we talk?</h2><p>For anyone working with inventory planning or S&amp;OP who wants to compare notes.</p></div>
+    <div class="btn-row">
+      <a class="btn btn-wa btn-sm" href="/whatsapp" target="_blank" rel="noopener" data-umami-event="whatsapp" data-umami-event-origem="cta-ponto-de-pedido">WhatsApp</a>
+      <a class="btn btn-primary btn-sm" href="#" data-cv data-umami-event="curriculo-clique" data-umami-event-origem="cta-ponto-de-pedido">Download resume</a>
+      <a class="btn btn-ghost btn-sm" href="https://www.linkedin.com/in/alexandrewwang/" target="_blank" rel="noopener" data-umami-event="linkedin" data-umami-event-origem="cta-ponto-de-pedido">LinkedIn</a>
+    </div>
+  </aside>
+  <div class="next-links">
+    <a href="../projetos/boletim-ruptura-en.html"><small>Related project</small>Store stockout dashboard</a>
+    <a href="forecast-erro-en.html"><small>Another publication</small>Is your forecast wrong? Measure before blaming sales.</a>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="../en.html">Back to portfolio</a>
+    <a href="../privacy.html">Privacy</a>
+  </div>
+</footer>
+</body>
+</html>
