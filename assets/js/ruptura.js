@@ -38,6 +38,7 @@
   ].map(([name, canal]) => ({ name, canal, base: 0.05 + rand() * 0.11 }));
 
   const SKUS = Array.from({ length: 80 }, (_, i) => ({
+    cod: 'P' + (1001 + i),
     line: LINES[i % 4],
     pot: Math.round(300 + rand() * 1700)
   }));
@@ -52,7 +53,7 @@
         const p = Math.min(0.6, store.base * sku.line.risk * wf * (cd ? 0.62 : 1.35));
         const r1 = rand() < p;
         const r7 = r1 ? (3 + Math.floor(rand() * 5)) / 7 : (rand() < p * 0.5 ? (1 + Math.floor(rand() * 2)) / 7 : 0);
-        rows.push({ week, store, line: sku.line.id, canal: store.canal, cd, r1, r7, pot: sku.pot });
+        rows.push({ week, store, sku: sku.cod, line: sku.line.id, canal: store.canal, cd, r1, r7, pot: sku.pot });
       });
     });
   });
@@ -226,6 +227,15 @@
     };
     $('tDet').innerHTML = sorted.slice(0, 5).map(rowHtml).join('');
     $('tPro').innerHTML = sorted.slice(-5).reverse().map(rowHtml).join('');
+
+    // Lista de reposição: faltas com estoque no CD, da maior para a menor venda perdida
+    const rep = $('tRep');
+    if (rep) {
+      const dias = x => Math.round(x.r7 * 7);
+      const lista = filtered(week).filter(x => x.cd && x.r1).sort((a, b) => b.r7 * b.pot - a.r7 * a.pot).slice(0, 10);
+      rep.innerHTML = lista.map(x => '<tr><td>' + x.store.name + '</td><td>' + x.sku + '</td><td>' + (T.line[x.line] || x.line) +
+        '</td><td class="num">' + dias(x) + '</td><td class="num">R$ ' + Math.round(x.r7 * x.pot).toLocaleString(LOCALE) + '</td></tr>').join('');
+    }
   }
 
   function rebuild() {

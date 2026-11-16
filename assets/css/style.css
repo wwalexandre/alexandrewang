@@ -963,3 +963,45 @@ body.hint-open .to-top { bottom: 96px; }
 .cv-perfil legend { padding: 0; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
 .cv-perfil label { display: flex; align-items: center; gap: 8px; font-weight: 400; font-size: 15px; cursor: pointer; }
 .cv-perfil input { accent-color: var(--orange); width: 16px; height: 16px; margin: 0; }
+
+/* Trajetória em modo Mapa: tabuleiro em perspectiva */
+.seg { flex-wrap: wrap; border-radius: 22px; }
+.tl-mapa { margin: 0 0 18px; padding: 14px 12px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.tl-mapa svg { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; overflow: visible; }
+.mp-trilha { fill: var(--surface-2); stroke: var(--line); }
+.mp-trilha-lado { fill: var(--line); }
+.mp-casa { cursor: pointer; outline: none; }
+.mp-topo { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; transition: fill .2s; }
+.mp-lado { fill: var(--line); }
+.mp-num { font: 700 18px/1 var(--display); fill: var(--muted); pointer-events: none; }
+.mp-nome { font: 700 14px/1 var(--font); fill: var(--text); pointer-events: none; }
+.mp-ano { font: 400 11.5px/1 var(--font); fill: var(--muted); pointer-events: none; }
+.mp-casa:hover .mp-topo { stroke: var(--orange); }
+.mp-casa:focus-visible .mp-topo { stroke: var(--orange); stroke-width: 3; }
+.mp-casa.passou .mp-topo { fill: var(--green); stroke: var(--green); }
+.mp-casa.passou .mp-num { fill: #fff; }
+.mp-casa.sel .mp-topo { fill: var(--orange); stroke: var(--orange); }
+.mp-casa.sel .mp-num { fill: var(--navy); }
+.mp-peao-base { fill: rgba(0, 0, 0, .28); }
+.mp-peao-corpo { fill: var(--navy); stroke: #fff; stroke-width: 1.5; }
+.mp-peao { transition: transform .35s cubic-bezier(.2, .7, .2, 1); }
+.mp-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 10px; font: 500 13px/1 var(--mono); color: var(--muted); }
+.mp-nav button:disabled { opacity: .4; cursor: default; }
+.timeline[data-mapa="on"] { padding-left: 0; }
+.timeline[data-mapa="on"]::before, .timeline[data-mapa="on"]::after, .timeline[data-mapa="on"] .tl::before { display: none; }
+.timeline[data-mapa="on"] .tl { display: none; }
+.timeline[data-mapa="on"] .tl.mapa-sel { display: block; }
+@media (prefers-reduced-motion: reduce) { .mp-peao { transition: none; } }
+
+@media (min-width: 900px) { .rank.rank-uma { grid-template-columns: 1fr; } }
+
+/* prédios do mapa: três faces em tons de cinza, com um acento por empresa */
+.mp-predio { pointer-events: none; }
+.mp-predio path { stroke: #0F1C2C; stroke-width: .9; stroke-linejoin: round; }
+.mb-topo { fill: #F2F5F7; }
+.mb-esq { fill: #C6D1DA; }
+.mb-dir { fill: #94A5B5; }
+.mb-topo.mb-acento { fill: #F7B56F; } .mb-esq.mb-acento { fill: #F08A24; } .mb-dir.mb-acento { fill: #B8650F; }
+.mb-topo.mb-acento-verde { fill: #7FD6BE; } .mb-esq.mb-acento-verde { fill: #2FB8A0; } .mb-dir.mb-acento-verde { fill: #1B7F6C; }
+.mp-predio .mb-janela { fill: none; stroke: #0F1C2C; stroke-width: 2.2; stroke-opacity: .32; }
+.mp-num { font-size: 13px; }

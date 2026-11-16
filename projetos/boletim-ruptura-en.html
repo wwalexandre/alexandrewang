@@ -110,6 +110,14 @@
           </div>
         </div>
       </div>
+      <div class="rank rank-uma">
+        <div class="chart-card">
+          <h3>Replenishment list: the 10 costliest gaps with stock at the DC</h3>
+          <div class="table-wrap" style="margin:0">
+            <table><thead><tr><th>Store</th><th>Product</th><th>Line</th><th class="num">Days out of stock (7 days)</th><th class="num">Lost sales</th></tr></thead><tbody id="tRep"></tbody></table>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -144,8 +152,45 @@ CALCULATE( [% Ruptura 1D], Ruptura[ESTOQUE_TRATAVEL] = <span class="s">"TRATAVEL
 SUMX( Ruptura, Ruptura[RUPTURA_7D] * Ruptura[POTENCIAL] )</pre>
     <p class="note">Measure and column names are in Portuguese, as in the original model.</p>
 
+    <h2>How to read each number</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Indicator</th><th>What it measures</th><th>What to do with it</th></tr></thead>
+        <tbody>
+          <tr><td>Total stockout</td><td>Out of every 100 product and store combinations, how many are at zero on the day of the stock snapshot.</td><td>Shows the size of the problem. On its own, it does not say who can fix it.</td></tr>
+          <tr><td>Actionable stockout</td><td>The same calculation, only for products that have stock at the DC.</td><td>It is the replenishment target: every gap here can be refilled.</td></tr>
+          <tr><td>SKU-stores to replenish now</td><td>How many actionable gaps exist in the week, as an absolute number.</td><td>Becomes the work queue for the week.</td></tr>
+          <tr><td>Potential sales lost</td><td>Days out of stock in the last 7 days, times the product's sales potential in that store.</td><td>Orders the queue: refill first what costs the most.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The gap between total and actionable stockout is information too. It is the part that a truck cannot fix: the product ran out across the whole network, and the conversation moves to purchasing and planning.</p>
+
+    <h2>The columns behind the calculation</h2>
+    <p>The base has one row per week, store and product. Five columns carry every measure:</p>
+    <ul>
+      <li><strong>ESTOQUE_RECEBIDO:</strong> flags whether the store has ever received the product. A product that never arrived does not count as a stockout.</li>
+      <li><strong>ESTOQUE_TRATAVEL:</strong> flags whether the DC has stock of the product. It is what separates actionable from total stockout.</li>
+      <li><strong>RUPTURA_1D:</strong> equals 1 when the store is at zero on the day of the stock snapshot.</li>
+      <li><strong>RUPTURA_7D:</strong> the share of the last 7 days the store spent at zero.</li>
+      <li><strong>POTENCIAL:</strong> how much the product usually sells in that store in a week.</li>
+    </ul>
+
+    <h2>Two rules that keep the number honest</h2>
+    <ul>
+      <li>Products being phased out are excluded: they will not be refilled, so they are not a replenishment failure.</li>
+      <li>Products the store never received are excluded: missing distribution is a different problem, with a different owner.</li>
+    </ul>
+
     <h2>The result</h2>
     <p>The bulletin went out every week to store managers and coordinators, with the same criteria for every store, and sped up replenishment priorities for company-owned stores. The goal is to replace "stockout is high" with "these stores have these SKUs at zero while the distribution center has stock".</p>
+
+    <h2>References</h2>
+    <ul>
+      <li>Gruen, T.; Corsten, D.; Bharadwaj, S. (2002). Retail Out-of-Stocks: A Worldwide Examination of Extent, Causes and Consumer Responses. Grocery Manufacturers of America.</li>
+      <li>Corsten, D.; Gruen, T. (2004). Stock-Outs Cause Walkouts. Harvard Business Review, 82(5).</li>
+      <li>Gruen, T.; Corsten, D. (2007). A Comprehensive Guide to Retail Out-of-Stock Reduction in the Fast-Moving Consumer Goods Industry.</li>
+    </ul>
 
     <div class="callout green">
       <p><strong>About this page:</strong> the original version runs in Power BI with the company's internal data, which cannot be published. This is a faithful replica of the logic, built in HTML and JavaScript, with 20 stores and 80 fictional products generated in the browser.</p>

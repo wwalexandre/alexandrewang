@@ -110,6 +110,14 @@
           </div>
         </div>
       </div>
+      <div class="rank rank-uma">
+        <div class="chart-card">
+          <h3>Lista de reposição: as 10 faltas com estoque no CD que mais custam</h3>
+          <div class="table-wrap" style="margin:0">
+            <table><thead><tr><th>Loja</th><th>Produto</th><th>Linha</th><th class="num">Dias sem estoque (7 dias)</th><th class="num">Venda perdida</th></tr></thead><tbody id="tRep"></tbody></table>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -143,8 +151,45 @@ CALCULATE( [% Ruptura 1D], Ruptura[ESTOQUE_TRATAVEL] = <span class="s">"TRATAVEL
 <span class="k">Valor Ruptura 7D</span> =
 SUMX( Ruptura, Ruptura[RUPTURA_7D] * Ruptura[POTENCIAL] )</pre>
 
+    <h2>Como ler cada número</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Indicador</th><th>O que mede</th><th>O que fazer com ele</th></tr></thead>
+        <tbody>
+          <tr><td>Ruptura total</td><td>De cada 100 combinações de produto e loja, quantas estão zeradas no dia da foto de estoque.</td><td>Mostra o tamanho do problema. Sozinho, não diz quem resolve.</td></tr>
+          <tr><td>Ruptura tratável</td><td>A mesma conta, só para os produtos que têm estoque no CD.</td><td>É a meta do abastecimento: toda falta aqui pode ser reposta.</td></tr>
+          <tr><td>SKU-lojas para repor agora</td><td>Quantas faltas tratáveis existem na semana, em número absoluto.</td><td>Vira a fila de trabalho da semana.</td></tr>
+          <tr><td>Venda potencial perdida</td><td>Dias em ruptura nos últimos 7 dias, vezes o potencial de venda do produto naquela loja.</td><td>Ordena a fila: repor primeiro o que mais custa.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>A diferença entre a ruptura total e a tratável também é informação. Ela é a parte da falta que não se resolve mandando caminhão: o produto acabou na rede inteira, e a conversa passa a ser com compras e planejamento.</p>
+
+    <h2>As colunas por trás da conta</h2>
+    <p>A base tem uma linha por semana, loja e produto. Cinco colunas sustentam todas as medidas:</p>
+    <ul>
+      <li><strong>ESTOQUE_RECEBIDO:</strong> marca se a loja já recebeu o produto alguma vez. Produto que nunca chegou não conta como ruptura.</li>
+      <li><strong>ESTOQUE_TRATAVEL:</strong> marca se há estoque do produto no CD. É o que separa a ruptura tratável da total.</li>
+      <li><strong>RUPTURA_1D:</strong> vale 1 quando a loja está zerada no dia da foto de estoque.</li>
+      <li><strong>RUPTURA_7D:</strong> a fração dos últimos 7 dias em que a loja ficou zerada.</li>
+      <li><strong>POTENCIAL:</strong> quanto o produto costuma vender naquela loja em uma semana.</li>
+    </ul>
+
+    <h2>Duas regras que evitam número inflado</h2>
+    <ul>
+      <li>Produto em retirada de linha fica fora: ele não será reposto, então não é falha de abastecimento.</li>
+      <li>Produto que a loja nunca recebeu fica fora: falta de distribuição é outro problema, com outro dono.</li>
+    </ul>
+
     <h2>O resultado</h2>
     <p>O boletim passou a sair toda semana para gerentes e coordenadores, com o mesmo critério para todas as lojas, e agilizou a priorização do abastecimento das lojas próprias. A ideia é trocar "a ruptura está alta" por "estas lojas têm estes SKUs zerados com estoque no CD".</p>
+
+    <h2>Referências</h2>
+    <ul>
+      <li>Gruen, T.; Corsten, D.; Bharadwaj, S. (2002). Retail Out-of-Stocks: A Worldwide Examination of Extent, Causes and Consumer Responses. Grocery Manufacturers of America.</li>
+      <li>Corsten, D.; Gruen, T. (2004). Stock-Outs Cause Walkouts. Harvard Business Review, 82(5).</li>
+      <li>Gruen, T.; Corsten, D. (2007). A Comprehensive Guide to Retail Out-of-Stock Reduction in the Fast-Moving Consumer Goods Industry.</li>
+    </ul>
 
     <div class="callout green">
       <p><strong>Sobre esta página:</strong> a versão original roda em Power BI com dados internos da empresa, que não podem ser publicados. Aqui está uma réplica fiel da lógica, feita em HTML e JavaScript, com 20 lojas e 80 produtos fictícios gerados no navegador.</p>
