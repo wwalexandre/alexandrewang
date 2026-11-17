@@ -1,6 +1,6 @@
 // Trajetória em modo Mapa: um tabuleiro em perspectiva isométrica, com uma casa por empresa em
-// ordem cronológica (da primeira experiência à mais recente). Cada prédio leva o letreiro ou o
-// logo da empresa na fachada. Clicar numa casa, ou usar Anterior e Próxima, move o peão e mostra
+// ordem cronológica (da primeira experiência à mais recente). Cada prédio leva o logo da empresa
+// num letreiro no telhado. Clicar numa casa, ou usar Anterior e Próxima, move o peão e mostra
 // o cartão daquela empresa logo abaixo. O desenho é SVG puro, sem biblioteca 3D.
 // Depende de main.js (LANG, REDUCE, Reveal), que é carregado antes.
 (function mapaTrajetoria() {
@@ -21,7 +21,7 @@
   const ESC = 52, HW = 72, HH = 36, FUNDO = 14;
   const grade = cartoes.map((_, i) => [Math.ceil(i / 2) * 2, 4 - Math.floor(i / 2) * 2]);
   const pts = grade.map(g => [(g[0] - g[1]) * ESC, (g[0] + g[1]) * ESC / 2]);
-  const ALT = { funed: 46, abbott: 64, hypera: 50, hering: 38, sanofi: 98 }; // altura visual de cada prédio
+  const ALT = { funed: 74, abbott: 76, hypera: 84, hering: 66, sanofi: 118 }; // altura visual de cada prédio
   const alt = i => ALT[cartoes[i].dataset.item] || 50;
   const minX = Math.min(...pts.map(p => p[0])), maxX = Math.max(...pts.map(p => p[0]));
   const cimaI = i => pts[i][1] === Math.min(...pts.map(p => p[1]));      // rótulo acima nas casas de cima
@@ -62,16 +62,46 @@
         class: 'mb-jan' + ((r * 7 + c * 3 + (o.sem || 0)) % 4 === 0 ? ' on' : '') }));
     }
   }
-  // Letreiro: placa branca com o logo (imagem) ou, na falta dele, o nome em texto.
-  function placa(gr, x, y, w, h, src, texto) {
-    gr.appendChild(svgEl('rect', { x, y, width: w, height: h, rx: 2, class: 'mb-placa' }));
-    if (src) {
-      const im = svgEl('image', { x: x + 3, y: y + 2, width: w - 6, height: h - 4, preserveAspectRatio: 'xMidYMid meet' });
+  // Letreiro no telhado: placa de frente para quem olha (sem a inclinação da fachada), apoiada em
+  // dois pés, para o logo ficar legível mesmo com o mapa pequeno. (cx, topo) é o centro do teto.
+  const MARCAS = {
+    abbott: { w: 24, h: 24, desenho(gr) {   // símbolo "a" da Abbott, em azul
+      gr.appendChild(svgEl('path', { class: 'mb-abbott', 'fill-rule': 'evenodd',
+        d: 'M4 3.5H18.5Q21 3.5 21 6V20.5H4V10H17V7.2H4ZM7.6 13.4V17.1H17V13.4Z' }));
+    } },
+    funed: { w: 34, h: 16, fundo: 'mb-funed', desenho(gr) {
+      gr.appendChild(svgEl('text', { x: 17, y: 11.8, class: 'mb-funed-txt', 'text-anchor': 'middle' }, 'FUNED'));
+    } },
+    hering: { w: 26, h: 20, desenho(gr) {   // os dois peixes cruzados da Hering
+      [1, -1].forEach(s => {
+        const p = svgEl('g', { transform: 'translate(13 10.5) scale(' + s + ' 1) rotate(38)' });
+        p.appendChild(svgEl('path', { class: 'mb-hering', d: 'M-10 0Q-3 -5.2 5 -1.2L9 -4.2 8 0 9 4.2 5 1.2Q-3 5.2 -10 0Z' }));
+        p.appendChild(svgEl('circle', { cx: -6.3, cy: -0.6, r: 0.9, class: 'mb-hering-olho' }));
+        gr.appendChild(p);
+      });
+    } },
+    hypera: { w: 52, h: 15, img: { vb: '0 2 332 52', w: 332, h: 93 } },
+    sanofi: { w: 42, h: 15, img: { vb: '38 36 230 64', w: 300, h: 137 } }
+  };
+  function letreiro(g, cx, topo, item, src) {
+    const M = MARCAS[item];
+    if (!M) return;
+    const pe = 5, y = topo - pe - M.h, x = cx - M.w / 2;
+    const gr = svgEl('g', { class: 'mb-letreiro', transform: 'translate(' + cx + ' ' + topo + ') scale(1.45) translate(' + (-cx) + ' ' + (-topo) + ')' });
+    [-1, 1].forEach(s => gr.appendChild(svgEl('line', { x1: cx + s * M.w * 0.28, y1: topo + 1, x2: cx + s * M.w * 0.28, y2: topo - pe, class: 'mb-pe' })));
+    gr.appendChild(svgEl('rect', { x, y, width: M.w, height: M.h, rx: 2.5, class: 'mb-placa ' + (M.fundo || '') }));
+    if (M.img && src) {
+      const box = svgEl('svg', { x: x + 2, y: y + 1.5, width: M.w - 4, height: M.h - 3, viewBox: M.img.vb, preserveAspectRatio: 'xMidYMid meet' });
+      const im = svgEl('image', { width: M.img.w, height: M.img.h });
       im.setAttribute('href', src);
-      gr.appendChild(im);
-    } else {
-      gr.appendChild(svgEl('text', { x: x + w / 2, y: y + h * 0.72, class: 'mb-placa-txt', 'text-anchor': 'middle', 'font-size': h * 0.78 }, texto));
+      box.appendChild(im);
+      gr.appendChild(box);
+    } else if (M.desenho) {
+      const in_ = svgEl('g', { transform: 'translate(' + x + ' ' + y + ')' });
+      M.desenho(in_);
+      gr.appendChild(in_);
     }
+    g.appendChild(gr);
   }
   function tanque(g, cx, cy, r, h, extra) {
     const rv = r * 0.5;
@@ -89,12 +119,34 @@
 
   // ---------- um prédio por tipo de lugar; todos levam o letreiro da empresa na fachada
   const PREDIOS = {
-    funed(g, x, y, c) {            // laboratório público: bloco largo com um volume verde no teto
-      bloco(g, x - 8, y - 8, 12, 10, 12, 'mb-acento-verde', 30);
-      bloco(g, x, y, 34, 24, 30);
-      const fe = face(g, 'esq', x, y, 34, 24, 30);
-      placa(fe, 14, 5, 40, 20, c.src, 'FUNED');
-      janelas(face(g, 'dir', x, y, 34, 24, 30), 3, 2, { mt: 6, mb: 6, sem: 1 });
+    funed(g, x, y, c) {            // sede histórica: dois andares cor de salmão, laje branca em balanço, pórtico com três portas e escadaria
+      const a = 33, b = 20, h = 32;
+      bloco(g, x, y, a, b, h, 'mb-salmao');
+      bloco(g, x, y, a + 4, b + 4, 2.5, 'mb-laje', h);
+      const fe = face(g, 'esq', x, y, a, b, h), w = fe.w;
+      for (let k = 0; k < 5; k++) {   // fileira de janelas do andar de cima
+        fe.appendChild(svgEl('rect', { x: 6 + k * (w - 12) / 5 + 1, y: 4, width: (w - 12) / 5 - 2, height: 8, class: 'mb-jan-b' }));
+      }
+      fe.appendChild(svgEl('rect', { x: 4, y: 12.5, width: w - 8, height: 1.4, class: 'mb-friso' }));
+      const px = w * 0.3, pw = w * 0.4;   // pórtico branco com o letreiro e as três portas
+      fe.appendChild(svgEl('rect', { x: px, y: 15.5, width: pw, height: h - 15.5, class: 'mb-portico' }));
+      for (let k = 0; k < 3; k++) {
+        fe.appendChild(svgEl('rect', { x: px + 2 + k * (pw - 4) / 3 + 0.8, y: 23, width: (pw - 4) / 3 - 1.6, height: h - 23, class: 'mb-porta' }));
+      }
+      fe.appendChild(svgEl('rect', { x: px + 3, y: 17.5, width: pw - 6, height: 2.2, class: 'mb-friso' }));
+      [[px / 2 - 3.5], [px + pw + (w - px - pw) / 2 - 3.5]].forEach(([ax]) => {   // janelas em arco dos lados
+        fe.appendChild(svgEl('path', { d: 'M' + ax + ' ' + (h - 3) + 'L' + ax + ' 22.5A3.5 3.5 0 0 1 ' + (ax + 7) + ' 22.5L' + (ax + 7) + ' ' + (h - 3) + 'Z', class: 'mb-jan-b' }));
+      });
+      const fd = face(g, 'dir', x, y, a, b, h);
+      for (let k = 0; k < 3; k++) {
+        fd.appendChild(svgEl('rect', { x: 5 + k * (fd.w - 10) / 3 + 1, y: 4, width: (fd.w - 10) / 3 - 2, height: 8, class: 'mb-jan-b' }));
+        fd.appendChild(svgEl('rect', { x: 5 + k * (fd.w - 10) / 3 + 1, y: 19, width: (fd.w - 10) / 3 - 2, height: 9, class: 'mb-jan-b' }));
+      }
+      fd.appendChild(svgEl('rect', { x: 3, y: 12.5, width: fd.w - 6, height: 1.4, class: 'mb-friso' }));
+      // escadaria na frente do pórtico
+      bloco(g, x - b - 5, y + (b + 5) / 2, 11, 5, 1.6, 'mb-degrau');
+      bloco(g, x - b - 3, y + (b + 3) / 2, 10, 3, 3.2, 'mb-degrau');
+      letreiro(g, x, y - h - 2.5, 'funed');
     },
     abbott(g, x, y, c) {           // prédio de vidro: torre da escada, andar de cima em balanço com faixa de janelas, térreo envidraçado e galpão ao fundo
       bloco(g, x + 14, y - 18, 30, 16, 24, 'mb-galpao');
@@ -106,13 +158,12 @@
       td.appendChild(svgEl('rect', { x: 3, y: 4, width: td.w - 6, height: 12, class: 'mb-luz' }));
       bloco(g, x, y, 34, 24, 17, null, 17);
       const fe = face(g, 'esq', x, y - 17, 34, 24, 17);
-      fe.appendChild(svgEl('rect', { x: 3, y: 4, width: fe.w - 33, height: 9, class: 'mb-luz' }));
-      for (let k = 1; k < 5; k++) fe.appendChild(svgEl('line', { x1: 3 + k * (fe.w - 33) / 5, y1: 4, x2: 3 + k * (fe.w - 33) / 5, y2: 13, class: 'mb-caixilho' }));
-      placa(fe, fe.w - 28, 3, 25, 11, c.src, 'Abbott');
+      fe.appendChild(svgEl('rect', { x: 3, y: 4, width: fe.w - 6, height: 9, class: 'mb-luz' }));
+      for (let k = 1; k < 7; k++) fe.appendChild(svgEl('line', { x1: 3 + k * (fe.w - 6) / 7, y1: 4, x2: 3 + k * (fe.w - 6) / 7, y2: 13, class: 'mb-caixilho' }));
       const fd = face(g, 'dir', x, y - 17, 34, 24, 17);
       fd.appendChild(svgEl('rect', { x: 3, y: 4, width: fd.w - 6, height: 9, class: 'mb-luz' }));
-      // torre da escada, toda de vidro, na ponta da fachada
-      const tx = x - 58, ty = y + 10;
+      // torre da escada, toda de vidro, na quina da fachada
+      const tx = x + 8, ty = y + 22;
       bloco(g, tx, ty, 9, 9, 46, 'mb-torre');
       [face(g, 'esq', tx, ty, 9, 9, 46), face(g, 'dir', tx, ty, 9, 9, 46)].forEach((f, lado) => {
         f.appendChild(svgEl('rect', { x: 1.5, y: 1.5, width: f.w - 3, height: f.h - 3, class: 'mb-luz' }));
@@ -122,34 +173,34 @@
           f.appendChild(svgEl('line', { x1: r % 2 ? f.w - 3 : 3, y1: y0 - 0.8, x2: r % 2 ? 3 : f.w - 3, y2: y1, class: 'mb-escada' }));
         }
       });
+      letreiro(g, x, y - 34, 'abbott');
     },
     hypera(g, x, y, c) {           // planta: galpão com dois tanques ao fundo
       tanque(g, x - 14, y - 16, 11, 42, 'mb-acento-verde');
       tanque(g, x + 8, y - 24, 10, 46, 'mb-acento-verde');
       bloco(g, x, y, 34, 22, 26);
       const fe = face(g, 'esq', x, y, 34, 22, 26);
-      placa(fe, 4, 4, 60, 17, c.src, 'Hypera');
-      janelas(fe, 5, 1, { mt: 22, mb: 2, mx: 6 });
+      janelas(fe, 5, 2, { mt: 5, mb: 4, mx: 6 });
       janelas(face(g, 'dir', x, y, 34, 22, 26), 3, 2, { mt: 5, mb: 5, sem: 3 });
+      letreiro(g, x, y - 26, 'hypera', c.src);
     },
     hering(g, x, y, c) {           // loja: vitrine de vidro, toldo laranja e letreiro com o nome
       bloco(g, x, y, 32, 24, 30);
       const fe = face(g, 'esq', x, y, 32, 24, 30);
-      placa(fe, 9, 3, 46, 12, null, c.nome);
       fe.appendChild(svgEl('rect', { x: 6, y: 22, width: 52, height: 7, class: 'mb-vidro' }));
       for (let k = 0; k < 7; k++) {   // toldo listrado sobre a vitrine
         fe.appendChild(svgEl('rect', { x: 4 + k * 8, y: 16, width: 8, height: 6, class: k % 2 ? 'mb-toldo-b' : 'mb-toldo-a' }));
       }
       janelas(face(g, 'dir', x, y, 32, 24, 30), 2, 2, { mt: 6, mb: 6, sem: 0 });
+      letreiro(g, x, y - 30, 'hering');
     },
     sanofi(g, x, y, c) {           // torre corporativa: fachada de vidro com fileiras de janelas
       bloco(g, x, y, 22, 20, 76);
       bloco(g, x, y, 10, 9, 8, 'mb-acento', 76);
-      g.appendChild(svgEl('line', { x1: x, y1: y - 84, x2: x, y2: y - 98, class: 'mb-antena' }));
       const fe = face(g, 'esq', x, y, 22, 20, 76);
-      placa(fe, 3, 5, 38, 19, c.src, 'Sanofi');
-      janelas(fe, 4, 6, { mt: 29, mb: 5, mx: 4, gap: 2.5, sem: 1 });
+      janelas(fe, 4, 8, { mt: 6, mb: 5, mx: 4, gap: 2.5, sem: 1 });
       janelas(face(g, 'dir', x, y, 22, 20, 76), 4, 8, { mt: 6, mb: 5, mx: 4, gap: 2.5, sem: 2 });
+      letreiro(g, x, y - 84, 'sanofi', c.src);
     }
   };
 
@@ -197,7 +248,8 @@
     const forma = svgEl('path', { d: E.d, transform: 'translate(' + tx + ' ' + ty + ') scale(' + k + ')', class: 'mp-estado-forma' });
     forma.style.strokeWidth = (1.4 / k) + 'px';
     ge.appendChild(forma);
-    ge.appendChild(svgEl('text', { x: Math.max(tx + 4, 16), y: Math.max(ty + 12, 22), class: 'mp-estado-nome' }, E.nome.toUpperCase()));
+    const dir = uf === 'SP';   // MG com o nome embaixo à esquerda, SP embaixo à direita, longe dos rótulos
+    ge.appendChild(svgEl('text', { x: dir ? Math.min(tx + E.w * k - 6, W - 16) : Math.max(tx + 4, 16), y: Math.min(ty + E.h * k - 10, H - 12), 'text-anchor': dir ? 'end' : 'start', class: 'mp-estado-nome' }, E.nome.toUpperCase()));
     chao.appendChild(ge);
   });
   svg.appendChild(chao);
@@ -245,7 +297,7 @@
   corpo.appendChild(svgEl('path', { d: 'M-7 -1 L0 -26 L7 -1 Z', class: 'mp-peao-corpo' }));
   corpo.appendChild(svgEl('circle', { cx: 0, cy: -29, r: 6.5, class: 'mp-peao-corpo' }));
   svg.append(sombra, corpo);
-  const posPeao = i => [pts[i][0] + ox - 34, pts[i][1] + oy + 15];
+  const posPeao = i => [pts[i][0] + ox - 44, pts[i][1] + oy + 12];
   const poe = (x, y, arco) => {
     sombra.setAttribute('transform', 'translate(' + x + ' ' + y + ')');
     corpo.setAttribute('transform', 'translate(' + x + ' ' + (y - arco) + ')');

@@ -1194,7 +1194,7 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
 .mp-ponto { fill: var(--muted); opacity: .28; }
 .mp-estado-forma { fill: var(--green); fill-opacity: .06; stroke: var(--green); stroke-opacity: .32; stroke-dasharray: 5 4; stroke-linejoin: round; }
 .mp-uf-sp .mp-estado-forma { fill: var(--orange); stroke: var(--orange); fill-opacity: .05; stroke-opacity: .3; }
-.mp-estado-nome { font: 700 13px/1 var(--display); letter-spacing: .28em; fill: var(--muted); opacity: .55; }
+.mp-estado-nome { font: 700 11px/1 var(--display); letter-spacing: .28em; fill: var(--muted); opacity: .55; }
 :root[data-theme="dark"] .mp-estado-forma { fill-opacity: .09; stroke-opacity: .45; }
 :root[data-theme="dark"] .mp-ponto { opacity: .2; }
 /* Abbott: prédio de vidro, que brilha no tema escuro como a fachada à noite */
@@ -1205,3 +1205,22 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
 .mb-topo.mb-torre { fill: #E4EEF0; } .mb-esq.mb-torre, .mb-dir.mb-torre { fill: #CFEDEA; }
 :root[data-theme="dark"] .mb-luz { fill: #E9FFF9; filter: drop-shadow(0 0 2.5px rgba(160, 255, 230, .75)); }
 :root[data-theme="dark"] .mb-esq.mb-torre, :root[data-theme="dark"] .mb-dir.mb-torre { fill: #E9FFF9; }
+/* FUNED: sede de dois andares cor de salmão, com laje branca, pórtico e escadaria */
+.mb-topo.mb-salmao { fill: #F6D3C0; } .mb-esq.mb-salmao { fill: #F0B99D; } .mb-dir.mb-salmao { fill: #D69878; }
+.mb-topo.mb-laje { fill: #FBFBF8; } .mb-esq.mb-laje { fill: #E7E9E9; } .mb-dir.mb-laje { fill: #C8CDD0; }
+.mb-topo.mb-degrau { fill: #E2DED8; } .mb-esq.mb-degrau { fill: #C9C3BB; } .mb-dir.mb-degrau { fill: #ABA49B; }
+.mb-jan-b { fill: #3F4A55; stroke: #fff; stroke-width: .7; }
+.mb-friso { fill: #fff; }
+.mb-portico { fill: #F6C9B0; stroke: #fff; stroke-width: 1.4; }
+.mb-porta { fill: #3A2F2B; }
+:root[data-theme="dark"] .mb-jan-b { fill: #F3D58A; }
+/* Letreiros no telhado: de frente para quem olha, para os logos ficarem legíveis */
+.mb-letreiro .mb-placa { fill: #fff; stroke: #0F1C2C; stroke-width: .9; }
+.mb-letreiro .mb-placa.mb-funed { fill: #C8102E; }
+.mb-funed-txt { font: 800 11px/1 var(--font); fill: #fff; letter-spacing: .02em; }
+.mb-abbott { fill: #009CDE; }
+.mb-hering { fill: #111; }
+.mb-hering-olho { fill: #fff; }
+.mb-pe { stroke: #0F1C2C; stroke-width: 1.2; }
+:root[data-theme="dark"] .mb-pe { stroke: #9DABBA; }
+.mp-casa.sel .mb-letreiro .mb-placa { stroke: var(--orange); stroke-width: 1.4; }
