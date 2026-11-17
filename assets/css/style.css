@@ -1187,3 +1187,21 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
 @keyframes troca-in { from { opacity: 0; transform: translateY(8px); } }
 .timeline.troca .tl-topicos, .timeline.troca .tl-star, .timeline.troca .tl-chaves, .timeline.troca .tl-produtos { animation: troca-in .3s cubic-bezier(.2, .7, .2, 1) both; }
 @media (prefers-reduced-motion: reduce) { .timeline.troca .tl-topicos, .timeline.troca .tl-star, .timeline.troca .tl-chaves, .timeline.troca .tl-produtos { animation: none; } }
+
+/* Mapa da trajetória: terreno e estados em marca d'água */
+.mp-chao-1 { stop-color: var(--surface); }
+.mp-chao-2 { stop-color: var(--surface-2); }
+.mp-ponto { fill: var(--muted); opacity: .28; }
+.mp-estado-forma { fill: var(--green); fill-opacity: .06; stroke: var(--green); stroke-opacity: .32; stroke-dasharray: 5 4; stroke-linejoin: round; }
+.mp-uf-sp .mp-estado-forma { fill: var(--orange); stroke: var(--orange); fill-opacity: .05; stroke-opacity: .3; }
+.mp-estado-nome { font: 700 13px/1 var(--display); letter-spacing: .28em; fill: var(--muted); opacity: .55; }
+:root[data-theme="dark"] .mp-estado-forma { fill-opacity: .09; stroke-opacity: .45; }
+:root[data-theme="dark"] .mp-ponto { opacity: .2; }
+/* Abbott: prédio de vidro, que brilha no tema escuro como a fachada à noite */
+.mb-luz { fill: #CFEDEA; stroke: #0F1C2C; stroke-width: .5; }
+.mb-caixilho { stroke: #0F1C2C; stroke-width: .5; opacity: .55; }
+.mb-escada { stroke: #0F1C2C; stroke-width: 1; opacity: .45; }
+.mb-topo.mb-galpao { fill: #B9C3CC; } .mb-esq.mb-galpao { fill: #8E9BA8; } .mb-dir.mb-galpao { fill: #6F7D8B; }
+.mb-topo.mb-torre { fill: #E4EEF0; } .mb-esq.mb-torre, .mb-dir.mb-torre { fill: #CFEDEA; }
+:root[data-theme="dark"] .mb-luz { fill: #E9FFF9; filter: drop-shadow(0 0 2.5px rgba(160, 255, 230, .75)); }
+:root[data-theme="dark"] .mb-esq.mb-torre, :root[data-theme="dark"] .mb-dir.mb-torre { fill: #E9FFF9; }
