@@ -188,3 +188,11 @@ Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca 
 - ~~Criar o usuário admin e liberar em `admins`~~ feito em 06/11/2026 (alexandre01.w@gmail.com). Conferido: `is_admin()` dá true para ele e false para outro usuário logado.
 - Testar no preview da Vercel: enviar uma mensagem real pelo formulário e conferir no `/admin/`.
 - Decidir sobre ligar o Umami.
+
+## Revisão de segurança de 2026-11-16
+
+- `limpar_visitas_antigas()` deixou de ser chamável pela API: ela apaga dados e não checa quem chama. Rode-a só pelo SQL editor do Supabase (ou como `postgres`).
+- `resumo_visitas`, `resumo_extra` e `registrar_venda` só são chamáveis por usuário logado. As duas primeiras já exigiam `is_admin()` por dentro.
+- A tabela `mensagens_contato` tem limite de tamanho (nome 120, e-mail 160, assunto 200, mensagem 5.000 caracteres), além do limite de envios por hora que a função `enviar_mensagem` já aplicava.
+- O Content-Security-Policy do `vercel.json` não libera mais nenhum terceiro: as fontes (`assets/fonts`) e o Chart.js (`assets/js/vendor`) são hospedados no próprio site. Para ligar o Umami ou outro serviço externo, é preciso liberar o domínio em `script-src` e `connect-src`.
+- Pendências que só o dono da conta resolve no painel do Supabase: ligar a proteção contra senhas vazadas (Auth, exige plano Pro) e ativar a verificação em duas etapas (TOTP) para o usuário admin.

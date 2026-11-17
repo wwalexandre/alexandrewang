@@ -5,7 +5,8 @@ const LANG = document.documentElement.lang.startsWith('en') ? 'en' : 'pt';
 const REDUCE = matchMedia('(prefers-reduced-motion: reduce)');
 const svgIcon = (d, extra) => '<svg viewBox="0 0 24 24" aria-hidden="true"' + (extra || '') + '><path d="' + d + '"/></svg>';
 
-// Estatísticas anônimas (Umami, sem cookies). Para ligar, preencha o Website ID do Umami.
+// Estatísticas anônimas (Umami, sem cookies). Para ligar, preencha o Website ID do Umami e libere
+// https://cloud.umami.is em script-src e connect-src do Content-Security-Policy no vercel.json (hoje fechado).
 // Só conta visitas no domínio oficial: prévias e testes locais ficam de fora.
 const UMAMI_ID = '';
 if (UMAMI_ID) {
@@ -1369,12 +1370,23 @@ const DEMO_TXT = {
     guarda('traj-imagens', on ? 'on' : 'off');
   }
 
+  // uma entrada curta no conteúdo que acabou de aparecer, só quando a pessoa mexe nos controles
+  const anima = () => {
+    if (REDUCE.matches) return;
+    tl.classList.remove('troca');
+    void tl.offsetWidth;
+    tl.classList.add('troca');
+    clearTimeout(anima.t);
+    anima.t = setTimeout(() => tl.classList.remove('troca'), 450);
+  };
   botoes.forEach(b => b.addEventListener('click', () => {
     formato(b.dataset.modo);
+    anima();
     track('trajetoria_formato', { formato: b.dataset.modo });
   }));
   if (caixa) caixa.addEventListener('change', () => {
     imagens(caixa.checked);
+    anima();
     track('trajetoria_imagens', { imagens: caixa.checked ? 'on' : 'off' });
   });
 
@@ -1486,168 +1498,4 @@ const Textos = (function textos() {
     document.head.appendChild(s);
   });
   carrega(base + 'vendor/supabase-js.umd.js').then(() => carrega(base + 'editar.js')).catch(() => {});
-})();
-
-// Trajetória em modo Mapa: um tabuleiro em perspectiva, com uma casa por empresa em ordem
-// cronológica (da primeira experiência à mais recente). Clicar numa casa, ou usar os botões
-// de avançar e voltar, mostra o cartão daquela empresa logo abaixo. O desenho é SVG puro.
-(function mapaTrajetoria() {
-  const tl = document.querySelector('.timeline');
-  if (!tl) return;
-  const cartoes = [...tl.querySelectorAll('.tl')].reverse(); // o HTML vem do mais recente para o mais antigo
-  if (cartoes.length < 2) return;
-  const EN = LANG === 'en';
-  const NS = 'http://www.w3.org/2000/svg';
-  const svgEl = (tag, attrs, texto) => {
-    const n = document.createElementNS(NS, tag);
-    Object.keys(attrs || {}).forEach(k => n.setAttribute(k, attrs[k]));
-    if (texto != null) n.textContent = texto;
-    return n;
-  };
-
-  // grade em zigue-zague, projetada em perspectiva isométrica
-  const grade = cartoes.map((_, i) => [Math.ceil(i / 2) * 2, 4 - Math.floor(i / 2) * 2]);
-  const proj = (gx, gy) => [(gx - gy) * 44, (gx + gy) * 22];
-  const pts = grade.map(g => proj(g[0], g[1]));
-  const minX = Math.min(...pts.map(p => p[0])), maxX = Math.max(...pts.map(p => p[0]));
-  const minY = Math.min(...pts.map(p => p[1])), maxY = Math.max(...pts.map(p => p[1]));
-  const HW = 60, HH = 30, FUNDO = 14;
-  const W = maxX - minX + HW * 2 + 24, H = maxY - minY + HH * 2 + FUNDO + 150;
-  const ox = -minX + HW + 12, oy = -minY + HH + 112;
-  const losango = (x, y, hw, hh) => 'M' + x + ' ' + (y - hh) + 'L' + (x + hw) + ' ' + y + 'L' + x + ' ' + (y + hh) + 'L' + (x - hw) + ' ' + y + 'Z';
-  const lateral = (x, y, hw, hh, d) =>
-    'M' + (x - hw) + ' ' + y + 'L' + x + ' ' + (y + hh) + 'L' + (x + hw) + ' ' + y +
-    'L' + (x + hw) + ' ' + (y + d) + 'L' + x + ' ' + (y + hh + d) + 'L' + (x - hw) + ' ' + (y + d) + 'Z';
-
-  const caixa = document.createElement('div');
-  caixa.className = 'tl-mapa';
-  caixa.hidden = true;
-  const svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'group',
-    'aria-label': EN ? 'Career path, in chronological order' : 'Trajetória em ordem cronológica' });
-
-  // trilha entre as casas
-  for (let i = 0; i < pts.length - 1; i++) {
-    const mx = (pts[i][0] + pts[i + 1][0]) / 2 + ox, my = (pts[i][1] + pts[i + 1][1]) / 2 + oy;
-    svg.appendChild(svgEl('path', { d: lateral(mx, my, 22, 11, 6), class: 'mp-trilha-lado' }));
-    svg.appendChild(svgEl('path', { d: losango(mx, my, 22, 11), class: 'mp-trilha' }));
-  }
-
-  // Bloco em perspectiva: (cx, cy) é o centro da base no chão; a e b são as meias-larguras
-  // nos dois eixos do tabuleiro; h é a altura. Desenha as três faces visíveis.
-  function bloco(g, cx, cy, a, b, h, extra) {
-    const P = (sa, sb, dz) => (cx + sa * a - sb * b) + ' ' + (cy + (sa * a + sb * b) * 0.5 - (dz || 0));
-    const face = (pontos, cls) => g.appendChild(svgEl('path', { d: 'M' + pontos.join('L') + 'Z', class: cls + (extra ? ' ' + extra : '') }));
-    face([P(-1, 1), P(1, 1), P(1, 1, h), P(-1, 1, h)], 'mb-esq');
-    face([P(1, 1), P(1, -1), P(1, -1, h), P(1, 1, h)], 'mb-dir');
-    face([P(-1, -1, h), P(1, -1, h), P(1, 1, h), P(-1, 1, h)], 'mb-topo');
-  }
-  // Faixas de janelas nas duas faces da frente
-  function janelas(g, cx, cy, a, b, h, linhas) {
-    for (let k = 1; k <= linhas; k++) {
-      const z = (h / (linhas + 1)) * k;
-      const p = (sa, sb) => (cx + sa * a - sb * b) + ' ' + (cy + (sa * a + sb * b) * 0.5 - z);
-      g.appendChild(svgEl('path', { d: 'M' + p(-1, 1) + 'L' + p(1, 1) + 'L' + p(1, -1), class: 'mb-janela' }));
-    }
-  }
-  // Um desenho simples por tipo de lugar: laboratório, fábrica, planta, loja e prédio corporativo
-  const PREDIOS = {
-    funed(g, x, y) {            // laboratório público: dois volumes baixos
-      bloco(g, x, y - 4, 24, 16, 16);
-      janelas(g, x, y - 4, 24, 16, 16, 1);
-      bloco(g, x - 6, y - 23, 10, 8, 10, 'mb-acento-verde');
-    },
-    abbott(g, x, y) {           // fábrica: galpão com chaminé
-      bloco(g, x, y - 4, 24, 16, 20);
-      janelas(g, x, y - 4, 24, 16, 20, 2);
-      bloco(g, x + 10, y - 26, 4, 4, 22, 'mb-acento');
-    },
-    hypera(g, x, y) {           // planta: galpão longo com dois tanques
-      bloco(g, x - 12, y - 14, 5, 5, 30, 'mb-acento-verde');
-      bloco(g, x - 2, y - 19, 5, 5, 30, 'mb-acento-verde');
-      bloco(g, x + 4, y - 1, 24, 14, 15);
-      janelas(g, x + 4, y - 1, 24, 14, 15, 1);
-    },
-    hering(g, x, y) {           // loja: volume pequeno com toldo
-      bloco(g, x, y - 4, 20, 14, 18);
-      bloco(g, x + 3, y - 15, 21, 15, 4, 'mb-acento');
-    },
-    sanofi(g, x, y) {           // prédio corporativo: torre com fileiras de janelas
-      bloco(g, x, y - 4, 16, 14, 58);
-      janelas(g, x, y - 4, 16, 14, 58, 6);
-      bloco(g, x, y - 62, 9, 8, 5, 'mb-acento');
-    }
-  };
-
-  const casas = cartoes.map((c, i) => {
-    const x = pts[i][0] + ox, y = pts[i][1] + oy;
-    const nome = (c.querySelector('.tl-co') || {}).textContent || '';
-    const periodo = (c.querySelector('.tl-period') || {}).textContent || '';
-    const curto = nome.replace(/\s*\(.*\)/, '').replace(/^Cia\.\s*/, '');
-    const g = svgEl('g', { class: 'mp-casa', role: 'button', tabindex: '0',
-      'aria-label': (i + 1) + '. ' + nome + ', ' + periodo });
-    g.appendChild(svgEl('path', { d: lateral(x, y, HW, HH, FUNDO), class: 'mp-lado' }));
-    g.appendChild(svgEl('path', { d: losango(x, y, HW, HH), class: 'mp-topo' }));
-    const predio = svgEl('g', { class: 'mp-predio' });
-    (PREDIOS[c.dataset.item] || PREDIOS.abbott)(predio, x + 6, y - 2);
-    g.appendChild(predio);
-    g.appendChild(svgEl('text', { x: x - 36, y: y + 5, class: 'mp-num', 'text-anchor': 'middle' }, String(i + 1)));
-    const cima = pts[i][1] === minY; // rótulo acima nas casas de cima, abaixo nas de baixo
-    const ly = cima ? y - HH - 62 : y + HH + FUNDO + 20;
-    g.appendChild(svgEl('text', { x: x, y: ly, class: 'mp-nome', 'text-anchor': 'middle' }, curto));
-    g.appendChild(svgEl('text', { x: x, y: ly + 15, class: 'mp-ano', 'text-anchor': 'middle' }, periodo));
-    svg.appendChild(g);
-    return g;
-  });
-
-  // peão que marca a casa atual
-  const peao = svgEl('g', { class: 'mp-peao', 'aria-hidden': 'true' });
-  peao.appendChild(svgEl('ellipse', { cx: 0, cy: 0, rx: 11, ry: 5.5, class: 'mp-peao-base' }));
-  peao.appendChild(svgEl('path', { d: 'M-7 -1 L0 -26 L7 -1 Z', class: 'mp-peao-corpo' }));
-  peao.appendChild(svgEl('circle', { cx: 0, cy: -29, r: 6.5, class: 'mp-peao-corpo' }));
-  svg.appendChild(peao);
-
-  const nav = document.createElement('div');
-  nav.className = 'mp-nav';
-  const voltar = document.createElement('button');
-  const avancar = document.createElement('button');
-  const passo = document.createElement('span');
-  passo.setAttribute('aria-live', 'polite');
-  [voltar, avancar].forEach(b => { b.type = 'button'; b.className = 'btn btn-outline btn-sm'; });
-  voltar.textContent = EN ? 'Previous' : 'Anterior';
-  avancar.textContent = EN ? 'Next' : 'Próxima';
-  nav.append(voltar, passo, avancar);
-  caixa.append(svg, nav);
-  tl.parentNode.insertBefore(caixa, tl);
-
-  let atual = 0;
-  function vai(i) {
-    atual = Math.max(0, Math.min(cartoes.length - 1, i));
-    casas.forEach((g, k) => {
-      g.classList.toggle('sel', k === atual);
-      g.classList.toggle('passou', k < atual);
-      g.setAttribute('aria-pressed', String(k === atual));
-    });
-    cartoes.forEach((c, k) => c.classList.toggle('mapa-sel', k === atual));
-    peao.setAttribute('transform', 'translate(' + (pts[atual][0] + ox - 8) + ' ' + (pts[atual][1] + oy + 21) + ')');
-    voltar.disabled = atual === 0;
-    avancar.disabled = atual === cartoes.length - 1;
-    passo.textContent = (atual + 1) + (EN ? ' of ' : ' de ') + cartoes.length;
-    try { sessionStorage.setItem('traj-casa', String(atual)); } catch (e) {}
-  }
-  casas.forEach((g, i) => {
-    g.addEventListener('click', () => vai(i));
-    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vai(i); } });
-  });
-  voltar.addEventListener('click', () => vai(atual - 1));
-  avancar.addEventListener('click', () => vai(atual + 1));
-
-  const liga = on => {
-    caixa.hidden = !on;
-    if (on) cartoes.forEach(Reveal.finish);
-  };
-  let inicio = 0;
-  try { inicio = parseInt(sessionStorage.getItem('traj-casa'), 10) || 0; } catch (e) {}
-  vai(inicio);
-  liga(tl.dataset.mapa === 'on');
-  document.addEventListener('traj-mapa', e => liga(e.detail));
 })();

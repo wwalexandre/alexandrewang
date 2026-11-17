@@ -1,3 +1,14 @@
+/* Fontes hospedadas no proprio site (Barlow, Barlow Condensed e JetBrains Mono), so o subconjunto latin.
+   Licenca: SIL Open Font License 1.1. Nada e pedido ao Google quando a pagina abre. */
+@font-face { font-family: 'Barlow'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/barlow-400.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/barlow-500.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/barlow-600.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Barlow'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/barlow-700.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/barlow-condensed-600.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/barlow-condensed-700.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/jetbrains-mono-500.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: swap; src: url('../fonts/jetbrains-mono-600.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
 /* Alexandre Wang | portfólio
    Paleta: azul-marinho e laranja dos vídeos + verde dos currículos */
 
@@ -1142,3 +1153,37 @@ i.iv-desembaraco { background: var(--iv-desembaraco); } i.iv-entregue { backgrou
 .fb-cel { font-weight: 600; }
 .fb-cel.fb-excesso { color: var(--cov-excesso); } .fb-cel.fb-risco { color: var(--cov-risco); } .fb-cel.fb-ok { color: var(--text); font-weight: 500; }
 .fb-cel.fb-sel { background: var(--surface-2); }
+
+/* Mapa v2: letreiros, janelas, fumaça e animações dos prédios */
+.tl-mapa svg { max-width: 760px; }
+.mb-sombra { fill: rgba(0, 0, 0, .28); stroke: none !important; }
+.mb-placa { fill: #fff; stroke: #0F1C2C; stroke-width: .8; }
+.mb-placa-txt { font-family: var(--display); font-weight: 700; fill: #0F1C2C; letter-spacing: .02em; }
+.mb-jan { fill: rgba(15, 28, 44, .5); transition: fill .35s; }
+.mb-jan.on { fill: #E9C46A; }
+.mp-casa.sel .mb-jan { fill: #FFE08A; }
+.mb-vidro { fill: #2B4A66; stroke: #0F1C2C; stroke-width: .6; }
+.mb-antena { stroke: #0F1C2C; stroke-width: 1.6; }
+.mb-fumaca { fill: var(--muted); opacity: 0; transform-box: fill-box; transform-origin: center; animation: mp-fumaca 3.3s ease-out infinite; }
+@keyframes mp-fumaca { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 18% { opacity: .55; } 100% { opacity: 0; transform: translate(9px, -28px) scale(2); } }
+.mp-predio { transition: transform .3s cubic-bezier(.2, .7, .2, 1), filter .3s; }
+.mp-casa:hover .mp-predio { transform: translateY(-2px); }
+.mp-casa.sel .mp-predio { transform: translateY(-5px); filter: drop-shadow(0 0 7px rgba(240, 138, 36, .65)); }
+.mp-rotulo-fundo { fill: var(--surface); stroke: var(--line); }
+.mp-casa.sel .mp-rotulo-fundo { stroke: var(--orange); stroke-width: 1.6; }
+.mp-nome { font-size: 14px; }
+.mp-ano { font-size: 11.5px; }
+.mp-entra .mp-predio { transform-box: fill-box; transform-origin: 50% 100%; animation: mp-sobe .85s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: var(--d, 0s); }
+@keyframes mp-sobe { from { transform: scaleY(.03); opacity: 0; } 55% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .mb-fumaca { animation: none; opacity: 0; }
+  .mp-predio, .mb-jan { transition: none; }
+  .mp-entra .mp-predio { animation: none; }
+}
+
+.mb-toldo-a { fill: #F08A24; } .mb-toldo-b { fill: #FBE3C4; }
+
+/* Trajetória: o conteúdo novo entra com um deslize curto quando a pessoa troca o formato ou liga as imagens */
+@keyframes troca-in { from { opacity: 0; transform: translateY(8px); } }
+.timeline.troca .tl-topicos, .timeline.troca .tl-star, .timeline.troca .tl-chaves, .timeline.troca .tl-produtos { animation: troca-in .3s cubic-bezier(.2, .7, .2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .timeline.troca .tl-topicos, .timeline.troca .tl-star, .timeline.troca .tl-chaves, .timeline.troca .tl-produtos { animation: none; } }
