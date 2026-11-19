@@ -154,3 +154,4 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 ### 18/11/2026
 
 - `(este commit)` README reescrito com passo a passo para retomar com qualquer IA, e este histórico
+- `(este commit)` Migrações de `itens_site` (13/11) e `textos_site` (16/11) copiadas do Supabase para `supabase/migrations/`

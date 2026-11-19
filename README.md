@@ -172,7 +172,7 @@ Toda página tem versão em português (`nome.html`) e em inglês (`nome-en.html
 | `assets/img/`, `assets/video/`, `assets/docs/` | Imagens, vídeos com legendas `.vtt` e arquivos para download |
 | `api/visita.js` | Função da Vercel que grava visitas, avisos e detecção de cópia |
 | `api/ping.js` | Cron diário que mantém o Supabase ativo |
-| `supabase/migrations/` | SQL do banco, fonte da verdade. Nunca edite uma migração antiga; crie outra |
+| `supabase/migrations/` | SQL do banco, fonte da verdade. Nunca edite uma migração antiga; crie outra. O projeto Supabase `antgravity` também guarda tabelas de outro projeto (PadariaTech: `produtos`, `vendas`, `itens_venda`, `registrar_venda`), que não pertencem a este site |
 | `vercel.json` | CSP e cabeçalhos, cache, redirecionamento por país, cron |
 | `sitemap.xml`, `robots.txt`, `.well-known/security.txt` | Busca, regras para robôs (inclusive de IA) e contato de segurança |
 | `LICENSE` | Todos os direitos reservados (o código é público para leitura, não para cópia) |
@@ -273,7 +273,7 @@ Resumo por fase. O registro dia a dia, com hashes, está em [`docs/HISTORICO.md`
 | 3. Backend e dados | 05 a 08/11/2026 | Supabase (contato, leads, `/admin/`), painel de visitantes sem IP, aviso na hora para empresas, detecção de cópia e licença, revisão de SEO |
 | 4. Migração (branch) | 12/11/2026 | Versão Cloudflare (Worker, D1, Access) na branch `cloudflare-d1`, não publicada |
 | 5. Conteúdo e refinamento | 13 a 17/11/2026 | Trajetória com STAR, palavras-chave e mapa isométrico, edição ao vivo pelo painel, currículos por área, três publicações novas com simulador, painéis de invoices e de fábrica, revisão de segurança |
-| 6. Documentação | 18/11/2026 | Este README reescrito para permitir retomar o trabalho com qualquer IA, e criação do `docs/HISTORICO.md` |
+| 6. Documentação | 18/11/2026 | Este README reescrito para permitir retomar o trabalho com qualquer IA, criação do `docs/HISTORICO.md`, `AGENTS.md` e `CLAUDE.md`, e registro no repositório das migrações de `itens_site` e `textos_site`, que só existiam no Supabase |
 
 ---
 
@@ -282,7 +282,6 @@ Resumo por fase. O registro dia a dia, com hashes, está em [`docs/HISTORICO.md`
 Em ordem de prioridade.
 
 1. **Decidir o destino da migração para Cloudflare.** A branch `cloudflare-d1` precisa receber tudo o que entrou na `main` depois de 07/11/2026, incluindo as tabelas novas (`textos_site`, `itens_site`, `clones`, `avisos`) e o endurecimento de funções, antes de publicar. Os passos manuais estão em `docs/CLOUDFLARE.md` daquela branch (login no wrangler, aplicar o D1, criar o aplicativo no Cloudflare Access, preencher `ACCESS_TEAM_DOMAIN` e `ACCESS_AUD`, deploy). Depois de publicar, atualizar este README, `SITE_URL`, canonical e sitemap se o domínio mudar.
-2. **Registrar no repositório as tabelas `textos_site` e `itens_site`.** O código usa as duas (edição ao vivo e aba Conteúdo do painel), mas não há migração delas em `supabase/migrations/`: foram criadas direto no Supabase. Exportar o SQL delas e salvar como migração nova, senão quem recriar o banco a partir do repositório perde essas funções.
-3. Enviar uma mensagem real pelo formulário e conferir no `/admin/`.
-4. Decidir sobre ligar o Umami.
-5. No painel do Supabase (enquanto for usado): proteção contra senhas vazadas e verificação em duas etapas para o admin.
+2. Enviar uma mensagem real pelo formulário e conferir no `/admin/`.
+3. Decidir sobre ligar o Umami.
+4. No painel do Supabase (enquanto for usado): proteção contra senhas vazadas e verificação em duas etapas para o admin.
