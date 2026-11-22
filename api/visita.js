@@ -8,6 +8,8 @@
 // Privacidade: o IP é usado só para montar um hash junto com um sal secreto e a data do dia.
 // O IP não é gravado em lugar nenhum, e o hash muda à meia-noite, então não dá para seguir
 // a mesma pessoa de um dia para o outro nem descobrir quem ela é.
+// Exceção desde 22/11/2026: o banco também guarda `rede_id`, um hash fixo do IP com o sal,
+// que serve só para o painel bloquear um visitante suspeito. Também não revela o IP.
 
 const { createHash } = require('crypto');
 
@@ -346,7 +348,10 @@ module.exports = async function handler(req, res) {
       p_latitude: texto(String(h['x-vercel-ip-latitude'] || ''), 16) || (rede && texto(rede.lat, 16)) || null,
       p_longitude: texto(String(h['x-vercel-ip-longitude'] || ''), 16) || (rede && texto(rede.lon, 16)) || null,
       p_operadora: (rede && rede.operadora) || null,
-      p_rede_tipo: (rede && rede.tipo) || null
+      p_rede_tipo: (rede && rede.tipo) || null,
+      // Vai só para o banco montar o rede_id (hash com o sal secreto), que permite bloquear
+      // alguém pelo painel. O IP em si não é gravado.
+      p_ip: ip || null
     });
   } catch (e) {
     // Falha de rede ou do banco não pode virar erro para o visitante.

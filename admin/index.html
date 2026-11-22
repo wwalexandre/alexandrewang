@@ -135,13 +135,27 @@
       </section>
 
       <section class="adm-bloco" data-vis-detalhe>
-        <h3>Últimas jornadas <span class="adm-nota">cada linha é uma pessoa, na ordem em que abriu as páginas. Horário de Brasília.</span></h3>
+        <h3>Últimas jornadas <span class="adm-nota">cada linha é uma pessoa, na ordem em que abriu as páginas. Horário de Brasília. Tempo é a soma do tempo em cada página.</span></h3>
         <div class="adm-table-wrap">
           <table class="adm-table">
-            <thead><tr><th>Quando (Brasília)</th><th>De onde</th><th>Aparelho</th><th>Veio de</th><th>Caminho</th></tr></thead>
+            <thead><tr><th>Quando (Brasília)</th><th>De onde</th><th>Rede</th><th>Aparelho</th><th>Veio de</th><th>Tempo no site</th><th>Caminho</th><th></th></tr></thead>
             <tbody id="visJornadas"></tbody>
           </table>
         </div>
+      </section>
+
+      <section class="adm-bloco">
+        <h3>Acesso e bloqueios</h3>
+        <label class="sw adm-sw-sp"><input type="checkbox" id="soSp"><span aria-hidden="true"></span> <b>Site só para o estado de São Paulo</b></label>
+        <p class="adm-nota">Ligado: quem acessa de fora do estado de SP vê uma página de acesso indisponível. Robôs do Google, LinkedIn e WhatsApp continuam entrando, para o site aparecer na busca e nas prévias de link. Este painel abre de qualquer lugar. Quem usa VPN consegue contornar.</p>
+        <p class="adm-status" id="bloqStatus" role="status"></p>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Bloqueado</th><th>Tipo</th><th>Motivo</th><th>Desde</th><th></th></tr></thead>
+            <tbody id="bloqLista"></tbody>
+          </table>
+        </div>
+        <p class="adm-nota">Bloquear uma rede (botão nas jornadas) impede a pessoa de abrir o site. Bloquear um e-mail (botão nos leads) impede que ele entre de novo como lead. Jornadas de antes de 22/11/2026 não guardaram a rede, por isso não dá para bloquear por elas.</p>
       </section>
     </div>
 

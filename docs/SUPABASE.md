@@ -196,3 +196,13 @@ Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca 
 - A tabela `mensagens_contato` tem limite de tamanho (nome 120, e-mail 160, assunto 200, mensagem 5.000 caracteres), além do limite de envios por hora que a função `enviar_mensagem` já aplicava.
 - O Content-Security-Policy do `vercel.json` não libera mais nenhum terceiro: as fontes (`assets/fonts`) e o Chart.js (`assets/js/vendor`) são hospedados no próprio site. Para ligar o Umami ou outro serviço externo, é preciso liberar o domínio em `script-src` e `connect-src`.
 - Pendências que só o dono da conta resolve no painel do Supabase: ligar a proteção contra senhas vazadas (Auth, exige plano Pro) e ativar a verificação em duas etapas (TOTP) para o usuário admin.
+
+## Bloqueio e acesso só SP (22/11/2026)
+
+Migração `20261122120000_bloqueio_e_acesso_sp.sql`.
+
+- `ingestao_config.so_sp`: liga a regra "só estado de SP". Lida pelo `middleware.js` da raiz via `checar_acesso(p_ip)`, que devolve só `bloqueado` e `so_sp`. Painel troca com `definir_so_sp` (admin).
+- `visitas.rede_id`: hash fixo de `'rede|' || ip || sal`, feito por `rede_do_ip` (não chamável pela API). Diferente da sessão, não muda à meia-noite; existe só para bloquear. O IP continua sem ser gravado. `registrar_visita` ganhou o argumento `p_ip`.
+- `bloqueios` (RLS só admin): por `rede_id` (via `bloquear_sessao`) ou por `email` (via `bloquear_email`). `registrar_lead` ignora e-mail bloqueado. Desbloquear é apagar a linha pelo painel.
+- `resumo_visitas`: cada jornada traz `sessao`, `rede`, `segundos` (soma dos eventos `tempo`), `bloqueavel` e `bloqueado`; o resumo traz também `bloqueios` e `so_sp`.
+- O middleware guarda a resposta por IP por 5 minutos e deixa passar se o banco falhar ou demorar mais de 0,8 s.

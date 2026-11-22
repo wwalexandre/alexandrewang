@@ -155,3 +155,12 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 
 - `7bffa82` README reescrito com passo a passo para retomar com qualquer IA, e este histórico
 - `306f04a` Migrações de `itens_site` (13/11) e `textos_site` (16/11) copiadas do Supabase para `supabase/migrations/`
+
+## Fase 7. Segurança e acesso
+
+### 22/11/2026
+
+- Site liberado só para o estado de São Paulo (`middleware.js`), com chave no painel para desligar
+- Bloqueio de visitantes: `rede_id` (hash fixo do IP com o sal, IP não gravado), tabela `bloqueios`, botão Bloquear nas jornadas e Bloquear e-mail nos leads
+- Tempo no site e rede em cada jornada do painel
+- Texto não selecionável, cópia e atalhos bloqueados, marca d'água e impressão desativada

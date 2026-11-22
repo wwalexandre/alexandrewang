@@ -1480,6 +1480,71 @@ const Textos = (function textos() {
   return { pagina, norm, folhas, pronto, url: SB_URL, key: SB_KEY };
 })();
 
+// Proteção do conteúdo: bloqueia copiar, recortar, menu do botão direito, arrastar imagens e
+// atalhos de copiar, salvar, imprimir e ver código. Coloca a marca d'água e, ao apertar
+// Print Screen, borra a página por um instante e apaga a área de transferência.
+// Nada disso é absoluto na web; é para desencorajar. Campos de formulário e o modo de
+// edição do painel continuam livres.
+(function protecaoConteudo() {
+  const en = (document.documentElement.lang || '').toLowerCase().startsWith('en');
+  const livre = alvo => document.body.classList.contains('ed-on') ||
+    !!(alvo && alvo.closest && alvo.closest('input, textarea, select, [contenteditable="true"]'));
+
+  const marca = document.createElement('div');
+  marca.className = 'marca-dagua';
+  marca.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(marca);
+
+  const caixa = document.createElement('div');
+  caixa.className = 'aviso-protecao';
+  caixa.setAttribute('role', 'status');
+  document.body.appendChild(caixa);
+  let relogio = 0;
+  function avisar(pt, ing) {
+    caixa.textContent = en ? ing : pt;
+    caixa.classList.add('on');
+    clearTimeout(relogio);
+    relogio = setTimeout(() => caixa.classList.remove('on'), 2200);
+  }
+  const avisoCopia = () => avisar('O conteúdo deste site é protegido.', 'This content is protected.');
+
+  ['copy', 'cut'].forEach(tipo => document.addEventListener(tipo, e => {
+    if (livre(e.target)) return;
+    e.preventDefault();
+    avisoCopia();
+  }));
+  document.addEventListener('contextmenu', e => {
+    if (livre(e.target) || (e.target.closest && e.target.closest('a[href]'))) return;
+    e.preventDefault();
+  });
+  document.addEventListener('dragstart', e => {
+    if (e.target && (e.target.tagName === 'IMG' || e.target.tagName === 'svg')) e.preventDefault();
+  });
+  document.addEventListener('selectstart', e => {
+    if (!livre(e.target)) e.preventDefault();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (livre(e.target)) return;
+    const k = (e.key || '').toLowerCase();
+    const mod = e.ctrlKey || e.metaKey;
+    const bloqueia = (mod && ['c', 'x', 'a', 's', 'p', 'u'].includes(k)) ||
+      (mod && e.shiftKey && ['i', 'j', 'c'].includes(k)) || k === 'f12';
+    if (!bloqueia) return;
+    e.preventDefault();
+    avisoCopia();
+  });
+
+  function veu() {
+    document.body.classList.add('protecao-veu');
+    setTimeout(() => document.body.classList.remove('protecao-veu'), 1500);
+    try { navigator.clipboard && navigator.clipboard.writeText('').catch(() => {}); } catch (e) {}
+    avisar('Capturas de tela deste site não são permitidas.', 'Screenshots of this site are not allowed.');
+  }
+  document.addEventListener('keyup', e => { if (e.key === 'PrintScreen') veu(); });
+  window.addEventListener('beforeprint', () => avisar('Impressão desativada.', 'Printing is disabled.'));
+})();
+
 // Modo de edição: só carrega o editor quando o painel pediu (?editar=1) nesta aba.
 (function modoEdicao() {
   let ligado = false;

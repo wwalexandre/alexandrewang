@@ -161,3 +161,8 @@
 .adm-texto > div { display: grid; gap: 3px; min-width: 0; }
 .adm-texto small { font-size: 12px; color: var(--muted); }
 .adm-texto s { font-size: 14px; color: var(--muted); }
+
+/* Acesso e bloqueios */
+.adm-acoes { white-space: nowrap; }
+.adm-sw-sp { margin: 4px 0 10px; }
+.adm-sw-sp b { color: var(--text); font-weight: 600; }

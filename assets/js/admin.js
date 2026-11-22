@@ -201,7 +201,18 @@
         leads = leads.filter(x => x.id !== l.id);
         renderLeads();
       });
-      td.append(del);
+      const bloq = el('button', 'btn btn-outline btn-sm adm-danger', 'Bloquear e-mail');
+      bloq.type = 'button';
+      bloq.addEventListener('click', async () => {
+        if (!window.confirm('Bloquear ' + l.email + '? Ele deixa de entrar como lead. O registro atual continua aqui.')) return;
+        bloq.disabled = true;
+        const { error } = await sb.rpc('bloquear_email', { p_email: l.email, p_descricao: 'Bloqueado pelos leads em ' + new Date().toLocaleDateString('pt-BR') });
+        if (error) { $('leadStatus').textContent = 'Não foi possível bloquear. Tente novamente.'; bloq.disabled = false; return; }
+        $('leadStatus').textContent = l.email + ' bloqueado.';
+        bloq.textContent = 'Bloqueado';
+      });
+      td.className = 'adm-acoes';
+      td.append(bloq, ' ', del);
       tr.append(td);
       body.append(tr);
     });
@@ -657,30 +668,116 @@
       abuso.append(tr);
     }
     $('visAbusoDica').textContent = pesados.some(m => m.robo || (m.n >= 30 && m.minutos <= 10))
-      ? 'Linha em vermelho é provável robô: ou veio de datacenter e VPN, ou abriu muita página em pouco tempo. Para bloquear, use o Firewall da Vercel, em Project Settings e depois Firewall, que vê o endereço de rede e corta o acesso antes de chegar ao site.'
-      : 'Para bloquear alguém, o caminho é o Firewall da Vercel, em Project Settings e depois Firewall. Ele vê o endereço de rede na borda e corta o acesso, sem precisar guardar nada aqui.';
+      ? 'Linha em vermelho é provável robô: ou veio de datacenter e VPN, ou abriu muita página em pouco tempo. Para barrar alguém, use o botão Bloquear em Últimas jornadas.'
+      : 'Para barrar alguém, use o botão Bloquear em Últimas jornadas: a rede da pessoa deixa de abrir o site.';
 
     const corpo = $('visJornadas');
     corpo.replaceChildren();
     (d.jornadas || []).forEach(j => {
-      const tr = el('tr');
+      const tr = el('tr', j.bloqueado ? 'adm-suspeito' : '');
       tr.append(el('td', '', j.inicio));
       tr.append(el('td', '', j.lugar));
+      tr.append(el('td', '', j.rede || ''));
       tr.append(el('td', '', j.dispositivo));
       tr.append(el('td', '', j.origem));
+      tr.append(el('td', '', duracao(j.segundos)));
       const td = el('td', 'adm-rota');
       td.append(el('span', '', nomeRota(j.rota)));
       tr.append(td);
+      const acao = el('td');
+      if (j.bloqueado) {
+        acao.append(el('span', 'adm-nota', 'Bloqueada'));
+      } else {
+        const b = el('button', 'btn btn-outline btn-sm adm-danger', 'Bloquear');
+        b.type = 'button';
+        if (!j.bloqueavel) {
+          b.disabled = true;
+          b.title = 'Visita de antes de 22/11/2026: a rede não foi guardada.';
+        }
+        b.addEventListener('click', () => bloquearJornada(j, b));
+        acao.append(b);
+      }
+      tr.append(acao);
       corpo.append(tr);
     });
     if (!(d.jornadas || []).length) {
       const tr = el('tr');
       const td = el('td', 'adm-vazio', 'Nenhuma visita registrada ainda.');
+      td.colSpan = 8;
+      tr.append(td);
+      corpo.append(tr);
+    }
+
+    renderBloqueios(d.bloqueios || [], d.so_sp !== false);
+  }
+
+  // Tempo somado de uma jornada, em texto curto
+  function duracao(seg) {
+    const s = Math.max(0, Math.round(Number(seg) || 0));
+    if (!s) return 'menos de 5 s';
+    if (s < 60) return s + ' s';
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + ' min' + (s % 60 ? ' ' + (s % 60) + ' s' : '');
+    return Math.floor(m / 60) + ' h ' + (m % 60) + ' min';
+  }
+
+  // ---------- Acesso e bloqueios ----------
+  async function bloquearJornada(j, botao) {
+    const motivo = window.prompt('Bloquear a rede desta pessoa (' + j.lugar + ', ' + j.inicio + ')? Ela deixa de abrir o site.\nMotivo (opcional):', 'Visita suspeita');
+    if (motivo === null) return;
+    botao.disabled = true;
+    const { data, error } = await sb.rpc('bloquear_sessao', { p_sessao: j.sessao, p_descricao: motivo + ' · ' + j.lugar + ', ' + j.inicio });
+    if (error) { $('bloqStatus').textContent = 'Não foi possível bloquear. Tente novamente.'; botao.disabled = false; return; }
+    $('bloqStatus').textContent = data ? 'Rede bloqueada. Pode levar até 5 minutos para valer.' : 'Esta jornada não tem rede guardada, então não dá para bloquear por ela.';
+    loadVis();
+  }
+
+  function renderBloqueios(lista, soSp) {
+    const chave = $('soSp');
+    chave.checked = soSp;
+    const corpo = $('bloqLista');
+    corpo.replaceChildren();
+    lista.forEach(b => {
+      const tr = el('tr');
+      tr.append(el('td', '', b.alvo));
+      tr.append(el('td', '', b.tipo === 'email' ? 'E-mail' : 'Rede'));
+      tr.append(el('td', '', b.descricao || ''));
+      tr.append(el('td', '', b.quando));
+      const td = el('td');
+      const des = el('button', 'btn btn-outline btn-sm', 'Desbloquear');
+      des.type = 'button';
+      des.addEventListener('click', async () => {
+        if (!window.confirm('Desbloquear ' + b.alvo + '?')) return;
+        des.disabled = true;
+        const { error } = await sb.from('bloqueios').delete().eq('id', b.id);
+        if (error) { $('bloqStatus').textContent = 'Não foi possível desbloquear. Tente novamente.'; des.disabled = false; return; }
+        $('bloqStatus').textContent = 'Desbloqueado.';
+        loadVis();
+      });
+      td.append(des);
+      tr.append(td);
+      corpo.append(tr);
+    });
+    if (!lista.length) {
+      const tr = el('tr');
+      const td = el('td', 'adm-vazio', 'Ninguém bloqueado.');
       td.colSpan = 5;
       tr.append(td);
       corpo.append(tr);
     }
   }
+
+  $('soSp').addEventListener('change', async e => {
+    const valor = e.target.checked;
+    if (!valor && !window.confirm('Liberar o site para qualquer lugar do mundo?')) { e.target.checked = true; return; }
+    e.target.disabled = true;
+    const { error } = await sb.rpc('definir_so_sp', { p_valor: valor });
+    e.target.disabled = false;
+    if (error) { e.target.checked = !valor; $('bloqStatus').textContent = 'Não foi possível mudar a regra.'; return; }
+    $('bloqStatus').textContent = valor
+      ? 'Ligado: só o estado de SP abre o site. Pode levar até 5 minutos para valer.'
+      : 'Desligado: o site abre de qualquer lugar. Pode levar até 5 minutos para valer.';
+  });
 
   // Cópias do site: o bloco só aparece se alguma tiver sido detectada.
   async function loadCopias() {

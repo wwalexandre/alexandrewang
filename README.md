@@ -25,11 +25,13 @@ Este README serve para duas coisas: explicar o site e permitir que **qualquer pe
 
 ## Estado atual (leia primeiro)
 
-Atualizado em 18/11/2026.
+Atualizado em 22/11/2026.
 
 | Item | Situação |
 |---|---|
 | Site em produção | Vercel, publicado a partir da branch `main` |
+| Acesso | Só estado de São Paulo, pelo `middleware.js` (chave no painel, em Visitantes, "Acesso e bloqueios"). Painel, robôs de busca e de prévia de link sempre liberados |
+| Proteção do conteúdo | Texto não selecionável, cópia bloqueada, marca d'água e impressão desativada (`style.css` e `main.js`). Desencoraja, não impede |
 | Banco em produção | Supabase (projeto `antgravity`), usado por contato, leads, visitas, avisos, textos editados e visibilidade dos cards |
 | Migração para Cloudflare | **Decidida, feita na branch `cloudflare-d1`, ainda não publicada.** A branch está atrás da `main` e não tem as mudanças feitas a partir de 07/11/2026 (mapa da trajetória, edição ao vivo, novas publicações e painéis, revisão de segurança). Ver [Pendências](#pendências) |
 | Estatísticas Umami | Código pronto, desligado (`UMAMI_ID` vazio em `assets/js/main.js`) |
