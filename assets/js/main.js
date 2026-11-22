@@ -59,6 +59,14 @@ function setLangCookie(lang) {
     setLangCookie(h ? (h.startsWith('en') ? 'en' : 'pt') : LANG);
   }));
 
+  // Fora do estado de SP o português não abre (o middleware leva para o inglês e deixa o
+  // cookie so_en). Nesse caso some o botão "PT" e não aparece o convite, que só fariam a
+  // pessoa voltar para a mesma página em inglês.
+  if (/(?:^|;\s*)so_en=1/.test(document.cookie)) {
+    document.querySelectorAll('a[hreflang^="pt"]').forEach(a => { a.hidden = true; a.style.display = 'none'; });
+    return;
+  }
+
   // Na versão em inglês, quem tem o navegador em português (um brasileiro viajando, por exemplo) recebe um convite discreto
   if (LANG !== 'en' || /(?:^|;\s*)lang=/.test(document.cookie)) return;
   const langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];

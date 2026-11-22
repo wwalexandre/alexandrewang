@@ -161,6 +161,7 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 ### 22/11/2026
 
 - Site liberado só para o estado de São Paulo (`middleware.js`), com chave no painel para desligar
+- Mesmo dia, ajuste: fora de SP o site não fecha mais, leva para a versão em inglês; Últimas jornadas no topo do painel
 - Bloqueio de visitantes: `rede_id` (hash fixo do IP com o sal, IP não gravado), tabela `bloqueios`, botão Bloquear nas jornadas e Bloquear e-mail nos leads
 - Tempo no site e rede em cada jornada do painel
 - Texto não selecionável, cópia e atalhos bloqueados, marca d'água e impressão desativada

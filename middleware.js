@@ -1,8 +1,9 @@
 // Porteiro do site (Vercel Routing Middleware). Roda antes de cada página.
 //
-// 1) Regra "só estado de São Paulo": quem vem de fora do estado de SP, Brasil, vê uma página
-//    curta de acesso indisponível. A regra liga e desliga no painel (ingestao_config.so_sp),
-//    sem precisar publicar o site de novo.
+// 1) Regra "português só no estado de São Paulo": quem vem de fora do estado de SP, Brasil,
+//    é levado para a versão em inglês da mesma página. A regra liga e desliga no painel
+//    (ingestao_config.so_sp), sem precisar publicar o site de novo. Desligada, o português
+//    abre para todo mundo.
 // 2) Bloqueio: redes marcadas como suspeitas no painel não entram, de onde quer que venham.
 //
 // O que fica sempre liberado: o painel (/admin, para o Alexandre poder desligar a regra se
@@ -54,14 +55,34 @@ async function consultar(ip) {
   }
 }
 
-function pagina(motivo) {
-  const fora = motivo === 'fora';
-  const pt = fora
-    ? 'Por enquanto, este site está disponível apenas para acessos do estado de São Paulo.'
-    : 'O acesso a este site não está disponível para a sua conexão.';
-  const en = fora
-    ? 'For now, this website is only available from the state of São Paulo, Brazil.'
-    : 'Access to this website is not available for your connection.';
+// Endereço da versão em inglês de uma página em português. Devolve null quando a página já
+// está em inglês ou não tem par (404, por exemplo).
+function versaoEmIngles(caminho) {
+  if (caminho === '/' || caminho === '/index.html') return '/en.html';
+  if (caminho === '/privacidade.html') return '/privacy.html';
+  const m = caminho.match(/^\/(projetos|publicacoes)\/([a-z0-9-]+)\.html$/);
+  if (m && !m[2].endsWith('-en')) return '/' + m[1] + '/' + m[2] + '-en.html';
+  return null;
+}
+
+function paraIngles(request, destino) {
+  const url = new URL(request.url);
+  url.pathname = destino;
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: url.pathname + url.search,
+      'Cache-Control': 'no-store',
+      // Avisa o site para esconder o botão "PT" e o convite para ler em português,
+      // que só trariam a pessoa de volta para cá.
+      'Set-Cookie': 'so_en=1; Path=/; Max-Age=3600; SameSite=Lax; Secure'
+    }
+  });
+}
+
+function pagina() {
+  const pt = 'O acesso a este site não está disponível para a sua conexão.';
+  const en = 'Access to this website is not available for your connection.';
   const html = '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width, initial-scale=1">'
     + '<meta name="robots" content="noindex">'
@@ -100,13 +121,15 @@ export default async function middleware(request) {
   const r = await consultar(ip);
   if (!r) return;
 
-  if (r.bloqueado === true) return pagina('bloqueado');
+  if (r.bloqueado === true) return pagina();
 
   if (r.so_sp !== false) {
     const pais = (request.headers.get('x-vercel-ip-country') || '').toUpperCase();
     const estado = (request.headers.get('x-vercel-ip-country-region') || '').toUpperCase();
     // Sem cabeçalho de país (ambiente local ou de teste), não dá para saber: deixa passar.
     if (!pais) return;
-    if (pais !== 'BR' || estado !== 'SP') return pagina('fora');
+    if (pais === 'BR' && estado === 'SP') return;
+    const destino = versaoEmIngles(new URL(request.url).pathname);
+    if (destino) return paraIngles(request, destino);
   }
 }

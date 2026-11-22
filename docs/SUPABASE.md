@@ -201,7 +201,7 @@ Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca 
 
 Migração `20261122120000_bloqueio_e_acesso_sp.sql`.
 
-- `ingestao_config.so_sp`: liga a regra "só estado de SP". Lida pelo `middleware.js` da raiz via `checar_acesso(p_ip)`, que devolve só `bloqueado` e `so_sp`. Painel troca com `definir_so_sp` (admin).
+- `ingestao_config.so_sp`: liga a regra "português só no estado de SP" (fora de SP, o middleware redireciona cada página em português para o par `-en`, `en.html` ou `privacy.html`, e deixa o cookie `so_en` para o site esconder o botão PT). Lida pelo `middleware.js` da raiz via `checar_acesso(p_ip)`, que devolve só `bloqueado` e `so_sp`. Painel troca com `definir_so_sp` (admin).
 - `visitas.rede_id`: hash fixo de `'rede|' || ip || sal`, feito por `rede_do_ip` (não chamável pela API). Diferente da sessão, não muda à meia-noite; existe só para bloquear. O IP continua sem ser gravado. `registrar_visita` ganhou o argumento `p_ip`.
 - `bloqueios` (RLS só admin): por `rede_id` (via `bloquear_sessao`) ou por `email` (via `bloquear_email`). `registrar_lead` ignora e-mail bloqueado. Desbloquear é apagar a linha pelo painel.
 - `resumo_visitas`: cada jornada traz `sessao`, `rede`, `segundos` (soma dos eventos `tempo`), `bloqueavel` e `bloqueado`; o resumo traz também `bloqueios` e `so_sp`.

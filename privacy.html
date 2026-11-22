@@ -87,7 +87,7 @@
   <p>To count how many different people came in, the server builds a scrambled code from the network address, the browser, a secret key of mine and <strong>the date of the day</strong>. Because the date is part of the calculation, the code changes at midnight. In practice, today's visit and tomorrow's visit from the same device are two unconnected visits, and the code cannot be reversed back into the original address.</p>
 
   <h2>Security and access</h2>
-  <p>To be able to stop abusive access, each visit also stores a second scrambled code, built only from the network address and my secret key. It does not change with the day, it is used only to block a network, and it cannot be reversed back into the address either. For now, the site is only available from the state of São Paulo, Brazil; the region is inferred by the Vercel server from the network address, without storing the address.</p>
+  <p>To be able to stop abusive access, each visit also stores a second scrambled code, built only from the network address and my secret key. It does not change with the day, it is used only to block a network, and it cannot be reversed back into the address either. For now, the Portuguese version only opens for visits from the state of São Paulo, Brazil, and visitors from anywhere else see the English version; the region is inferred by the Vercel server from the network address, without storing the address.</p>
 
   <h2>How to opt out</h2>
   <p>If your browser has <strong>Do Not Track</strong> or <strong>Global Privacy Control</strong> turned on, the visit is not recorded. The site checks this on both sides, in the browser and on the server, and simply stores nothing. Content blockers work too, and nothing on the site stops working because of it.</p>

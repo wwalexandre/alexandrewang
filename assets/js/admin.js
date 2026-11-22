@@ -698,7 +698,7 @@
           if (j.bloqueavel) { bloquearJornada(j, b); return; }
           const sp = $('soSp').checked;
           window.alert('Esta visita é de antes de 22/11/2026, quando o site ainda não guardava a rede de quem acessa. Por isso não dá para bloquear a pessoa por ela.\n\n'
-            + (sp ? 'Mas a regra "só estado de São Paulo" está ligada: quem acessa de fora do estado de SP já não abre o site.\n\n' : '')
+            + (sp ? 'A regra "português só no estado de São Paulo" está ligada: quem acessa de fora do estado de SP só vê a versão em inglês.\n\n' : '')
             + 'Se ela deixou e-mail, use "Bloquear e-mail" na aba Leads. Se voltar a acessar, a nova visita aparece aqui com o botão funcionando.');
         });
         acao.append(b);
@@ -775,14 +775,14 @@
 
   $('soSp').addEventListener('change', async e => {
     const valor = e.target.checked;
-    if (!valor && !window.confirm('Liberar o site para qualquer lugar do mundo?')) { e.target.checked = true; return; }
+    if (!valor && !window.confirm('Liberar a versão em português para qualquer lugar?')) { e.target.checked = true; return; }
     e.target.disabled = true;
     const { error } = await sb.rpc('definir_so_sp', { p_valor: valor });
     e.target.disabled = false;
     if (error) { e.target.checked = !valor; $('bloqStatus').textContent = 'Não foi possível mudar a regra.'; return; }
     $('bloqStatus').textContent = valor
-      ? 'Ligado: só o estado de SP abre o site. Pode levar até 5 minutos para valer.'
-      : 'Desligado: o site abre de qualquer lugar. Pode levar até 5 minutos para valer.';
+      ? 'Ligado: fora do estado de SP, só a versão em inglês. Pode levar até 5 minutos para valer.'
+      : 'Desligado: o português abre para todo mundo. Pode levar até 5 minutos para valer.';
   });
 
   // Cópias do site: o bloco só aparece se alguma tiver sido detectada.
