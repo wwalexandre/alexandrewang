@@ -691,10 +691,16 @@
         const b = el('button', 'btn btn-outline btn-sm adm-danger', 'Bloquear');
         b.type = 'button';
         if (!j.bloqueavel) {
-          b.disabled = true;
+          b.classList.add('adm-apagado');
           b.title = 'Visita de antes de 22/11/2026: a rede não foi guardada.';
         }
-        b.addEventListener('click', () => bloquearJornada(j, b));
+        b.addEventListener('click', () => {
+          if (j.bloqueavel) { bloquearJornada(j, b); return; }
+          const sp = $('soSp').checked;
+          window.alert('Esta visita é de antes de 22/11/2026, quando o site ainda não guardava a rede de quem acessa. Por isso não dá para bloquear a pessoa por ela.\n\n'
+            + (sp ? 'Mas a regra "só estado de São Paulo" está ligada: quem acessa de fora do estado de SP já não abre o site.\n\n' : '')
+            + 'Se ela deixou e-mail, use "Bloquear e-mail" na aba Leads. Se voltar a acessar, a nova visita aparece aqui com o botão funcionando.');
+        });
         acao.append(b);
       }
       tr.append(acao);

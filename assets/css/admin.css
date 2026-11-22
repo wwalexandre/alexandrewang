@@ -166,3 +166,4 @@
 .adm-acoes { white-space: nowrap; }
 .adm-sw-sp { margin: 4px 0 10px; }
 .adm-sw-sp b { color: var(--text); font-weight: 600; }
+.adm-apagado { opacity: .55; }
