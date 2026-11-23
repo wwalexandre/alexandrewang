@@ -206,3 +206,7 @@ Migração `20261122120000_bloqueio_e_acesso_sp.sql`.
 - `bloqueios` (RLS só admin): por `rede_id` (via `bloquear_sessao`) ou por `email` (via `bloquear_email`). `registrar_lead` ignora e-mail bloqueado. Desbloquear é apagar a linha pelo painel.
 - `resumo_visitas`: cada jornada traz `sessao`, `rede`, `segundos` (soma dos eventos `tempo`), `bloqueavel` e `bloqueado`; o resumo traz também `bloqueios` e `so_sp`.
 - O middleware guarda a resposta por IP por 5 minutos e deixa passar se o banco falhar ou demorar mais de 0,8 s.
+
+## Painel visual (22/11/2026)
+
+Migração `20261122150000_painel_visual.sql`. `resumo_painel(p_dias)` (só admin) devolve `periodos.atual` e `periodos.anterior` (visitas, sessoes, tempo_medio, leads, fora_sp) para a tendência dos cartões, as séries `tempo_dia`, `leads_dia` e `fora_dia` para as minilinhas e `pontos` (latitude e longitude arredondadas a 0,1 grau, cidade, país, região, páginas e pessoas) para o mapa.

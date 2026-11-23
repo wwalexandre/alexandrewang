@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="../assets/css/admin.css">
 <script src="../assets/js/vendor/supabase-js.umd.js" defer></script>
+<script src="../assets/js/admin-mapa.js" defer></script>
 <script src="../assets/js/admin.js" defer></script>
 </head>
 <body class="adm">
@@ -86,15 +87,67 @@
       <p class="adm-status" id="visStatus" role="status"></p>
       <div class="adm-aviso" id="visAviso" hidden></div>
 
-      <section class="adm-bloco adm-bloco-topo" data-vis-detalhe>
-        <h3>Últimas jornadas <span class="adm-nota">cada linha é uma pessoa, na ordem em que abriu as páginas. Horário de Brasília. Tempo é a soma do tempo em cada página.</span></h3>
-        <div class="adm-table-wrap">
-          <table class="adm-table">
-            <thead><tr><th>Quando (Brasília)</th><th>De onde</th><th>Rede</th><th>Aparelho</th><th>Veio de</th><th>Tempo no site</th><th>Caminho</th><th></th></tr></thead>
-            <tbody id="visJornadas"></tbody>
-          </table>
-        </div>
-      </section>
+      <div class="dash-kpis" id="visKpis"></div>
+
+      <div class="dash-grade">
+        <section class="dash-card dash-largo" data-vis-detalhe aria-labelledby="t-jornadas">
+          <header class="dash-card-topo">
+            <div>
+              <h3 id="t-jornadas">Últimas jornadas</h3>
+              <p class="adm-nota">Cada linha é uma pessoa, na ordem em que abriu as páginas. Horário de Brasília.</p>
+            </div>
+            <span class="dash-contagem" id="visJornadasN"></span>
+          </header>
+          <div class="dash-tabela-wrap">
+            <table class="dash-tabela">
+              <thead><tr><th>Quando</th><th>De onde</th><th>Veio de</th><th>Tempo no site</th><th>Caminho</th><th><span class="sr-only">Ações</span></th></tr></thead>
+              <tbody id="visJornadas"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="dash-card dash-com-mapa" data-vis-detalhe aria-labelledby="t-mapa">
+          <header class="dash-card-topo">
+            <div>
+              <h3 id="t-mapa">Mapa de acessos</h3>
+              <p class="adm-nota" id="visMapaDica">Passe o mouse num ponto para ver a cidade.</p>
+            </div>
+            <div class="dash-zoom" role="group" aria-label="Zoom do mapa">
+              <button type="button" data-zoom="mundo" class="on" aria-pressed="true">Mundo</button>
+              <button type="button" data-zoom="brasil" aria-pressed="false">Brasil</button>
+              <button type="button" data-zoom="sp" aria-pressed="false">SP</button>
+            </div>
+          </header>
+          <div class="dash-mapa" id="visMapa"></div>
+          <ul class="dash-legenda" id="visMapaLegenda"></ul>
+          <ul class="dash-top" id="visMapaTop" aria-label="Cidades com mais pessoas"></ul>
+        </section>
+
+        <section class="dash-card dash-largo" data-vis-detalhe aria-labelledby="t-dia">
+          <header class="dash-card-topo">
+            <div>
+              <h3 id="t-dia">Visitas por dia</h3>
+              <p class="adm-nota">O dia vira à meia-noite de Brasília.</p>
+            </div>
+          </header>
+          <div class="adm-grafico" id="visGrafico"></div>
+        </section>
+
+        <section class="dash-card dash-acesso" aria-labelledby="t-acesso">
+          <header class="dash-card-topo">
+            <div>
+              <h3 id="t-acesso">Acesso e bloqueios</h3>
+              <p class="dash-acesso-sub" id="bloqResumo"></p>
+            </div>
+            <svg class="dash-escudo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 4.5 5.5v6c0 4.6 3.1 8.6 7.5 10 4.4-1.4 7.5-5.4 7.5-10v-6z"/><path d="m8.6 12.1 2.4 2.4 4.6-4.8"/></svg>
+          </header>
+          <label class="sw adm-sw-sp"><input type="checkbox" id="soSp"><span aria-hidden="true"></span> <b>Português só para o estado de São Paulo</b></label>
+          <p class="dash-acesso-nota">Ligado: quem acessa de fora do estado de SP vê a mesma página em inglês, sem o botão PT. Robôs do Google, LinkedIn e WhatsApp sempre veem as duas versões. Quem usa VPN consegue contornar.</p>
+          <p class="adm-status" id="bloqStatus" role="status"></p>
+          <ul class="dash-bloqueios" id="bloqLista"></ul>
+          <p class="dash-acesso-nota">Bloquear uma rede (botão nas jornadas) impede a pessoa de abrir o site. Bloquear um e-mail (aba Leads) impede que ele entre de novo como lead. Jornadas de antes de 22/11/2026 não guardaram a rede.</p>
+        </section>
+      </div>
 
       <details class="adm-ferramenta">
         <summary>Gerar link com etiqueta</summary>
@@ -113,13 +166,9 @@
         </div>
       </details>
 
+      <h3 class="adm-grupo dash-mais">Mais detalhes</h3>
       <div class="adm-cards" id="visCards"></div>
       <p class="adm-frase" id="visFrase" hidden></p>
-
-      <section class="adm-bloco" data-vis-detalhe>
-        <h3>Visitas por dia <span class="adm-nota">o dia vira à meia-noite de Brasília</span></h3>
-        <div class="adm-grafico" id="visGrafico"></div>
-      </section>
 
       <div id="visListas" data-vis-detalhe></div>
 
@@ -142,20 +191,6 @@
           </table>
         </div>
         <p class="adm-nota" id="visAbusoDica"></p>
-      </section>
-
-      <section class="adm-bloco">
-        <h3>Acesso e bloqueios</h3>
-        <label class="sw adm-sw-sp"><input type="checkbox" id="soSp"><span aria-hidden="true"></span> <b>Português só para o estado de São Paulo</b></label>
-        <p class="adm-nota">Ligado: quem acessa de fora do estado de SP (outros estados e outros países) é levado para a mesma página em inglês, e o botão PT some. Desligado: o português abre para todo mundo. Robôs do Google, LinkedIn e WhatsApp sempre veem as duas versões, para o site aparecer na busca e nas prévias de link. Quem usa VPN consegue contornar.</p>
-        <p class="adm-status" id="bloqStatus" role="status"></p>
-        <div class="adm-table-wrap">
-          <table class="adm-table">
-            <thead><tr><th>Bloqueado</th><th>Tipo</th><th>Motivo</th><th>Desde</th><th></th></tr></thead>
-            <tbody id="bloqLista"></tbody>
-          </table>
-        </div>
-        <p class="adm-nota">Bloquear uma rede (botão nas jornadas) impede a pessoa de abrir o site. Bloquear um e-mail (botão nos leads) impede que ele entre de novo como lead. Jornadas de antes de 22/11/2026 não guardaram a rede, por isso não dá para bloquear por elas.</p>
       </section>
     </div>
 

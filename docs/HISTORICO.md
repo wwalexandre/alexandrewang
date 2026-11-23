@@ -165,3 +165,4 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 - Bloqueio de visitantes: `rede_id` (hash fixo do IP com o sal, IP não gravado), tabela `bloqueios`, botão Bloquear nas jornadas e Bloquear e-mail nos leads
 - Tempo no site e rede em cada jornada do painel
 - Texto não selecionável, cópia e atalhos bloqueados, marca d'água e impressão desativada
+- Aba Visitantes virou painel visual: 4 cartões com tendência contra o período anterior e minilinha, jornadas com etiquetas coloridas, mapa de acessos (mundo, Brasil, SP) e cartão escuro de acesso e bloqueios. Nova função `resumo_painel` e contornos em `assets/js/admin-mapa.js`

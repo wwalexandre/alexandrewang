@@ -559,18 +559,218 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-vis-detalhe]'), n => { n.hidden = !ligado; });
   };
 
+  // ---------- Painel visual: cartões com tendência, mapa e jornadas ----------
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag, attrs) => {
+    const n = document.createElementNS(NS, tag);
+    Object.keys(attrs || {}).forEach(k => n.setAttribute(k, attrs[k]));
+    return n;
+  };
+  const ICONES = {
+    pessoas: ['M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20', 'M10 11.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7', 'M20 20v-1.4a3.4 3.4 0 0 0-2.5-3.3', 'M15.5 4.7a3.4 3.4 0 0 1 0 6.6'],
+    paginas: ['M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z', 'M14 3v5h5', 'M9 13h6', 'M9 17h4'],
+    tempo: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18', 'M12 7v5l3.2 2'],
+    leads: ['M4 6h16v12H4z', 'm4 7 8 6 8-6']
+  };
+  function icone(nome) {
+    const s = svgEl('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' });
+    (ICONES[nome] || []).forEach(d => s.append(svgEl('path', { d })));
+    return s;
+  }
+
+  // Dia de hoje em Brasília, no mesmo formato das chaves do banco (AAAA-MM-DD)
+  const diaSP = data => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(data);
+
+  // Série com todos os dias do período (dia sem dado vira zero). Período longo vira semanas.
+  function serie(lista, campo, dias, media) {
+    const mapa = {};
+    (lista || []).forEach(i => { mapa[i.chave] = Number(i[campo]) || 0; });
+    const valores = [];
+    const hoje = Date.now();
+    for (let k = dias - 1; k >= 0; k--) valores.push(mapa[diaSP(new Date(hoje - k * 86400000))] || 0);
+    const passo = Math.max(1, Math.ceil(dias / 60));
+    if (passo === 1) return valores;
+    const juntos = [];
+    for (let i = 0; i < valores.length; i += passo) {
+      const bloco = valores.slice(i, i + passo);
+      const soma = bloco.reduce((a, b) => a + b, 0);
+      const cheios = bloco.filter(v => v > 0).length;
+      juntos.push(media ? (cheios ? soma / cheios : 0) : soma);
+    }
+    return juntos;
+  }
+
+  // Minilinha do cartão: área suave com a linha por cima
+  function minilinha(valores) {
+    const L = 120, A = 36, M = 3;
+    const s = svgEl('svg', { viewBox: '0 0 ' + L + ' ' + A, preserveAspectRatio: 'none', 'aria-hidden': 'true', class: 'dash-mini' });
+    if (!valores.length) return s;
+    const max = Math.max.apply(null, valores) || 1;
+    const passo = valores.length > 1 ? L / (valores.length - 1) : L;
+    const pts = valores.map((v, i) => [valores.length > 1 ? i * passo : L / 2, A - M - (v / max) * (A - M * 2)]);
+    const linha = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
+    s.append(svgEl('path', { d: linha + 'L' + L + ' ' + A + 'L0 ' + A + 'Z', class: 'dash-mini-area' }));
+    s.append(svgEl('path', { d: linha, class: 'dash-mini-linha' }));
+    return s;
+  }
+
+  // Comparação com o período anterior, do mesmo tamanho
+  function tendencia(atual, anterior) {
+    const chip = el('span', 'dash-tend');
+    if (!anterior && !atual) { chip.textContent = 'sem dados'; chip.classList.add('neutra'); return chip; }
+    if (!anterior) { chip.textContent = 'novo'; chip.classList.add('neutra'); chip.title = 'Não havia dados no período anterior.'; return chip; }
+    const pct = Math.round(((atual - anterior) / anterior) * 100);
+    if (pct === 0) { chip.textContent = 'igual'; chip.classList.add('neutra'); return chip; }
+    chip.textContent = (pct > 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%';
+    chip.classList.add(pct > 0 ? 'sobe' : 'desce');
+    chip.title = 'Período anterior: ' + anterior;
+    return chip;
+  }
+
+  function renderKpis(d, p) {
+    const dias = d.dias || visDias;
+    const atual = (p.periodos && p.periodos.atual) || {};
+    const ant = (p.periodos && p.periodos.anterior) || {};
+    const cx = $('visKpis');
+    cx.replaceChildren();
+    const itens = [
+      { cor: 'k2', ic: 'pessoas', rot: 'Pessoas diferentes', val: atual.sessoes || 0, ant: ant.sessoes || 0, txt: String(atual.sessoes || 0), s: serie(d.por_dia, 's', dias),
+        nota: (atual.fora_sp || 0) + ' de fora do estado de SP' },
+      { cor: 'k1', ic: 'paginas', rot: 'Páginas abertas', val: atual.visitas || 0, ant: ant.visitas || 0, txt: String(atual.visitas || 0), s: serie(d.por_dia, 'n', dias),
+        nota: atual.sessoes ? (atual.visitas / atual.sessoes).toFixed(1).replace('.', ',') + ' por pessoa' : '' },
+      { cor: 'k3', ic: 'tempo', rot: 'Tempo médio na página', val: atual.tempo_medio || 0, ant: ant.tempo_medio || 0, txt: fmtSeg(atual.tempo_medio), s: serie(p.tempo_dia, 'n', dias, true),
+        nota: ((d.engajamento && d.engajamento.rolagem_media) || 0) + '% de rolagem média' },
+      { cor: 'k4', ic: 'leads', rot: 'E-mails deixados', val: atual.leads || 0, ant: ant.leads || 0, txt: String(atual.leads || 0), s: serie(p.leads_dia, 'n', dias),
+        nota: atual.sessoes ? Math.round(((atual.leads || 0) / atual.sessoes) * 100) + '% das pessoas' : '' }
+    ];
+    itens.forEach(i => {
+      const c = el('article', 'dash-kpi ' + i.cor);
+      const topo = el('div', 'dash-kpi-topo');
+      const bola = el('span', 'dash-kpi-ic');
+      bola.append(icone(i.ic));
+      topo.append(bola, el('span', 'dash-kpi-rot', i.rot));
+      const meio = el('div', 'dash-kpi-meio');
+      const num = el('div', 'dash-kpi-num');
+      num.append(el('strong', '', i.txt), tendencia(i.val, i.ant));
+      meio.append(num, minilinha(i.s));
+      c.append(topo, meio, el('p', 'dash-kpi-nota', i.nota + (i.nota ? ' · ' : '') + 'vs. ' + dias + ' dias antes'));
+      cx.append(c);
+    });
+  }
+
+  // Mapa: contorno equiretangular (x = lon + 180, y = 90 - lat), pontos do tamanho do volume
+  const ZOOMS = { mundo: [0, 8, 360, 142], brasil: [100, 82, 52, 46], sp: [125.6, 108.4, 12, 8.6] };
+  let mapaZoom = 'mundo';
+  let mapaPontos = [];
+  const grupoPonto = p => (p.pais === 'BR' ? (p.regiao === 'SP' ? 'sp' : 'br') : 'fora');
+  function renderMapa() {
+    const cx = $('visMapa');
+    cx.replaceChildren();
+    const base = window.MAPA_PAINEL;
+    if (!base) { cx.append(el('p', 'adm-vazio', 'Mapa indisponível.')); return; }
+    const vb = ZOOMS[mapaZoom];
+    const k = vb[2] / 360;
+    const s = svgEl('svg', { viewBox: vb.join(' '), role: 'img', 'aria-label': 'Mapa com os lugares de onde vieram as visitas' });
+    s.style.aspectRatio = vb[2] + ' / ' + vb[3];
+    s.append(svgEl('path', { d: base.mundo, class: 'dash-terra' }));
+    s.append(svgEl('path', { d: base.brasil, class: 'dash-terra dash-br' }));
+    s.append(svgEl('path', { d: base.sp, class: 'dash-terra dash-uf' }));
+    const max = mapaPontos.reduce((a, p) => Math.max(a, p.s || 1), 1);
+    mapaPontos.slice().sort((a, b) => b.s - a.s).forEach(p => {
+      const x = Number(p.lon) + 180, y = 90 - Number(p.lat);
+      const r = (3.6 + 7 * Math.sqrt((p.s || 1) / max)) * k;
+      const g = svgEl('g', { class: 'dash-pino ' + grupoPonto(p), tabindex: '0' });
+      g.append(svgEl('circle', { cx: x, cy: y, r: r * 1.9, class: 'dash-pino-halo' }));
+      g.append(svgEl('circle', { cx: x, cy: y, r, class: 'dash-pino-ponto', 'stroke-width': 1.2 * k }));
+      const nome = (p.cidade || 'Cidade desconhecida') + (p.pais === 'BR' ? (p.regiao ? ', ' + p.regiao : '') : ', ' + nomePais(p.pais));
+      const texto = nome + ': ' + p.s + (p.s === 1 ? ' pessoa, ' : ' pessoas, ') + p.n + (p.n === 1 ? ' página' : ' páginas');
+      const t = svgEl('title');
+      t.textContent = texto;
+      g.append(t);
+      const mostra = () => { $('visMapaDica').textContent = texto; };
+      g.addEventListener('mouseenter', mostra);
+      g.addEventListener('focus', mostra);
+      s.append(g);
+    });
+    cx.append(s);
+
+    const leg = $('visMapaLegenda');
+    leg.replaceChildren();
+    const soma = { sp: 0, br: 0, fora: 0 };
+    mapaPontos.forEach(p => { soma[grupoPonto(p)] += p.s || 0; });
+    [['sp', 'Estado de SP'], ['br', 'Outros estados'], ['fora', 'Fora do Brasil']].forEach(([g, nome]) => {
+      const li = el('li');
+      li.append(el('span', 'dash-leg-ponto ' + g), el('span', '', nome), el('b', '', String(soma[g])));
+      leg.append(li);
+    });
+
+    // As cidades com mais pessoas, com barra proporcional na cor do grupo
+    const top = $('visMapaTop');
+    top.replaceChildren();
+    const cores = { sp: 'var(--c1)', br: 'var(--c2)', fora: 'var(--c3)' };
+    const lista = mapaPontos.slice().sort((a, b) => b.s - a.s).slice(0, 4);
+    const maior = lista.length ? lista[0].s || 1 : 1;
+    lista.forEach(p => {
+      const li = el('li');
+      const barra = el('i');
+      barra.style.setProperty('--w', Math.max(3, Math.round(((p.s || 0) / maior) * 100)) + '%');
+      barra.style.setProperty('--cor', cores[grupoPonto(p)]);
+      li.append(el('span', '', (p.cidade || 'Cidade desconhecida') + (p.pais === 'BR' ? (p.regiao ? ', ' + p.regiao : '') : ', ' + nomePais(p.pais))),
+        el('b', '', p.s + (p.s === 1 ? ' pessoa' : ' pessoas')), barra);
+      top.append(li);
+    });
+    top.hidden = !lista.length;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.dash-zoom button'), b => {
+    b.addEventListener('click', () => {
+      mapaZoom = b.dataset.zoom;
+      Array.prototype.forEach.call(document.querySelectorAll('.dash-zoom button'), o => {
+        o.classList.toggle('on', o === b);
+        o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+      });
+      renderMapa();
+    });
+  });
+
+  // Etiqueta colorida de origem e de tempo, sempre com o texto escrito
+  function pilulaOrigem(origem) {
+    const o = String(origem || 'direto');
+    let cor = 'laranja';
+    if (o === 'direto') cor = 'cinza';
+    else if (/linkedin/i.test(o)) cor = 'azul';
+    else if (/google|bing/i.test(o)) cor = 'verde';
+    return el('span', 'dash-pill ' + cor, nomeSite(o));
+  }
+  function pilulaTempo(seg) {
+    const s = Math.round(Number(seg) || 0);
+    const cor = s >= 60 ? 'verde' : s >= 10 ? 'azul' : 'cinza';
+    return el('span', 'dash-pill ' + cor, duracao(s));
+  }
+  function celulaLugar(j) {
+    const td = el('td', 'dash-lugar');
+    const m = String(j.lugar || '').match(/^(.*?), ([A-Z]{2})(?: · .*)?$/);
+    const cidade = m ? m[1] : String(j.lugar || '').split(' · ')[0];
+    // Bandeira em emoji vira duas letras no Windows, então o país vai escrito (só quando não é o Brasil)
+    const forte = el('strong', '', cidade);
+    const sub = [m && m[2] !== 'BR' ? nomePais(m[2]) : '', j.rede, j.dispositivo].filter(Boolean).join(' · ');
+    td.append(forte);
+    if (sub) td.append(el('small', '', sub));
+    return td;
+  }
+
   function renderVis(d) {
     const tot = d.totais || {};
     const eng = d.engajamento || {};
+    renderKpis(d, d.painel || {});
+    mapaPontos = (d.painel && d.painel.pontos) || [];
+    renderMapa();
     const cards = $('visCards');
     cards.replaceChildren();
-    cards.append(cartao('visitas de página', String(tot.visitas || 0)));
-    cards.append(cartao('pessoas diferentes', String(tot.sessoes || 0), 'contagem por dia'));
     cards.append(cartao('países', String(tot.paises || 0)));
     cards.append(cartao('cidades', String(tot.cidades || 0)));
-    cards.append(cartao('tempo médio na página', fmtSeg(eng.tempo_medio)));
     cards.append(cartao('rolagem média', (eng.rolagem_media || 0) + '%',
       (eng.leram_ate_o_fim || 0) + ' chegaram ao fim'));
+    cards.append(cartao('maior tempo numa página', fmtSeg(eng.tempo_maximo)));
 
     const linha = frase(d);
     $('visFrase').textContent = linha;
@@ -673,22 +873,31 @@
 
     const corpo = $('visJornadas');
     corpo.replaceChildren();
-    (d.jornadas || []).forEach(j => {
-      const tr = el('tr', j.bloqueado ? 'adm-suspeito' : '');
-      tr.append(el('td', '', j.inicio));
-      tr.append(el('td', '', j.lugar));
-      tr.append(el('td', '', j.rede || ''));
-      tr.append(el('td', '', j.dispositivo));
-      tr.append(el('td', '', j.origem));
-      tr.append(el('td', '', duracao(j.segundos)));
-      const td = el('td', 'adm-rota');
-      td.append(el('span', '', nomeRota(j.rota)));
+    const jornadas = d.jornadas || [];
+    $('visJornadasN').textContent = jornadas.length ? jornadas.length + (jornadas.length === 1 ? ' jornada' : ' jornadas') : '';
+    jornadas.forEach(j => {
+      const tr = el('tr', j.bloqueado ? 'dash-bloqueada' : '');
+      const quando = el('td', 'dash-quando');
+      const partes = String(j.inicio || '').split(' ');
+      quando.append(el('strong', '', partes[1] || ''), el('small', '', partes[0] || ''));
+      tr.append(quando);
+      tr.append(celulaLugar(j));
+      const orig = el('td');
+      orig.append(pilulaOrigem(j.origem));
+      tr.append(orig);
+      const tempo = el('td');
+      tempo.append(pilulaTempo(j.segundos));
+      tr.append(tempo);
+      const td = el('td', 'dash-rota');
+      const rota = nomeRota(j.rota);
+      td.title = rota;
+      td.append(el('small', '', j.paginas + (j.paginas === 1 ? ' página' : ' páginas')), el('span', '', rota));
       tr.append(td);
-      const acao = el('td');
+      const acao = el('td', 'dash-acao');
       if (j.bloqueado) {
-        acao.append(el('span', 'adm-nota', 'Bloqueada'));
+        acao.append(el('span', 'dash-pill vermelho', 'Bloqueada'));
       } else {
-        const b = el('button', 'btn btn-outline btn-sm adm-danger', 'Bloquear');
+        const b = el('button', 'dash-btn-bloq', 'Bloquear');
         b.type = 'button';
         if (!j.bloqueavel) {
           b.classList.add('adm-apagado');
@@ -706,10 +915,10 @@
       tr.append(acao);
       corpo.append(tr);
     });
-    if (!(d.jornadas || []).length) {
+    if (!jornadas.length) {
       const tr = el('tr');
       const td = el('td', 'adm-vazio', 'Nenhuma visita registrada ainda.');
-      td.colSpan = 8;
+      td.colSpan = 6;
       tr.append(td);
       corpo.append(tr);
     }
@@ -743,14 +952,18 @@
     chave.checked = soSp;
     const corpo = $('bloqLista');
     corpo.replaceChildren();
+    const redes = lista.filter(b => b.tipo !== 'email').length;
+    $('bloqResumo').textContent = (soSp ? 'Português só em SP' : 'Português liberado para todos') + ' · '
+      + redes + (redes === 1 ? ' rede bloqueada' : ' redes bloqueadas') + ' · '
+      + (lista.length - redes) + (lista.length - redes === 1 ? ' e-mail' : ' e-mails');
     lista.forEach(b => {
-      const tr = el('tr');
-      tr.append(el('td', '', b.alvo));
-      tr.append(el('td', '', b.tipo === 'email' ? 'E-mail' : 'Rede'));
-      tr.append(el('td', '', b.descricao || ''));
-      tr.append(el('td', '', b.quando));
-      const td = el('td');
-      const des = el('button', 'btn btn-outline btn-sm', 'Desbloquear');
+      const tr = el('li');
+      const info = el('div');
+      info.append(el('strong', '', (b.tipo === 'email' ? 'E-mail: ' : 'Rede: ') + b.alvo));
+      info.append(el('small', '', [b.descricao, 'desde ' + b.quando].filter(Boolean).join(' · ')));
+      tr.append(info);
+      const td = el('span');
+      const des = el('button', 'dash-btn-claro', 'Desbloquear');
       des.type = 'button';
       des.addEventListener('click', async () => {
         if (!window.confirm('Desbloquear ' + b.alvo + '?')) return;
@@ -764,13 +977,7 @@
       tr.append(td);
       corpo.append(tr);
     });
-    if (!lista.length) {
-      const tr = el('tr');
-      const td = el('td', 'adm-vazio', 'Ninguém bloqueado.');
-      td.colSpan = 5;
-      tr.append(td);
-      corpo.append(tr);
-    }
+    if (!lista.length) corpo.append(el('li', 'dash-vazio', 'Ninguém bloqueado.'));
   }
 
   $('soSp').addEventListener('change', async e => {
@@ -808,9 +1015,10 @@
     $('visStatus').textContent = 'Carregando...';
     if (gravacaoLigada === null) gravacaoLigada = await checarGravacao();
     loadCopias();
-    const [principal, extra] = await Promise.all([
+    const [principal, extra, painel] = await Promise.all([
       sb.rpc('resumo_visitas', { p_dias: visDias }),
-      sb.rpc('resumo_extra', { p_dias: visDias })
+      sb.rpc('resumo_extra', { p_dias: visDias }),
+      sb.rpc('resumo_painel', { p_dias: visDias })
     ]);
     if (principal.error) {
       $('visStatus').textContent = 'Não foi possível carregar o relatório de visitas.';
@@ -819,6 +1027,7 @@
     $('visStatus').textContent = '';
     const dados = principal.data || {};
     dados.extra = extra.error ? {} : (extra.data || {});
+    dados.painel = painel.error ? {} : (painel.data || {});
     renderVis(dados);
   }
 
