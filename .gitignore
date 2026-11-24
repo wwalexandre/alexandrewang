@@ -1,0 +1,15 @@
+# Segredos nunca entram no repositório (ele é público)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service_role*
+supabase/.temp/
+.vercel/
+
+# Lixo de sistema e de editor
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini

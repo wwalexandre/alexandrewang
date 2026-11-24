@@ -166,3 +166,10 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 - Tempo no site e rede em cada jornada do painel
 - Texto não selecionável, cópia e atalhos bloqueados, marca d'água e impressão desativada
 - Aba Visitantes virou painel visual: 4 cartões com tendência contra o período anterior e minilinha, jornadas com etiquetas coloridas, mapa de acessos (mundo, Brasil, SP) e cartão escuro de acesso e bloqueios. Nova função `resumo_painel` e contornos em `assets/js/admin-mapa.js`
+
+### 24/11/2026
+
+- Revisão de segurança contra os 10 ataques mais comuns (tabela em `docs/SUPABASE.md`)
+- Verificação em duas etapas (TOTP) no `/admin/`, exigida também pelo banco via `is_admin()`
+- `is_admin()` e `sessao_do_dia()` fechadas para visitante anônimo; escrita de `textos_site` e `itens_site` pela mesma regra do painel
+- Teto diário nos avisos de cópia; `.gitignore` contra `.env` e chaves

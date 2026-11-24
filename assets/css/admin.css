@@ -12,9 +12,15 @@
 .adm-card h2 { font-family: var(--display); font-size: 28px; margin: 0; }
 .adm-card form { display: grid; gap: 10px; }
 .adm label { font-size: 13px; font-weight: 600; }
-.adm input[type="email"], .adm input[type="password"] { width: 100%; font: 16px var(--font); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.adm input[type="email"], .adm input[type="password"], #mfaCode, #mfaSetupCode { width: 100%; font: 16px var(--font); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
 .adm input:focus-visible, .adm button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 .adm-err { color: #C0392B; font-size: 14px; min-height: 1.2em; margin: 0; }
+#mfaCode, #mfaSetupCode { letter-spacing: .3em; font-variant-numeric: tabular-nums; }
+.adm-card p { margin: 0; }
+.adm-qr { width: 180px; height: 180px; background: #fff; padding: 8px; border-radius: 10px; border: 1px solid var(--line); }
+.adm-mfa-chave { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.adm-mfa-chave code { color: var(--text); font-size: 13px; user-select: all; }
+#btnMfaSair, #btnMfaCancelar { justify-self: start; }
 
 .adm-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
 .adm-tabs button { font: 600 15px var(--font); padding: 10px 16px; border: 0; background: none; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; }

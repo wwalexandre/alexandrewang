@@ -19,6 +19,7 @@
     <h1>Painel</h1>
     <div class="adm-head-actions" id="headActions" hidden>
       <span class="adm-user" id="userEmail"></span>
+      <button type="button" class="btn btn-primary btn-sm" id="btnMfa" hidden>Ativar duas etapas</button>
       <button type="button" class="btn btn-outline btn-sm" id="btnLogout">Sair</button>
     </div>
   </header>
@@ -35,6 +36,32 @@
       <p class="adm-err" id="loginErr" role="alert"></p>
       <button type="submit" class="btn btn-primary" id="btnLogin">Entrar</button>
     </form>
+  </section>
+
+  <section class="adm-card" id="mfaView" hidden aria-labelledby="t-mfa">
+    <h2 id="t-mfa">Código de acesso</h2>
+    <p>Digite os 6 números que aparecem agora no seu app autenticador.</p>
+    <form id="mfaForm" novalidate>
+      <label for="mfaCode">Código</label>
+      <input id="mfaCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+      <p class="adm-err" id="mfaErr" role="alert"></p>
+      <button type="submit" class="btn btn-primary" id="btnMfaOk">Confirmar</button>
+    </form>
+    <button type="button" class="btn btn-outline btn-sm" id="btnMfaSair">Sair</button>
+  </section>
+
+  <section class="adm-card" id="mfaSetupView" hidden aria-labelledby="t-mfa-setup">
+    <h2 id="t-mfa-setup">Verificação em duas etapas</h2>
+    <p>1. Abra um app autenticador (Google Authenticator, Microsoft Authenticator, 1Password ou similar) e leia o QR code.</p>
+    <img class="adm-qr" id="mfaQr" alt="QR code para o app autenticador" width="180" height="180">
+    <p class="adm-mfa-chave">Sem câmera? Digite esta chave no app: <code id="mfaSecret"></code></p>
+    <form id="mfaSetupForm" novalidate>
+      <label for="mfaSetupCode">2. Digite o código de 6 números que o app mostrar</label>
+      <input id="mfaSetupCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+      <p class="adm-err" id="mfaSetupErr" role="alert"></p>
+      <button type="submit" class="btn btn-primary" id="btnMfaAtivar">Ativar</button>
+    </form>
+    <button type="button" class="btn btn-outline btn-sm" id="btnMfaCancelar">Cancelar</button>
   </section>
 
   <section class="adm-card" id="deniedView" hidden>
