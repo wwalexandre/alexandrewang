@@ -57,7 +57,7 @@ O site continua sendo HTML estático na Vercel. O Supabase entra só para **guar
 - **Projetos continuam estáticos.** Estão em páginas bilíngues, indexáveis e rápidas. Movê-los para o banco exigiria campos PT e EN e pioraria o SEO.
 - **Sem depoimentos públicos.** Depoimento enviado por qualquer visitante pesa pouco para recrutadores. Se quiser prova social, cadastrar trechos reais de recomendações (com permissão) numa fase futura.
 - **Sem variáveis de ambiente na Vercel.** O site não tem build, então o HTML não lê variáveis. URL e chave publicável ficam no código.
-- **Aviso conhecido do verificador do Supabase:** `is_admin()` é `SECURITY DEFINER` e pode ser chamada por RPC. Ela só devolve true ou false sobre quem chama. Se quiser zerar o aviso, mover a função para um schema interno e recriar as políticas.
+- **Aviso conhecido do verificador do Supabase:** funções `SECURITY DEFINER` chamáveis por RPC. É de propósito: as de registro (`registrar_visita`, `registrar_evento_visita`, `preparar_aviso`, `registrar_clone`) exigem o token, as de formulário (`enviar_mensagem`, `registrar_lead`) têm limites, `checar_acesso` só devolve `bloqueado` e `so_sp`, e as do painel exigem `is_admin()` por dentro. Desde 24/11/2026, `is_admin()` só é chamável por usuário logado e `sessao_do_dia()` por ninguém de fora.
 - **Plano gratuito do Supabase** pode pausar projetos sem atividade por um período. Se pausar, o formulário de contato e os leads deixam de gravar até reativar no painel.
 
 ## Painel de visitantes
@@ -165,7 +165,7 @@ O código copiado continua chamando `/api/visita` deste domínio. Quando a chama
 | `Origin` diferente em `/api/visita` | cópia que manteve o JavaScript e o endereço relativo |
 | Bloco `marcaDeCopia` em `assets/js/main.js` | compara `location.hostname` e avisa pelo endereço absoluto |
 
-O e-mail sai **só na primeira vez** que cada domínio aparece. Depois o contador sobe e a data da última vez é atualizada. Domínios `*.vercel.app` e `localhost` nunca contam como cópia.
+O e-mail sai **só na primeira vez** que cada domínio aparece, e no máximo 5 por dia (desde 24/11/2026; no máximo 20 domínios novos gravados por dia). Assim, um `Origin` forjado em série não vira enxurrada de e-mails nem enche a tabela. Depois o contador sobe e a data da última vez é atualizada. Domínios `*.vercel.app` e `localhost` nunca contam como cópia.
 
 O painel mostra o bloco **Cópias do site** só quando existe alguma, com domínio, página, quantas vezes, primeira e última.
 
@@ -195,7 +195,7 @@ Mudança de banco vira uma **nova migração** em `supabase/migrations/` (nunca 
 - `resumo_visitas`, `resumo_extra` e `registrar_venda` só são chamáveis por usuário logado. As duas primeiras já exigiam `is_admin()` por dentro.
 - A tabela `mensagens_contato` tem limite de tamanho (nome 120, e-mail 160, assunto 200, mensagem 5.000 caracteres), além do limite de envios por hora que a função `enviar_mensagem` já aplicava.
 - O Content-Security-Policy do `vercel.json` não libera mais nenhum terceiro: as fontes (`assets/fonts`) e o Chart.js (`assets/js/vendor`) são hospedados no próprio site. Para ligar o Umami ou outro serviço externo, é preciso liberar o domínio em `script-src` e `connect-src`.
-- Pendências que só o dono da conta resolve no painel do Supabase: ligar a proteção contra senhas vazadas (Auth, exige plano Pro) e ativar a verificação em duas etapas (TOTP) para o usuário admin.
+- Pendências que só o dono da conta resolve no painel do Supabase: ligar a proteção contra senhas vazadas (Auth, exige plano Pro) e ativar a verificação em duas etapas (TOTP) para o usuário admin. A segunda ganhou botão no painel em 24/11/2026 (ver abaixo).
 
 ## Bloqueio e acesso só SP (22/11/2026)
 
@@ -210,3 +210,35 @@ Migração `20261122120000_bloqueio_e_acesso_sp.sql`.
 ## Painel visual (22/11/2026)
 
 Migração `20261122150000_painel_visual.sql`. `resumo_painel(p_dias)` (só admin) devolve `periodos.atual` e `periodos.anterior` (visitas, sessoes, tempo_medio, leads, fora_sp) para a tendência dos cartões, as séries `tempo_dia`, `leads_dia` e `fora_dia` para as minilinhas e `pontos` (latitude e longitude arredondadas a 0,1 grau, cidade, país, região, páginas e pessoas) para o mapa.
+
+## Revisão de segurança de 24/11/2026
+
+Migração `20261124120000_seguranca_duas_etapas_e_funcoes_internas.sql`.
+
+- **Verificação em duas etapas (TOTP) no painel.** Botão "Ativar duas etapas" no topo do `/admin/`: mostra o QR code, pede o primeiro código e só então ativa. Depois disso, o login pede a senha e o código do app.
+- **O banco exige o código, não só a tela.** `is_admin()` devolve true só se a sessão for `aal2` ou se o admin ainda não tiver fator verificado. Com o app ativado, quem descobrir a senha passa do login mas não lê nem altera nada. Enquanto ninguém ativar, nada muda.
+- Escrita em `textos_site` e `itens_site` passou a usar `is_admin()`, para valer a mesma regra. A edição ao vivo (`editar.js`) confere o acesso pela mesma função.
+- `is_admin()` não é mais chamável por visitante anônimo (só por usuário logado, porque as políticas precisam dela). `sessao_do_dia()` não é chamável por ninguém de fora; só as funções de registro usam.
+- `registrar_clone`: teto diário (5 e-mails e 20 domínios novos por dia).
+- `.gitignore` novo bloqueia `.env`, chaves e a pasta `.vercel`.
+
+Testado com a chave publicável depois da migração: `sessao_do_dia` e `is_admin` (permissão negada), `registrar_clone` com token errado (erro `token`), leitura de `leads` (permissão negada), insert em `admins` (permissão negada), leitura pública de `itens_site` e `textos_site` (200) e `checar_acesso` (funciona). No banco: admin sem fator continua admin, outro usuário com `aal2` não é admin, e 25 domínios falsos geraram 20 gravados e 5 avisos (teste desfeito em seguida).
+
+**Ordem para ativar:** só depois que esta mudança estiver na `main`. Se ativar pela prévia, o painel publicado (versão antiga, sem a tela do código) deixa de abrir os dados até o merge.
+
+**Se perder o celular:** no painel do Supabase, Authentication, Users, abrir o usuário e apagar o fator (ou, no SQL editor, `delete from auth.mfa_factors where user_id = (select id from auth.users where email = 'SEU_EMAIL');`). Depois ativar de novo pelo painel.
+
+### Os 10 ataques comuns e como o site responde
+
+| Ataque | Situação |
+|---|---|
+| Trocar o ID na URL para ver dado de outro | Protegido. Páginas são estáticas; dados só saem pelo RLS, que filtra por `is_admin()` ou pelo dono (`auth.uid()`) |
+| Achar a chave de API no navegador | Só a chave publicável aparece, e ela é pública por design. Nenhuma chave secreta no código nem no histórico do Git |
+| Mudar o preço (Pix pago 100 vezes) | Não existe pagamento no site. A função `registrar_venda` (demo) pega o preço da tabela no servidor, não do navegador |
+| Liberar o prêmio sem pagar | Não se aplica: não há compra nem área paga |
+| Virar admin no cadastro | Cadastro público desligado; `admins` não aceita insert de ninguém pela API |
+| Adivinhar a senha do login | Limite de tentativas do Supabase e, a partir de agora, código do app (duas etapas). Falta ligar a proteção contra senhas vazadas (plano Pro) |
+| Mandar a IA ignorar as instruções | Não há IA no site. Cuidado ao pedir para uma IA ler mensagens do formulário: trate o texto como dado |
+| Script no nome de usuário (XSS) | Protegido. Texto de visitante sempre com `textContent` e CSP sem scripts de fora nem `unsafe-inline` |
+| Senhas no GitHub | Nenhuma encontrada no código nem no histórico. `.gitignore` bloqueia `.env` e chaves |
+| Banco aberto sem proteção | RLS em todas as tabelas, sem bucket de arquivos e funções internas fechadas |

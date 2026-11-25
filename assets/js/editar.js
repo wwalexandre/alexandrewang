@@ -109,8 +109,9 @@
     const sessao = data && data.session;
     let admin = false;
     if (sessao) {
-      const r = await sb.from('admins').select('user_id').eq('user_id', sessao.user.id).maybeSingle();
-      admin = !r.error && !!r.data;
+      // is_admin() no banco já exige o código do app quando a verificação em duas etapas está ativa
+      const r = await sb.rpc('is_admin');
+      admin = !r.error && r.data === true;
     }
     if (!admin) {
       aviso.textContent = 'Para editar, entre primeiro no ';

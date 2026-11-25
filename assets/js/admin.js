@@ -12,7 +12,10 @@
     auth: { persistSession: true, autoRefreshToken: true }
   });
 
-  const views = { boot: $('bootMsg'), login: $('loginView'), denied: $('deniedView'), app: $('appView') };
+  const views = {
+    boot: $('bootMsg'), login: $('loginView'), mfa: $('mfaView'), setup: $('mfaSetupView'),
+    denied: $('deniedView'), app: $('appView')
+  };
   const show = name => {
     Object.keys(views).forEach(k => { views[k].hidden = k !== name; });
     $('headActions').hidden = name !== 'app';
@@ -32,18 +35,127 @@
     return !error && !!data;
   }
 
+  // Verificação em duas etapas (TOTP). Depois de ativada, o banco só libera os dados
+  // com sessão aal2 (função is_admin), então senha sozinha não abre mais nada.
+  async function nivelAcesso() {
+    const { data, error } = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (error || !data) return { atual: 'aal1', proximo: 'aal1' };
+    return { atual: data.currentLevel, proximo: data.nextLevel };
+  }
+
+  const soDigitos = v => String(v || '').replace(/\D/g, '');
+
   async function enter(session) {
     if (!(await isAdmin(session.user.id))) {
       await sb.auth.signOut();
       show('denied');
       return;
     }
+    const nivel = await nivelAcesso();
+    if (nivel.proximo === 'aal2' && nivel.atual !== 'aal2') {
+      $('mfaErr').textContent = '';
+      $('mfaCode').value = '';
+      show('mfa');
+      $('mfaCode').focus();
+      return;
+    }
+    abrirPainel(session, nivel);
+  }
+
+  let painelCarregado = false;
+  function abrirPainel(session, nivel) {
     $('userEmail').textContent = session.user.email || '';
+    $('btnMfa').hidden = nivel.proximo === 'aal2';
     show('app');
+    if (painelCarregado) return;
+    painelCarregado = true;
     loadMessages();
     loadLeads();
     loadVis();
   }
+
+  async function sessaoAtual() {
+    const { data } = await sb.auth.getSession();
+    return data && data.session;
+  }
+
+  $('mfaForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = $('mfaErr');
+    const btn = $('btnMfaOk');
+    err.textContent = '';
+    const code = soDigitos($('mfaCode').value);
+    if (code.length !== 6) { err.textContent = 'Digite os 6 números do app.'; return; }
+    btn.disabled = true;
+    const { data: fatores } = await sb.auth.mfa.listFactors();
+    const fator = fatores && fatores.totp && fatores.totp[0];
+    if (!fator) { btn.disabled = false; err.textContent = 'Nenhum app autenticador ativo nesta conta.'; return; }
+    const { error } = await sb.auth.mfa.challengeAndVerify({ factorId: fator.id, code: code });
+    btn.disabled = false;
+    if (error) { err.textContent = 'Código inválido ou expirado. Tente o próximo.'; return; }
+    $('mfaCode').value = '';
+    const session = await sessaoAtual();
+    if (session) abrirPainel(session, await nivelAcesso());
+    else show('login');
+  });
+
+  $('btnMfaSair').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    show('login');
+  });
+
+  // Ativar: cria o fator, mostra o QR code e só confirma depois do primeiro código certo.
+  let fatorNovo = null;
+  $('btnMfa').addEventListener('click', async () => {
+    const btn = $('btnMfa');
+    btn.disabled = true;
+    // apaga tentativas antigas que não foram confirmadas
+    const { data: lista } = await sb.auth.mfa.listFactors();
+    for (const f of (lista && lista.all) || []) {
+      if (f.status !== 'verified') await sb.auth.mfa.unenroll({ factorId: f.id });
+    }
+    const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Painel' });
+    btn.disabled = false;
+    if (error || !data) { window.alert('Não deu para iniciar a verificação em duas etapas. Tente de novo.'); return; }
+    fatorNovo = data.id;
+    let qr = (data.totp && data.totp.qr_code) || '';
+    const prefixo = 'data:image/svg+xml;utf-8,';
+    if (qr.indexOf(prefixo) === 0) qr = qr.slice(prefixo.length);
+    if (qr.charAt(0) === '<') qr = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(qr);
+    $('mfaQr').src = qr;
+    $('mfaSecret').textContent = (data.totp && data.totp.secret) || '';
+    $('mfaSetupErr').textContent = '';
+    $('mfaSetupCode').value = '';
+    show('setup');
+  });
+
+  $('mfaSetupForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = $('mfaSetupErr');
+    const btn = $('btnMfaAtivar');
+    err.textContent = '';
+    const code = soDigitos($('mfaSetupCode').value);
+    if (code.length !== 6) { err.textContent = 'Digite os 6 números do app.'; return; }
+    if (!fatorNovo) { show('app'); return; }
+    btn.disabled = true;
+    const { error } = await sb.auth.mfa.challengeAndVerify({ factorId: fatorNovo, code: code });
+    btn.disabled = false;
+    if (error) { err.textContent = 'Código inválido. Confira o relógio do celular e tente o próximo.'; return; }
+    fatorNovo = null;
+    $('mfaQr').removeAttribute('src');
+    $('mfaSecret').textContent = '';
+    const session = await sessaoAtual();
+    if (session) abrirPainel(session, await nivelAcesso());
+    window.alert('Pronto. A partir de agora o painel pede o código do app depois da senha.');
+  });
+
+  $('btnMfaCancelar').addEventListener('click', async () => {
+    if (fatorNovo) await sb.auth.mfa.unenroll({ factorId: fatorNovo });
+    fatorNovo = null;
+    $('mfaQr').removeAttribute('src');
+    $('mfaSecret').textContent = '';
+    show('app');
+  });
 
   async function boot() {
     const { data } = await sb.auth.getSession();
@@ -71,6 +183,7 @@
     await sb.auth.signOut();
     $('msgList').replaceChildren();
     $('leadBody').replaceChildren();
+    painelCarregado = false;
     show('login');
   });
   $('btnBack').addEventListener('click', () => show('login'));
