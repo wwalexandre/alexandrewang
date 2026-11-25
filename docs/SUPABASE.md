@@ -242,3 +242,13 @@ Testado com a chave publicável depois da migração: `sessao_do_dia` e `is_admi
 | Script no nome de usuário (XSS) | Protegido. Texto de visitante sempre com `textContent` e CSP sem scripts de fora nem `unsafe-inline` |
 | Senhas no GitHub | Nenhuma encontrada no código nem no histórico. `.gitignore` bloqueia `.env` e chaves |
 | Banco aberto sem proteção | RLS em todas as tabelas, sem bucket de arquivos e funções internas fechadas |
+
+## Assistente da aba Pergunte (25/11/2026)
+
+Migração `20261125120000_assistente_limite_diario.sql`.
+
+- `perguntas_chat`: só `rede_id` (o mesmo código fixo do bloqueio) e a hora. Sem IP e sem o texto da pergunta. Apagada depois de 3 dias. RLS: só admin lê.
+- `registrar_pergunta(p_token, p_ip)`: exige o token, recusa rede bloqueada e libera no máximo 20 perguntas por rede e 200 no total a cada 24 horas. Testado: a mesma rede teve 20 de 22 perguntas liberadas e outra rede continuou liberada (teste desfeito).
+- A função `api/chat.js` só aceita chamada do próprio site (cabeçalho `Origin`), corta pergunta em 600 caracteres e manda só as 6 últimas falas.
+- Modelo padrão `gemini-3.5-flash-lite` (plano gratuito). Dá para trocar pela variável `GEMINI_MODEL` na Vercel, sem mexer no código.
+- Variáveis na Vercel: `GEMINI_API_KEY` (criada no Google AI Studio) e `VISITAS_TOKEN` (já existia). As duas precisam valer também para Preview, se quiser testar na prévia.

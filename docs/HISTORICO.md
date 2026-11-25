@@ -173,3 +173,9 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 - Verificação em duas etapas (TOTP) no `/admin/`, exigida também pelo banco via `is_admin()`
 - `is_admin()` e `sessao_do_dia()` fechadas para visitante anônimo; escrita de `textos_site` e `itens_site` pela mesma regra do painel
 - Teto diário nos avisos de cópia; `.gitignore` contra `.env` e chaves
+
+### 25/11/2026
+
+- Aba Pergunte (PT) e Ask (EN): assistente com IA (Google Gemini, plano gratuito) que responde sobre a trajetória, os projetos e o código do site
+- Base de conhecimento gerada só com conteúdo público (`scripts/gerar_conhecimento.py`)
+- Limite diário por rede no banco (`registrar_pergunta`) e seção nova na página de privacidade

@@ -25,12 +25,13 @@ Este README serve para duas coisas: explicar o site e permitir que **qualquer pe
 
 ## Estado atual (leia primeiro)
 
-Atualizado em 24/11/2026.
+Atualizado em 25/11/2026.
 
 | Item | Situação |
 |---|---|
 | Site em produção | Vercel, publicado a partir da branch `main` |
 | Acesso | Português só no estado de São Paulo; de fora, o `middleware.js` leva para a mesma página em inglês (chave no painel, em Visitantes, "Acesso e bloqueios"). Redes bloqueadas veem acesso indisponível. Painel, robôs de busca e de prévia de link sempre liberados |
+| Assistente (aba Pergunte) | `assistente.html` e `assistente-en.html`, função `api/chat.js` com Google Gemini no plano gratuito (`GEMINI_API_KEY` na Vercel). Responde só com o conteúdo público do site, do README, dos docs e do repositório `conferencia-caixa` (`api/_conhecimento.js`, gerado por `scripts/gerar_conhecimento.py`). Limite de 20 perguntas por rede e 200 no total por dia (`registrar_pergunta`) |
 | Segurança | Revisão de 24/11/2026 contra os 10 ataques mais comuns (tabela em `docs/SUPABASE.md`). Painel com verificação em duas etapas pronta para ativar; o banco passa a exigir o código assim que ela for ativada |
 | Proteção do conteúdo | Texto não selecionável, cópia bloqueada, marca d'água e impressão desativada (`style.css` e `main.js`). Desencoraja, não impede |
 | Banco em produção | Supabase (projeto `antgravity`), usado por contato, leads, visitas, avisos, textos editados e visibilidade dos cards |
@@ -261,6 +262,7 @@ Valem para pessoas e IAs.
 | 13/11/2026 | Tirar enfeites sem informação | Visual mais sério, menos cara de template |
 | 16/11/2026 | Currículos em três versões (supply chain, transformação digital e dados, automação) e versão para RH | Cada vaga lê uma coisa |
 | 16/11/2026 | Fontes e Chart.js hospedados no site | CSP sem terceiros |
+| 25/11/2026 | Assistente com Gemini no plano gratuito, base só com conteúdo público e sem gravar perguntas | Custo zero; o plano gratuito pode usar as perguntas para treino, então o aviso pede para não digitar dados pessoais |
 | 24/11/2026 | Duas etapas exigidas pelo banco (`is_admin()` com `aal2`), não só pela tela | Senha vazada sozinha não abre os dados, nem chamando a API direto |
 
 ---
@@ -291,3 +293,4 @@ Em ordem de prioridade.
 3. Decidir sobre ligar o Umami.
 4. Ativar a verificação em duas etapas no `/admin/` (botão "Ativar duas etapas", só depois do merge na `main`). Ligar a proteção contra senhas vazadas no Supabase (exige plano Pro). Ligar duas etapas também no GitHub e na Vercel.
 5. Atualizar o SheetJS (`assets/js/vendor/xlsx.full.min.js`, versão 0.18.5, usado no validador) para 0.20.3, baixando de cdn.sheetjs.com. Risco baixo: só lê o arquivo que o próprio visitante escolhe.
+6. Sempre que mudar texto do site, README ou docs, rodar `python scripts/gerar_conhecimento.py` para o assistente aprender a versão nova.

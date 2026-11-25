@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alexandre Wang">
+<meta name="copyright" content="© 2026 Alexandre Wang. Todos os direitos reservados.">
+<title>Pergunte | Alexandre Wang</title>
+<meta name="description" content="Assistente com IA que responde sobre a trajetória, os projetos e o código do site de Alexandre Wang, em linguagem simples.">
+<link rel="canonical" href="https://alexandrewang.vercel.app/assistente.html">
+<link rel="alternate" hreflang="pt-BR" href="https://alexandrewang.vercel.app/assistente.html">
+<link rel="alternate" hreflang="en" href="https://alexandrewang.vercel.app/assistente-en.html">
+<link rel="alternate" hreflang="x-default" href="https://alexandrewang.vercel.app/assistente.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pergunte sobre o Alexandre e o código deste site">
+<meta property="og:description" content="Um assistente com IA que responde com base no que está publicado no site e no GitHub.">
+<meta property="og:image" content="https://alexandrewang.vercel.app/assets/img/og.png">
+<meta property="og:url" content="https://alexandrewang.vercel.app/assistente.html">
+<meta property="og:site_name" content="Alexandre Wang">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image:alt" content="Cartão do portfólio de Alexandre Wang">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0F1C2C">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preload" href="assets/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js" defer></script>
+<script src="assets/js/assistente.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="nav" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="brand"><span class="brand-mark">AW</span><span>Alexandre Wang</span></a>
+    <div class="nav-links">
+      <a href="index.html#trajetoria">Trajetória</a>
+      <a href="index.html#projetos">Projetos</a>
+      <a href="index.html#publicacoes">Publicações</a>
+      <a href="assistente.html" aria-current="page">Pergunte</a>
+      <a href="index.html#contato">Contato</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" aria-label="Idioma"><a href="assistente.html" class="on" aria-current="true">PT</a><a href="assistente-en.html" hreflang="en">EN</a></div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <div class="crumb"><a href="index.html">← Voltar ao portfólio</a></div>
+    <h1>Pergunte</h1>
+    <p class="lead">Um assistente com IA que responde sobre a minha trajetória, os projetos e como o código deste site funciona, em linguagem simples. Ele só usa o que está publicado aqui e no meu GitHub.</p>
+  </div>
+</header>
+
+<main id="conteudo" class="chat-wrap" data-idioma="pt">
+  <section class="chat" aria-label="Conversa com o assistente">
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite">
+      <div class="chat-msg ia"><p>Olá. Pode perguntar sobre a experiência do Alexandre, um projeto específico ou como este site foi feito por dentro.</p></div>
+    </div>
+    <div class="chat-sugestoes" id="chatSugestoes" aria-label="Sugestões de pergunta">
+      <button type="button" class="chat-chip">Em quais empresas ele trabalhou e o que fazia?</button>
+      <button type="button" class="chat-chip">Como funciona o painel de visitantes do site?</button>
+      <button type="button" class="chat-chip">Explique o projeto Conferência do Caixa para quem não programa.</button>
+      <button type="button" class="chat-chip">Como o site protege os dados?</button>
+    </div>
+    <form class="chat-form" id="chatForm" novalidate>
+      <label class="sr-only" for="chatPergunta">Sua pergunta</label>
+      <textarea id="chatPergunta" rows="2" maxlength="600" placeholder="Escreva sua pergunta" required></textarea>
+      <button type="submit" class="btn btn-primary" id="chatEnviar">Perguntar</button>
+    </form>
+    <p class="chat-nota">As respostas são geradas por IA (Google Gemini) e podem conter erros. Para decisões, confirme comigo pela seção <a href="index.html#contato">Contato</a>. Não digite dados pessoais: a pergunta vai para o Google, que pode usá-la para melhorar os próprios produtos. Detalhes na página de <a href="privacidade.html#assistente">privacidade</a>.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Alexandre Wang</span>
+    <a href="index.html">Voltar ao portfólio</a>
+  </div>
+</footer>
+</body>
+</html>

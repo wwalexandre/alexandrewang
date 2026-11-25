@@ -60,6 +60,7 @@ async function consultar(ip) {
 function versaoEmIngles(caminho) {
   if (caminho === '/' || caminho === '/index.html') return '/en.html';
   if (caminho === '/privacidade.html') return '/privacy.html';
+  if (caminho === '/assistente.html') return '/assistente-en.html';
   const m = caminho.match(/^\/(projetos|publicacoes)\/([a-z0-9-]+)\.html$/);
   if (m && !m[2].endsWith('-en')) return '/' + m[1] + '/' + m[2] + '-en.html';
   return null;
