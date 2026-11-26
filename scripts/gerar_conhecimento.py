@@ -111,10 +111,8 @@ def main():
     for rel in ['index.html'] + paginas:
         partes.append(texto_da_pagina(rel))
 
-    partes.append('## Como o código do site funciona (README do repositório wwalexandre/alexandrewang)')
-    partes.append(ler('README.md'))
-    # docs/SUPABASE.md e docs/HISTORICO.md ficam de fora: detalhes internos de segurança não
-    # são assunto do assistente, e cada pergunta fica menor (o plano gratuito limita tokens por minuto).
+    # O README do site fica de fora: como o site foi construído é assunto reservado do Alexandre.
+    # docs/SUPABASE.md e docs/HISTORICO.md também ficam de fora pelo mesmo motivo.
 
     externo = readme_externo('conferencia-caixa')
     if externo:

@@ -31,7 +31,7 @@ Atualizado em 25/11/2026.
 |---|---|
 | Site em produção | Vercel, publicado a partir da branch `main` |
 | Acesso | Português só no estado de São Paulo; de fora, o `middleware.js` leva para a mesma página em inglês (chave no painel, em Visitantes, "Acesso e bloqueios"). Redes bloqueadas veem acesso indisponível. Painel, robôs de busca e de prévia de link sempre liberados |
-| Assistente (balão e aba Pergunte) | Balão flutuante em todas as páginas (`assets/js/balao.js`, carregado pelo `main.js`; o link Pergunte/Ask do menu abre o balão). Versão em tela cheia em `assistente.html` e `assistente-en.html`. Função `api/chat.js` com Google Gemini no plano gratuito (`GEMINI_API_KEY` na Vercel). Responde só com o conteúdo público do site, do README e do repositório `conferencia-caixa` (`api/_conhecimento.js`, gerado por `scripts/gerar_conhecimento.py`). Limite de 20 perguntas por rede e 200 no total por dia (`registrar_pergunta`) |
+| Assistente (balão e aba Pergunte) | Balão flutuante em todas as páginas (`assets/js/balao.js`, carregado pelo `main.js`; o link Pergunte/Ask do menu abre o balão). Versão em tela cheia em `assistente.html` e `assistente-en.html`. Função `api/chat.js` com Google Gemini no plano gratuito (`GEMINI_API_KEY` na Vercel). Responde só com o texto público das páginas e o README do repositório `conferencia-caixa`, mais um índice com datas. Não explica como o site foi construído (o README do site fica fora da base, a pedido do Alexandre) (`api/_conhecimento.js`, gerado por `scripts/gerar_conhecimento.py`). Limite de 20 perguntas por rede e 200 no total por dia (`registrar_pergunta`) |
 | Segurança | Revisão de 24/11/2026 contra os 10 ataques mais comuns (tabela em `docs/SUPABASE.md`). Painel com verificação em duas etapas pronta para ativar; o banco passa a exigir o código assim que ela for ativada |
 | Proteção do conteúdo | Texto não selecionável, cópia bloqueada, marca d'água e impressão desativada (`style.css` e `main.js`). Desencoraja, não impede |
 | Banco em produção | Supabase (projeto `antgravity`), usado por contato, leads, visitas, avisos, textos editados e visibilidade dos cards |
@@ -293,4 +293,4 @@ Em ordem de prioridade.
 3. Decidir sobre ligar o Umami.
 4. Ativar a verificação em duas etapas no `/admin/` (botão "Ativar duas etapas", só depois do merge na `main`). Ligar a proteção contra senhas vazadas no Supabase (exige plano Pro). Ligar duas etapas também no GitHub e na Vercel.
 5. Atualizar o SheetJS (`assets/js/vendor/xlsx.full.min.js`, versão 0.18.5, usado no validador) para 0.20.3, baixando de cdn.sheetjs.com. Risco baixo: só lê o arquivo que o próprio visitante escolhe.
-6. Sempre que mudar texto do site, README ou docs, rodar `python scripts/gerar_conhecimento.py` para o assistente aprender a versão nova.
+6. Sempre que mudar texto do site ou publicar projeto novo, rodar `python scripts/gerar_conhecimento.py` para o assistente aprender a versão nova.

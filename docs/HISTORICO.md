@@ -180,3 +180,4 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 - Base de conhecimento gerada só com conteúdo público (`scripts/gerar_conhecimento.py`)
 - Limite diário por rede no banco (`registrar_pergunta`) e seção nova na página de privacidade
 - O assistente virou um balão flutuante em todas as páginas (`assets/js/balao.js`), com modelo reserva quando o Gemini está sobrecarregado
+- O assistente deixou de explicar como o site foi construído: README do site fora da base, regra de recusa e sugestões de pergunta trocadas
