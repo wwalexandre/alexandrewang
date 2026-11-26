@@ -25,14 +25,14 @@ Este README serve para duas coisas: explicar o site e permitir que **qualquer pe
 
 ## Estado atual (leia primeiro)
 
-Atualizado em 25/11/2026.
+Atualizado em 26/11/2026.
 
 | Item | Situação |
 |---|---|
 | Site em produção | Vercel, publicado a partir da branch `main` |
 | Acesso | Português só no estado de São Paulo; de fora, o `middleware.js` leva para a mesma página em inglês (chave no painel, em Visitantes, "Acesso e bloqueios"). Redes bloqueadas veem acesso indisponível. Painel, robôs de busca e de prévia de link sempre liberados |
 | Assistente (balão e aba Pergunte) | Balão flutuante em todas as páginas (`assets/js/balao.js`, carregado pelo `main.js`; o link Pergunte/Ask do menu abre o balão). Versão em tela cheia em `assistente.html` e `assistente-en.html`. Função `api/chat.js` com Google Gemini no plano gratuito (`GEMINI_API_KEY` na Vercel). Responde só com o texto público das páginas e o README do repositório `conferencia-caixa`, mais um índice com datas. Não explica como o site foi construído (o README do site fica fora da base, a pedido do Alexandre). Filtro de saída troca por recusa qualquer resposta que repita as regras ou tenha cara de chave, token ou variável secreta; o gerador para se a base tiver algo assim (`api/_conhecimento.js`, gerado por `scripts/gerar_conhecimento.py`). Limite de 20 perguntas por rede e 200 no total por dia (`registrar_pergunta`) |
-| Segurança | Revisão de 24/11/2026 contra os 10 ataques mais comuns (tabela em `docs/SUPABASE.md`). Painel com verificação em duas etapas pronta para ativar; o banco passa a exigir o código assim que ela for ativada |
+| Segurança | Revisão de 24/11/2026 contra os 10 ataques mais comuns e teste de ataque de 26/11/2026 com a chave pública, tudo barrado (`docs/SUPABASE.md`). Tabelas de loja (`produtos`, `vendas`, `itens_venda`, vazias e sem uso) só para o admin. Cadastro de contas novas desligado no Supabase. `.env`, `.git` e arquivos de configuração dão 404 no site. Painel com verificação em duas etapas pronta, **ainda não ativada** |
 | Proteção do conteúdo | Texto não selecionável, cópia bloqueada, marca d'água e impressão desativada (`style.css` e `main.js`). Desencoraja, não impede |
 | Banco em produção | Supabase (projeto `antgravity`), usado por contato, leads, visitas, avisos, textos editados e visibilidade dos cards |
 | Migração para Cloudflare | **Decidida, feita na branch `cloudflare-d1`, ainda não publicada.** A branch está atrás da `main` e não tem as mudanças feitas a partir de 07/11/2026 (mapa da trajetória, edição ao vivo, novas publicações e painéis, revisão de segurança). Ver [Pendências](#pendências) |
@@ -263,6 +263,8 @@ Valem para pessoas e IAs.
 | 16/11/2026 | Currículos em três versões (supply chain, transformação digital e dados, automação) e versão para RH | Cada vaga lê uma coisa |
 | 16/11/2026 | Fontes e Chart.js hospedados no site | CSP sem terceiros |
 | 25/11/2026 | Assistente com Gemini no plano gratuito, base só com conteúdo público e sem gravar perguntas | Custo zero; o plano gratuito pode usar as perguntas para treino, então o aviso pede para não digitar dados pessoais |
+| 26/11/2026 | Assistente não explica como o site foi construído; README do site fora da base | Como o site foi feito é assunto reservado do Alexandre |
+| 26/11/2026 | Tabelas de loja só para o admin e público sem escrita desnecessária | Regras antigas deixavam conta logada criar produto e venda com qualquer preço |
 | 24/11/2026 | Duas etapas exigidas pelo banco (`is_admin()` com `aal2`), não só pela tela | Senha vazada sozinha não abre os dados, nem chamando a API direto |
 
 ---
@@ -280,6 +282,7 @@ Resumo por fase. O registro dia a dia, com hashes, está em [`docs/HISTORICO.md`
 | 4. Migração (branch) | 12/11/2026 | Versão Cloudflare (Worker, D1, Access) na branch `cloudflare-d1`, não publicada |
 | 5. Conteúdo e refinamento | 13 a 17/11/2026 | Trajetória com STAR, palavras-chave e mapa isométrico, edição ao vivo pelo painel, currículos por área, três publicações novas com simulador, painéis de invoices e de fábrica, revisão de segurança |
 | 6. Documentação | 18/11/2026 | Este README reescrito para permitir retomar o trabalho com qualquer IA, criação do `docs/HISTORICO.md`, `AGENTS.md` e `CLAUDE.md`, e registro no repositório das migrações de `itens_site` e `textos_site`, que só existiam no Supabase |
+| 8. Assistente com IA | 25 e 26/11/2026 | Balão "Pergunte" com Gemini em todas as páginas, índice de projetos com datas, proteção contra vazamento das instruções e teste de ataque no banco |
 | 7. Segurança e acesso | 22 a 24/11/2026 | Acesso em português só em SP, bloqueio de visitantes, painel visual e revisão contra os 10 ataques mais comuns, com verificação em duas etapas no painel |
 
 ---
@@ -291,6 +294,7 @@ Em ordem de prioridade.
 1. **Decidir o destino da migração para Cloudflare.** A branch `cloudflare-d1` precisa receber tudo o que entrou na `main` depois de 07/11/2026, incluindo as tabelas novas (`textos_site`, `itens_site`, `clones`, `avisos`) e o endurecimento de funções, antes de publicar. Os passos manuais estão em `docs/CLOUDFLARE.md` daquela branch (login no wrangler, aplicar o D1, criar o aplicativo no Cloudflare Access, preencher `ACCESS_TEAM_DOMAIN` e `ACCESS_AUD`, deploy). Depois de publicar, atualizar este README, `SITE_URL`, canonical e sitemap se o domínio mudar.
 2. Enviar uma mensagem real pelo formulário e conferir no `/admin/`.
 3. Decidir sobre ligar o Umami.
-4. Ativar a verificação em duas etapas no `/admin/` (botão "Ativar duas etapas", só depois do merge na `main`). Ligar a proteção contra senhas vazadas no Supabase (exige plano Pro). Ligar duas etapas também no GitHub e na Vercel.
+4. **Ativar a verificação em duas etapas no `/admin/`** (botão "Ativar duas etapas"). Enquanto não for ativada, só a senha protege o painel. Ligar a proteção contra senhas vazadas no Supabase (exige plano Pro). Ligar duas etapas também no GitHub e na Vercel.
 5. Atualizar o SheetJS (`assets/js/vendor/xlsx.full.min.js`, versão 0.18.5, usado no validador) para 0.20.3, baixando de cdn.sheetjs.com. Risco baixo: só lê o arquivo que o próprio visitante escolhe.
-6. Sempre que mudar texto do site ou publicar projeto novo, rodar `python scripts/gerar_conhecimento.py` para o assistente aprender a versão nova.
+6. Avaliar deixar o repositório privado no GitHub (Settings, General, Change visibility). Ele é público, então qualquer pessoa lê o código e estas instruções; a Vercel continua publicando normalmente.
+7. Sempre que mudar texto do site ou publicar projeto novo, rodar `python scripts/gerar_conhecimento.py` para o assistente aprender a versão nova.
