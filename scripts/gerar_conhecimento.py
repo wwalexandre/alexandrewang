@@ -14,6 +14,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import urllib.request
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -58,16 +59,56 @@ def readme_externo(repo):
         return ''
 
 
+def data_da_pagina(caminho):
+    """Data de publicação: datePublished da página, se houver; senão, o dia em que ela entrou no git."""
+    m = re.search(r'"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})', ler(caminho))
+    if m:
+        return m.group(1)
+    try:
+        saida = subprocess.run(['git', 'log', '--diff-filter=A', '--follow', '--format=%as', '--', caminho],
+                               cwd=RAIZ, capture_output=True, text=True, timeout=30).stdout.split()
+        return saida[-1] if saida else ''
+    except Exception:
+        return ''
+
+
+def data_repo(repo):
+    try:
+        with urllib.request.urlopen('https://api.github.com/repos/wwalexandre/' + repo, timeout=15) as r:
+            return json.loads(r.read().decode('utf-8')).get('created_at', '')[:10]
+    except Exception:
+        return ''
+
+
+def dia(iso):
+    return iso[8:10] + '/' + iso[5:7] + '/' + iso[0:4] if len(iso) == 10 else 'sem data'
+
+
 def main():
     partes = []
-    partes.append('## O site e a carreira (texto público das páginas em português)')
-    paginas = ['index.html'] + sorted(
+    paginas = sorted(
         p.replace('\\', '/') for p in glob.glob(os.path.join(RAIZ, 'projetos', '*.html'))
         + glob.glob(os.path.join(RAIZ, 'publicacoes', '*.html')))
+    paginas = [os.path.relpath(p, RAIZ).replace('\\', '/') for p in paginas]
+    paginas = [p for p in paginas if not p.endswith('-en.html')]
+
+    # Índice com datas, para o assistente saber o que é mais recente.
+    itens = []
     for p in paginas:
-        rel = os.path.relpath(p, RAIZ).replace('\\', '/') if os.path.isabs(p) else p
-        if rel.endswith('-en.html'):
-            continue
+        t = re.search(r'<title>(.*?)</title>', ler(p), re.S)
+        nome = html.unescape(t.group(1)).split(' | ')[0].strip() if t else p
+        tipo = 'Projeto' if p.startswith('projetos/') else 'Publicação'
+        itens.append((data_da_pagina(p), tipo, nome, 'https://alexandrewang.vercel.app/' + p))
+    criado = data_repo('conferencia-caixa')
+    itens.append((criado, 'Projeto', 'Conferência do Caixa (ferramenta no GitHub)',
+                  'https://wwalexandre.github.io/conferencia-caixa/'))
+    itens.sort(key=lambda i: i[0], reverse=True)
+    partes.append('## Índice de projetos e publicações do Alexandre, do mais recente para o mais antigo\n'
+                  'Data = dia em que entrou no site ou no GitHub.\n'
+                  + '\n'.join('- ' + dia(d) + ' | ' + tipo + ' | ' + nome + ' | ' + url for d, tipo, nome, url in itens))
+
+    partes.append('## O site e a carreira (texto público das páginas em português)')
+    for rel in ['index.html'] + paginas:
         partes.append(texto_da_pagina(rel))
 
     partes.append('## Como o código do site funciona (README do repositório wwalexandre/alexandrewang)')
