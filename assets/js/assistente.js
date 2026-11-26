@@ -36,7 +36,8 @@
       if (i % 2 === 1) {
         const a = document.createElement('a');
         a.href = parte.replace(/[.,;:]+$/, '');
-        a.textContent = a.href.replace('https://alexandrewang.vercel.app/', '/') || '/';
+        const curto = a.href.replace('https://alexandrewang.vercel.app/', '/');
+        a.textContent = curto === '/' ? 'alexandrewang.vercel.app' : curto;
         no.appendChild(a);
         const sobra = parte.slice(a.href.length);
         if (sobra) no.appendChild(document.createTextNode(sobra));

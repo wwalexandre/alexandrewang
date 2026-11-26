@@ -83,13 +83,31 @@ async function podePerguntar(ip) {
 }
 
 // Monta a entrada com as últimas falas, para o modelo entender perguntas de continuação.
-function montarEntrada(historico, pergunta, en) {
+function montarEntrada(historico, pergunta) {
   const linhas = historico.map(f => (f.de === 'ia' ? 'Assistente: ' : 'Visitante: ') + f.texto);
-  const aviso = en
-    ? '(The visitor is on the English version of the site. Reply in English unless the question is in Portuguese.)\n\n'
-    : '';
+  const aviso = '(Answer in the same language as the visitor\'s question below: question in English, '
+    + 'answer in English; pergunta em português, resposta em português.)\n\n';
   if (!linhas.length) return aviso + pergunta;
   return aviso + 'Conversa até agora:\n' + linhas.join('\n') + '\n\nNova pergunta do visitante: ' + pergunta;
+}
+
+// Endereços que existem na base. O modelo às vezes troca letras de um endereço; quando um
+// endereço da resposta não existe na base e há um conhecido com o mesmo caminho, troca pelo certo.
+const URL_RE = /https?:\/\/[^\s<>"')\]]+/g;
+const CONHECIDOS = [...new Set((CONHECIMENTO.match(URL_RE) || []).map(u => u.replace(/[.,;:]+$/, '')))];
+function caminho(u) {
+  try { return new URL(u).pathname.replace(/\/+$/, ''); } catch (e) { return ''; }
+}
+function corrigirEnderecos(texto) {
+  return texto.replace(URL_RE, bruto => {
+    const u = bruto.replace(/[.,;:]+$/, '');
+    const resto = bruto.slice(u.length);
+    if (CONHECIDOS.includes(u) || CONHECIDOS.includes(u + '/') || CONHECIDOS.includes(u.replace(/\/$/, ''))) return bruto;
+    const c = caminho(u);
+    if (!c) return bruto;
+    const iguais = CONHECIDOS.filter(k => caminho(k) === c);
+    return iguais.length === 1 ? iguais[0] + resto : bruto;
+  });
 }
 
 // Pega o texto da resposta, aceitando os formatos conhecidos da API.
@@ -141,7 +159,7 @@ module.exports = async function handler(req, res) {
 
   const parar = new AbortController();
   const relogio = setTimeout(() => parar.abort(), 25000);
-  const entrada = montarEntrada(historico, pergunta, corpo.idioma === 'en');
+  const entrada = montarEntrada(historico, pergunta);
   const chamar = (modelo, pensamento) => fetch(GEMINI_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': chave },
@@ -172,7 +190,7 @@ module.exports = async function handler(req, res) {
       res.status(502).json({ erro: 'ia' });
       return;
     }
-    const resposta = textoDaResposta(await resp.json()).replace(/\u2014/g, ',');
+    const resposta = corrigirEnderecos(textoDaResposta(await resp.json()).replace(/\u2014/g, ','));
     if (!resposta) { res.status(502).json({ erro: 'vazia' }); return; }
     res.status(200).json({ resposta: resposta.slice(0, 6000) });
   } catch (e) {
