@@ -17,6 +17,7 @@ const SB_URL = 'https://apezjjrpvlglaawvhqoo.supabase.co';
 const SB_KEY = 'sb_publishable_eHbHUKdtoOVlIg87zQZAew_DgD-GK6J';
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/interactions';
 const MODELO_PADRAO = 'gemini-3.5-flash-lite';
+const MODELO_RESERVA = 'gemini-3.6-flash';
 
 const MAX_PERGUNTA = 600;
 const MAX_FALA = 1500;
@@ -36,6 +37,9 @@ const REGRAS = [
   '- Linguagem simples, para quem não é programador. Explique termos técnicos em uma frase.',
   '- Respostas curtas: até 3 parágrafos curtos ou uma lista de até 6 itens.',
   '- Quando fizer sentido, indique o endereço completo da página do site onde está o assunto.',
+  '  Copie endereços letra por letra como estão no material. Nunca monte um endereço.',
+  '- Não cite "MATERIAL", "Parte 1", "Parte 2" nem outros rótulos internos. Diga "no site" ou',
+  '  "no repositório do projeto no GitHub".',
   '- Escreva texto puro, sem markdown: sem asteriscos, sem crases, sem # e sem links entre',
   '  colchetes. Para listas, comece a linha com "- ". Endereços vão soltos no texto.',
   '- Não use travessão longo. Use vírgula, ponto ou dois-pontos.',
@@ -137,19 +141,27 @@ module.exports = async function handler(req, res) {
 
   const parar = new AbortController();
   const relogio = setTimeout(() => parar.abort(), 25000);
+  const entrada = montarEntrada(historico, pergunta, corpo.idioma === 'en');
+  const chamar = (modelo, pensamento) => fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': chave },
+    body: JSON.stringify({
+      model: modelo,
+      system_instruction: REGRAS,
+      input: entrada,
+      store: false,
+      generation_config: { max_output_tokens: 1500, thinking_level: pensamento }
+    }),
+    signal: parar.signal
+  });
   try {
-    const resp = await fetch(GEMINI_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': chave },
-      body: JSON.stringify({
-        model: process.env.GEMINI_MODEL || MODELO_PADRAO,
-        system_instruction: REGRAS,
-        input: montarEntrada(historico, pergunta, corpo.idioma === 'en'),
-        store: false,
-        generation_config: { max_output_tokens: 1500, thinking_level: 'minimal' }
-      }),
-      signal: parar.signal
-    });
+    let resp = await chamar(process.env.GEMINI_MODEL || MODELO_PADRAO, 'minimal');
+    // Modelo sobrecarregado (503/500) ou sem cota (429): tenta uma vez o modelo reserva,
+    // que tem fila e cota próprias no plano gratuito.
+    if (resp.status === 429 || resp.status >= 500) {
+      console.error('gemini principal', resp.status, (await resp.text()).slice(0, 300));
+      resp = await chamar(process.env.GEMINI_MODEL_RESERVA || MODELO_RESERVA, 'low');
+    }
     if (resp.status === 429) {
       console.error('gemini 429', (await resp.text()).slice(0, 500));
       res.status(429).json({ erro: 'cota' });

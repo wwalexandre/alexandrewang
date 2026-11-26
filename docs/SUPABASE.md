@@ -250,5 +250,5 @@ Migração `20261125120000_assistente_limite_diario.sql`.
 - `perguntas_chat`: só `rede_id` (o mesmo código fixo do bloqueio) e a hora. Sem IP e sem o texto da pergunta. Apagada depois de 3 dias. RLS: só admin lê.
 - `registrar_pergunta(p_token, p_ip)`: exige o token, recusa rede bloqueada e libera no máximo 20 perguntas por rede e 200 no total a cada 24 horas. Testado: a mesma rede teve 20 de 22 perguntas liberadas e outra rede continuou liberada (teste desfeito).
 - A função `api/chat.js` só aceita chamada do próprio site (cabeçalho `Origin`), corta pergunta em 600 caracteres e manda só as 6 últimas falas.
-- Modelo padrão `gemini-3.5-flash-lite` (plano gratuito). Dá para trocar pela variável `GEMINI_MODEL` na Vercel, sem mexer no código.
+- Modelo padrão `gemini-3.5-flash-lite` (plano gratuito). Dá para trocar pela variável `GEMINI_MODEL` na Vercel, sem mexer no código. Se ele estiver sobrecarregado ou sem cota, a função tenta uma vez o `gemini-3.6-flash` (variável `GEMINI_MODEL_RESERVA`).
 - Variáveis na Vercel: `GEMINI_API_KEY` (criada no Google AI Studio) e `VISITAS_TOKEN` (já existia). As duas precisam valer também para Preview, se quiser testar na prévia.

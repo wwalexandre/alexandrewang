@@ -60,7 +60,7 @@ def readme_externo(repo):
 
 def main():
     partes = []
-    partes.append('## Parte 1. O site e a carreira (texto público das páginas em português)')
+    partes.append('## O site e a carreira (texto público das páginas em português)')
     paginas = ['index.html'] + sorted(
         p.replace('\\', '/') for p in glob.glob(os.path.join(RAIZ, 'projetos', '*.html'))
         + glob.glob(os.path.join(RAIZ, 'publicacoes', '*.html')))
@@ -70,14 +70,14 @@ def main():
             continue
         partes.append(texto_da_pagina(rel))
 
-    partes.append('## Parte 2. Como o código do site funciona (README do repositório wwalexandre/alexandrewang)')
+    partes.append('## Como o código do site funciona (README do repositório wwalexandre/alexandrewang)')
     partes.append(ler('README.md'))
     # docs/SUPABASE.md e docs/HISTORICO.md ficam de fora: detalhes internos de segurança não
     # são assunto do assistente, e cada pergunta fica menor (o plano gratuito limita tokens por minuto).
 
     externo = readme_externo('conferencia-caixa')
     if externo:
-        partes.append('## Parte 3. Projeto Conferência do Caixa (repositório wwalexandre/conferencia-caixa)')
+        partes.append('## Projeto Conferência do Caixa (repositório wwalexandre/conferencia-caixa)')
         partes.append(externo)
 
     texto = limpar('\n\n'.join(partes))
