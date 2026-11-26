@@ -38,7 +38,8 @@ def limpar(texto):
 def texto_da_pagina(caminho):
     s = ler(caminho)
     titulo = re.search(r'<title>(.*?)</title>', s, re.S)
-    s = re.sub(r'<(script|style|svg|nav|footer)\b.*?</\1>', ' ', s, flags=re.S | re.I)
+    s = re.sub(r'<!--.*?-->', ' ', s, flags=re.S)
+    s = re.sub(r'<(script|style|svg|nav|footer|template|noscript)\b.*?</\1>', ' ', s, flags=re.S | re.I)
     s = re.sub(r'<(br|p|li|h[1-6]|div|section|tr)\b[^>]*>', '\n', s, flags=re.I)
     s = re.sub(r'<[^>]+>', ' ', s)
     s = html.unescape(s)
@@ -120,6 +121,13 @@ def main():
         partes.append(externo)
 
     texto = limpar('\n\n'.join(partes))
+    # Trava de segurança: este arquivo vai para o repositório público e para o Gemini.
+    # Se aparecer algo com cara de chave, token ou nome de variável secreta, não gera.
+    suspeito = re.search(r'AIza[0-9A-Za-z_-]{20,}|\bAQ\.[0-9A-Za-z_-]{20,}|sb_secret_|service_role'
+                         r'|eyJ[0-9A-Za-z_-]{10,}\.[0-9A-Za-z_-]{10,}|-----BEGIN [A-Z ]*KEY-----'
+                         r'|GEMINI_API_KEY|VISITAS_TOKEN|SUPABASE_', texto)
+    if suspeito:
+        raise SystemExit('parei: a base tem algo com cara de segredo: ' + suspeito.group(0)[:12] + '...')
     with io.open(SAIDA, 'w', encoding='utf-8', newline='\n') as f:
         f.write('// Gerado por scripts/gerar_conhecimento.py. Não edite à mão.\n')
         f.write('// Só conteúdo que já é público (páginas do site, README e docs).\n')
