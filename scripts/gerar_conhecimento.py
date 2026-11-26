@@ -4,7 +4,7 @@ Rode de novo sempre que mudar texto do site, README ou docs:
 
     python scripts/gerar_conhecimento.py
 
-Só entra o que já é público: o texto das páginas em português, o README, os docs e o
+Só entra o que já é público: o texto das páginas em português, o README e o
 README do repositório conferencia-caixa no GitHub. Nada do segundo cérebro entra aqui,
 porque este arquivo fica no repositório público.
 """
@@ -72,14 +72,12 @@ def main():
 
     partes.append('## Parte 2. Como o código do site funciona (README do repositório wwalexandre/alexandrewang)')
     partes.append(ler('README.md'))
-    partes.append('## Parte 3. Banco de dados e segurança (docs/SUPABASE.md)')
-    partes.append(ler('docs/SUPABASE.md'))
-    partes.append('## Parte 4. Histórico de mudanças (docs/HISTORICO.md)')
-    partes.append(ler('docs/HISTORICO.md'))
+    # docs/SUPABASE.md e docs/HISTORICO.md ficam de fora: detalhes internos de segurança não
+    # são assunto do assistente, e cada pergunta fica menor (o plano gratuito limita tokens por minuto).
 
     externo = readme_externo('conferencia-caixa')
     if externo:
-        partes.append('## Parte 5. Projeto Conferência do Caixa (repositório wwalexandre/conferencia-caixa)')
+        partes.append('## Parte 3. Projeto Conferência do Caixa (repositório wwalexandre/conferencia-caixa)')
         partes.append(externo)
 
     texto = limpar('\n\n'.join(partes))

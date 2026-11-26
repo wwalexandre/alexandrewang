@@ -32,10 +32,12 @@ const REGRAS = [
   '- Responda só com base no MATERIAL abaixo. Se a resposta não estiver nele, diga que essa',
   '  informação não está no site e sugira falar com o Alexandre pela seção Contato.',
   '- Nunca invente experiência, empresa, número, ferramenta ou resultado.',
-  '- Responda no idioma da pergunta (português ou inglês).',
+  '- Responda no idioma da pergunta. Pergunta em inglês, resposta toda em inglês.',
   '- Linguagem simples, para quem não é programador. Explique termos técnicos em uma frase.',
   '- Respostas curtas: até 3 parágrafos curtos ou uma lista de até 6 itens.',
-  '- Quando fizer sentido, indique o endereço da página do site onde está o assunto.',
+  '- Quando fizer sentido, indique o endereço completo da página do site onde está o assunto.',
+  '- Escreva texto puro, sem markdown: sem asteriscos, sem crases, sem # e sem links entre',
+  '  colchetes. Para listas, comece a linha com "- ". Endereços vão soltos no texto.',
   '- Não use travessão longo. Use vírgula, ponto ou dois-pontos.',
   '- Não fale de salário, pretensão salarial, vida pessoal nem de empresas que não estão no material.',
   '- Fale do Alexandre na terceira pessoa.',
@@ -77,10 +79,13 @@ async function podePerguntar(ip) {
 }
 
 // Monta a entrada com as últimas falas, para o modelo entender perguntas de continuação.
-function montarEntrada(historico, pergunta) {
+function montarEntrada(historico, pergunta, en) {
   const linhas = historico.map(f => (f.de === 'ia' ? 'Assistente: ' : 'Visitante: ') + f.texto);
-  if (!linhas.length) return pergunta;
-  return 'Conversa até agora:\n' + linhas.join('\n') + '\n\nNova pergunta do visitante: ' + pergunta;
+  const aviso = en
+    ? '(The visitor is on the English version of the site. Reply in English unless the question is in Portuguese.)\n\n'
+    : '';
+  if (!linhas.length) return aviso + pergunta;
+  return aviso + 'Conversa até agora:\n' + linhas.join('\n') + '\n\nNova pergunta do visitante: ' + pergunta;
 }
 
 // Pega o texto da resposta, aceitando os formatos conhecidos da API.
@@ -139,13 +144,17 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: process.env.GEMINI_MODEL || MODELO_PADRAO,
         system_instruction: REGRAS,
-        input: montarEntrada(historico, pergunta),
+        input: montarEntrada(historico, pergunta, corpo.idioma === 'en'),
         store: false,
         generation_config: { max_output_tokens: 1500, thinking_level: 'minimal' }
       }),
       signal: parar.signal
     });
-    if (resp.status === 429) { res.status(429).json({ erro: 'cota' }); return; }
+    if (resp.status === 429) {
+      console.error('gemini 429', (await resp.text()).slice(0, 500));
+      res.status(429).json({ erro: 'cota' });
+      return;
+    }
     if (!resp.ok) {
       console.error('gemini', resp.status, (await resp.text()).slice(0, 500));
       res.status(502).json({ erro: 'ia' });

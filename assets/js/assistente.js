@@ -46,12 +46,21 @@
     });
   }
 
+  // Tira marcações de markdown que o modelo às vezes manda: [texto](url) vira só o endereço
+  // (ou "texto (endereço)"), e somem asteriscos de ênfase e crases.
+  function limpar(t) {
+    return t
+      .replace(/\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, (m, txt, url) => (txt === url || /^https?:/.test(txt) ? url : txt + ' (' + url + ')'))
+      .replace(/\*\*|__|`/g, '')
+      .replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1$2');
+  }
+
   // Parágrafos e listas simples ("- item" ou "1. item"); negrito em markdown vira texto normal.
   function bolha(de, texto) {
     const caixa = document.createElement('div');
     caixa.className = 'chat-msg ' + de;
     let lista = null;
-    texto.replace(/\*\*/g, '').split(/\n+/).forEach(linha => {
+    limpar(texto).split(/\n+/).forEach(linha => {
       const l = linha.trim();
       if (!l) return;
       const item = l.match(/^(?:[-*•]|\d+[.)])\s+(.*)$/);
@@ -84,7 +93,7 @@
       const resp = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pergunta: pergunta, historico: historico.slice(-6) })
+        body: JSON.stringify({ pergunta: pergunta, historico: historico.slice(-6), idioma: en ? 'en' : 'pt' })
       });
       const dados = await resp.json().catch(() => ({}));
       espera.remove();
