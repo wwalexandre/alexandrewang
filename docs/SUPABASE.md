@@ -252,3 +252,11 @@ Migração `20261125120000_assistente_limite_diario.sql`.
 - A função `api/chat.js` só aceita chamada do próprio site (cabeçalho `Origin`), corta pergunta em 600 caracteres e manda só as 6 últimas falas.
 - Modelo padrão `gemini-3.5-flash-lite` (plano gratuito). Dá para trocar pela variável `GEMINI_MODEL` na Vercel, sem mexer no código. Se ele estiver sobrecarregado ou sem cota, a função tenta uma vez o `gemini-3.6-flash` (variável `GEMINI_MODEL_RESERVA`).
 - Variáveis na Vercel: `GEMINI_API_KEY` (criada no Google AI Studio) e `VISITAS_TOKEN` (já existia). As duas precisam valer também para Preview, se quiser testar na prévia.
+
+## Loja fechada e escritas públicas cortadas (26/11/2026)
+
+Migração `20261126120000_fechar_loja_e_escritas_publicas.sql`.
+
+- `produtos`, `vendas` e `itens_venda` (vazias, o site não usa): antes qualquer conta logada podia criar produto e venda com o preço que quisesse. Agora só o admin, com duas etapas. `registrar_venda` não fica mais exposta na API.
+- O público (anon) perdeu escrita em `textos_site` e `itens_site` (continua lendo) e qualquer acesso a `bloqueios`.
+- Teste com a chave pública: criar produto, venda falsa, pagamento falso, ler admins, mensagens, visitas e config, apagar ou alterar textos e chamar funções do painel deram "permission denied". Texto com `'); drop table` e `<script>` no contato virou texto comum (mensagem de teste apagada).

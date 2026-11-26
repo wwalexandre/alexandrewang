@@ -182,3 +182,4 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 - O assistente virou um balão flutuante em todas as páginas (`assets/js/balao.js`), com modelo reserva quando o Gemini está sobrecarregado
 - O assistente deixou de explicar como o site foi construído: README do site fora da base, regra de recusa e sugestões de pergunta trocadas
 - Proteção do assistente contra vazamento: regras confidenciais, filtro de saída (trechos das regras, nomes de variáveis, chaves e tokens viram recusa padrão) e gerador que apaga comentários do HTML e para se achar algo com cara de segredo
+- Banco: tabelas de loja fechadas só para o admin e escritas públicas desnecessárias cortadas; teste de ataque com a chave pública barrado em tudo
