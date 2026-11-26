@@ -1572,3 +1572,12 @@ const Textos = (function textos() {
   });
   carrega(base + 'vendor/supabase-js.umd.js').then(() => carrega(base + 'editar.js')).catch(() => {});
 })();
+
+// Balão do assistente com IA (assets/js/balao.js), em todas as páginas que usam este arquivo.
+(function () {
+  const eu = [...document.scripts].find(s => /\/main\.js(\?|$)/.test(s.src));
+  if (!eu || document.querySelector('.chat-wrap')) return;
+  const s = document.createElement('script');
+  s.src = eu.src.replace(/main\.js.*$/, 'balao.js');
+  document.head.appendChild(s);
+})();

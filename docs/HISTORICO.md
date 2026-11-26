@@ -179,3 +179,4 @@ Ao terminar um trabalho, acrescente as linhas do dia no fim deste arquivo, no me
 - Aba Pergunte (PT) e Ask (EN): assistente com IA (Google Gemini, plano gratuito) que responde sobre a trajetória, os projetos e o código do site
 - Base de conhecimento gerada só com conteúdo público (`scripts/gerar_conhecimento.py`)
 - Limite diário por rede no banco (`registrar_pergunta`) e seção nova na página de privacidade
+- O assistente virou um balão flutuante em todas as páginas (`assets/js/balao.js`), com modelo reserva quando o Gemini está sobrecarregado
